@@ -155,6 +155,9 @@
   /* A stronger neutral border (R15-13): the hover border of a card you can choose or open
      (FilterCardRow, the interactive Card). Never blue on hover: blue means chosen. */
   --border-strong: var(--ink-300);
+  /* Halfway between --border and the row hairline (George 2026-11-04): a panel's edge on a tinted
+     page, which needs less weight than a region rule on white. WorkspacePage's box. */
+  --border-medium: color-mix(in oklab, var(--border) 50%, var(--divider));
   --divider-tint: var(--hairline-tint);
   /* A Surface's edge (R21-01, TOKENS.md §4's context model, its first variable): the border a
      Card, a DataTable's box or a DagFrame draws, by the surface it sits on. --border by default;
@@ -331,6 +334,7 @@
   --color-ring: var(--ring);
   --color-divider: var(--divider);
   --color-border-strong: var(--border-strong);
+  --color-border-medium: var(--border-medium);
   --color-divider-tint: var(--divider-tint);
   --color-surface-edge: var(--surface-edge);
   --color-hairline-strong: var(--hairline-strong);

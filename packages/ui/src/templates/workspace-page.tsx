@@ -21,13 +21,14 @@ import { cn } from "../lib/utils"
               Actions on one part of the record sit on that part, not here.
    - back     Below md only: the way from the record back to the list.
 
-   Edges. From md the band starts on the frame's edge, under the logo, and the list and stage
-   sit in a box ruled at the region weight (`border`, not the hairline): the band's rule on
-   top, the frame's rules left and right, one between the list and the stage. Inside the box
-   the list's and the stage bar's contents start at the workspace gutter (`gutter-workspace`:
-   24 from sm), the caller's, with the same utility. Below md there is no frame: the screen is
-   the box, and the band, the back row, the list and the stage bar start at the workspace
-   gutter (16, 24 from sm).
+   Edges. From md the page behind the workspace is the page tint (`surface-page`), and the list
+   and the stage are one white panel on it, edged at `border-medium` (between the region rule
+   and the hairline): top, left, right, and one rule between the list and the stage. The band
+   sits on the tint with no rule of its own, starting on the frame's edge under the logo, so the
+   panel's top edge is what divides it from the band. Inside the panel the list's and the stage
+   bar's contents start at the workspace gutter (`gutter-workspace`: 24 from sm), the caller's,
+   with the same utility. Below md there is no frame and no tint: the screen is the panel, the
+   band has its rule, and everything starts at the workspace gutter (16, 24 from sm).
 
    Breakpoints (theme.css, the standard ones):
    - below md (768): one column, two screens. `open` false shows the band and the list;
@@ -65,41 +66,55 @@ function WorkspacePage({
   stageLabel: string
 }) {
   return (
-    <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0 md:page-frame">
-      <div data-slot="workspace-band" className={cn("border-b border-border bg-background py-3 max-md:gutter-workspace", open && "max-md:hidden")}>
-        {band}
-      </div>
-      <div data-slot="workspace-columns" className="flex flex-1 flex-col md:grid md:min-h-0 md:grid-cols-workspace md:border-x md:border-border lg:grid-cols-workspace-wide">
-        <section
-          data-slot="workspace-list"
-          aria-label={listLabel}
-          className={cn("flex min-w-0 flex-col bg-background md:min-h-0 md:overflow-x-clip md:overflow-y-auto md:border-r md:border-border scrollbar-thin", open && "max-md:hidden")}
+    <div data-slot="workspace-backdrop" className="flex flex-1 flex-col md:bg-surface-page">
+      <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0 md:page-frame">
+        <div
+          data-slot="workspace-band"
+          className={cn("py-3 max-md:border-b max-md:border-border max-md:bg-background max-md:gutter-workspace", open && "max-md:hidden")}
         >
-          {list}
-        </section>
-        <section
-          data-slot="workspace-stage"
-          aria-label={stageLabel}
-          className={cn("flex min-w-0 flex-1 flex-col bg-surface-page md:min-h-0 md:overflow-x-clip md:overflow-y-auto scrollbar-thin", open ? "" : "max-md:hidden")}
+          {band}
+        </div>
+        <div
+          data-slot="workspace-columns"
+          className="flex flex-1 flex-col md:grid md:min-h-0 md:grid-cols-workspace md:border-x md:border-t md:border-border-medium md:bg-background lg:grid-cols-workspace-wide"
         >
-          {back && (
-            <div data-slot="workspace-back" className="border-b border-border bg-background py-2 gutter-workspace md:hidden">
-              {back}
+          <section
+            data-slot="workspace-list"
+            aria-label={listLabel}
+            className={cn(
+              "flex min-w-0 flex-col bg-background md:min-h-0 md:overflow-x-clip md:overflow-y-auto md:border-r md:border-border-medium scrollbar-thin",
+              open && "max-md:hidden",
+            )}
+          >
+            {list}
+          </section>
+          <section
+            data-slot="workspace-stage"
+            aria-label={stageLabel}
+            className={cn(
+              "flex min-w-0 flex-1 flex-col bg-surface-page md:min-h-0 md:bg-background md:overflow-x-clip md:overflow-y-auto scrollbar-thin",
+              open ? "" : "max-md:hidden",
+            )}
+          >
+            {back && (
+              <div data-slot="workspace-back" className="border-b border-border bg-background py-2 gutter-workspace md:hidden">
+                {back}
+              </div>
+            )}
+            {stageBar && (
+              <div data-slot="workspace-stage-bar" className="sticky top-0 z-sticky border-b border-border-medium bg-background">
+                {stageBar}
+              </div>
+            )}
+            <div data-slot="workspace-stage-body" className="flex flex-1 flex-col p-4 md:p-6">
+              <div data-slot="workspace-stage-column" className="mx-auto flex w-full max-w-record flex-col gap-4">
+                {stage}
+              </div>
             </div>
-          )}
-          {stageBar && (
-            <div data-slot="workspace-stage-bar" className="sticky top-0 z-sticky border-b border-border bg-background">
-              {stageBar}
-            </div>
-          )}
-          <div data-slot="workspace-stage-body" className="flex flex-1 flex-col p-4 md:p-6">
-            <div data-slot="workspace-stage-column" className="mx-auto flex w-full max-w-record flex-col gap-4">
-              {stage}
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+        </div>
+      </main>
+    </div>
   )
 }
 
