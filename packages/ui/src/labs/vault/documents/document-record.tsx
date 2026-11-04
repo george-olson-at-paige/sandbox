@@ -2,13 +2,13 @@
 
 import type { ComponentProps, ElementType, ReactNode } from "react"
 import { useState } from "react"
-import { ArrowUpRightIcon } from "lucide-react"
+import { ArrowUpRightIcon, CircleAlertIcon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { Avatar } from "../../../components/display/avatar"
 import { AreaLines, RecordCard, RecordSection } from "../record-section"
 import type { SaidValue, VaultDocument } from "../views/data"
-import { StatusLine } from "../views/row-parts"
+import { cn } from "../../../lib/utils"
 import { DocumentLetterhead } from "./document-letterhead"
 import { SaidList, type SaidListCopy } from "./said-list"
 
@@ -22,7 +22,7 @@ import { SaidList, type SaidListCopy } from "./said-list"
      (George 2026-11-04: the queue): the values waiting, each on its own line (SaidList) with its
      act, Looks right or Fix (not checked yet) or Use this / Keep mine (checked, for the
      Vault); its right says how many and has Confirm all when more than one isn't checked (no
-     decline all). Then anything else it needs ("No file yet"). The only place a value is acted on.
+     decline all). Then anything else it needs ("No file yet"), a line of the queue in the same rhythm (a to-do, not a footnote). The only place a value is acted on.
    - "In your Vault": Area by Area, what the document is there ("A government photo ID").
    - "What we read" (George 2026-11-04: Paige speaking, "we", the relationship, not the paper):
      a value once settled moves here from Needs you, with what became of it: the Area it went to
@@ -167,9 +167,20 @@ export function DocumentRecord({
             </p>
           )}
           {waiting.length > 0 && <SaidList queue values={waiting} {...lists} />}
-          {needs.map((n) => (
-            <StatusLine key={n.kind} need={n.text} />
-          ))}
+          {needs.length > 0 && (
+            <ul className={cn("flex flex-col divide-y divide-divider", waiting.length > 0 && "border-t border-divider")}>
+              {needs.map((n) => (
+                <li
+                  key={n.kind}
+                  data-slot="need-line"
+                  className="flex items-center gap-2 py-2.5 text-sm font-semibold text-attention [&_svg]:size-icon"
+                >
+                  <CircleAlertIcon aria-hidden />
+                  {n.text}
+                </li>
+              ))}
+            </ul>
+          )}
         </RecordSection>
       ) : null}
       {document.forWhat.length > 0 && (

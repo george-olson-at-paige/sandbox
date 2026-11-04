@@ -226,3 +226,9 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - ~~Every section always shows with an empty line~~ backed out (George): a section with nothing in it isn't drawn, on People and Documents. EmptyState `xs` stays in the library for where a line must show.
 - Section headings: a section's name is a heading, not another caps label: font-display text-lg bold in the strong ink over a hairline (Needs you in the attention ink with its alert); Area names and a heading's right stay small caps, muted. Sections 32 apart; 12 from a heading's rule to its content.
 
+**Last pass (George 2026-11-04):**
+- The type ("ID") is no longer under the letterhead's name; the stage bar's chip carries it.
+- Documents' band has **Add a document** (`onAdd`; absent without it). The add dialog isn't built, so the app doesn't pass it yet; the stories do. People's stories pass `onAdd` too.
+- The other needs ("Say what it is", "No file yet") are queue rows in Needs you's rhythm (14, attention, 10 above and below, a hairline between), not a footnote under the heading.
+- **To come back to:** Needs you as a whole (George, out of time today): what a need like "Say what it is" or "No file yet" lets you do in place, and the "Couldn't read" / "Not this document" / "Change it in Personal too?" states.
+

@@ -11,8 +11,8 @@ import type { VaultDocument } from "../views/data"
      icon (FileIcon, with its format band from 32: PNG, PDF). A document Paige made has the pen;
      one with no file yet has a question. No picture of the document here: a real preview waits
      until we have one, and gets thought through then (VIEWS-PLAN.md).
-   - The name in the display face; its type on the line under it ("ID"), where a person's
-     "Spouse" is.
+   - The name in the display face. Its type ("ID") is the stage bar's chip, not repeated here
+     (George 2026-11-04).
    - The file, as a link that opens it, where a person's phone and email are, then when it came
      in. Then the facts ("Original · Wallet") and the note, quiet. */
 
@@ -36,7 +36,6 @@ export function DocumentLetterhead({ document }: { document: VaultDocument }) {
       </span>
       <div className="flex min-w-0 flex-col gap-0.5 pt-1">
         <h3 className="font-display text-2xl leading-tight font-bold wrap-anywhere text-foreground-strong">{document.title}</h3>
-        {document.type && document.type !== document.title && <p className="text-sm font-medium text-muted-foreground">{document.type}</p>}
         <p data-slot="document-file" className="mt-1 flex flex-wrap gap-x-2 text-sm font-semibold">
           {fileName && document.file ? (
             <a href={document.file.src} target="_blank" rel="noreferrer" className="rounded-sm text-primary focus-ring hover:underline">

@@ -2,7 +2,7 @@
 
 import type { ElementType, MouseEvent, ReactNode } from "react"
 import { useMemo, useState } from "react"
-import { ArrowLeftIcon, DownloadIcon, FilePenLineIcon, FileTextIcon, Share2Icon, Trash2Icon } from "lucide-react"
+import { ArrowLeftIcon, DownloadIcon, PlusIcon, FilePenLineIcon, FileTextIcon, Share2Icon, Trash2Icon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { useActionMenu, type ListAction } from "../../../components/actions/action-menu"
@@ -73,6 +73,7 @@ export function DocumentsView({
   onEdit,
   onRemove,
   onShare,
+  onAdd,
   hrefFor = (id) => `?id=${id}`,
   linkAs,
 }: {
@@ -88,6 +89,8 @@ export function DocumentsView({
   onEdit?: (id: string) => void
   onRemove?: (id: string) => Promise<void>
   onShare?: (id: string) => void
+  /** Add a document (opens the add dialog, not built yet: VIEWS-PLAN §4). Without it, the band has no Add: absent beats broken. */
+  onAdd?: () => void
   hrefFor?: (id: string) => string
   linkAs?: ElementType
 }) {
@@ -192,7 +195,13 @@ export function DocumentsView({
             title={copy.title}
             description={copy.lead}
             meta={copy.count(documents.length)}
-            actions={undefined /* Add a document: the add dialog isn't built (VIEWS-PLAN §4). */}
+            actions={
+              onAdd && (
+                <Button size="sm" icon={<PlusIcon />} onClick={onAdd}>
+                  {copy.add}
+                </Button>
+              )
+            }
           />
         }
         list={

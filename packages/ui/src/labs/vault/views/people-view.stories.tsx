@@ -33,6 +33,7 @@ const meta = {
       await wait(600)
     },
     onShare: () => {},
+    onAdd: () => {},
   },
   globals: { viewport: { value: "w1280", isRotated: false } },
 } satisfies Meta<typeof PeopleView>
