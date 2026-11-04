@@ -1,0 +1,45 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Which section do I use?" />
+
+# Which section do I use?
+
+Start at the top of this table and take the first row that fits.
+
+| You need… | Use | Example |
+|---|---|---|
+| The frame of a whole page, or a list page | **Templates** | `HomePage`, `AreaPage`, `SetupBeat`, `AdminPage`, `AuthPage`, `ListPage`, `Page`, `PageHeader` |
+| A piece of Paige's own world: Life Areas, facts, items, captures | **Vault** | `AreaTile`, `ChoiceCard`, `FactField`, `ItemRow`, `RailPanels`, `CaptureCard` |
+| A piece of the admin site: its nav, its metrics, a partner's offers | **Admin** | `AdminSidebar`, `MetricCard`, `PipelineGraph`, `ManageOffersDialog` |
+| One admin page's setup: its list's columns, segments, filters and actions, its own dialogs | **Admin › Pages** | `peoplePage`, `partnersPage`, `plansPage`, `SubscriptionDetailSections` |
+| A piece of Essential Setup: step progress, the steps' footer, a composed step | **Setup** | `StepRail`, `FlowFooter`; Welcome (content and illustration, before About you) |
+| A page of the door: sign in, create an account, the phone and its code, a password link, an invite | **Auth** (stories on `AuthPage`; a part lands here when two pages share one) | Sign in, Register, Verify code, Accept invite |
+| Chrome the product areas share: the header bar and its parts | **Shell** | `AppHeader`, `AccountMenu`, `NotificationBell`, `HeaderSearch` |
+| A generic block a page is made of | **Patterns** | `Panel`, `PageIntro`, `KpiRow`, `FilterCardRow`, `ListToolbar` |
+| A form, or a part of one | **Forms** | `Form`, `Field`, `FormSection`, `FormFooter`, `ErrorSummary`, `InlineEdit` |
+| A value-shaped input: a date, a phone number, money | **Forms › Fields** | `DateField`, `PhoneField`, `CurrencyField`, `SsnField` |
+| An *autocomplete* (a text field whose typed text brings up things to pick from), or what other libraries call a *combobox* (a button that opens a searchable list) | **Components › Inputs**: the autocomplete is `Combobox`; the button that opens a searchable list is `Select` (one) or `MultiSelect` (several) | `Combobox`, `Select`, `MultiSelect` |
+| A single control or surface | **Components** (Actions, Inputs, Display, Feedback, Navigation, Overlays) | `Button`, `Input`, `Select`, `Card`, `Callout`, `Badge`, `Stat`, `Sparkline`, `DataTable`, `Sidebar` |
+| A note on the page that stays with its content, or a message that arrives over the page and leaves (or stays while something is in flight) | **Components › Feedback**: `Callout` is in the page; `Toast` is over it (`toast(…)`, `attachmentToast(…)` for a document being read) | `Callout`, `Toast` |
+| A file: as a row (its glyph, name, "PDF · 2.4 MB" or where it is in the stream, actions), or just its glyph | **Components › Display** | `Attachment`, `FileIcon` (+ `lib/file-kind`) |
+| A chart (line, bar) or a DAG (steps and their dependencies) | **Components › Charts** (its own folder, `src/charts`, because the libraries load lazily; load them through `LazyChart` and `LazyDagFrame`) | `LazyChart`, `LazyDagFrame` |
+| To arrange things: a column, a row, equal columns, content plus actions | **Primitives** | `Stack` (vertical), `Inline` (horizontal, wraps), `Grid` (columns), `Split` (actions drop under the content), `Flex` |
+| A colour, a type size, a spacing step, the focus look | **Foundations** (to read; the classes come from `theme.css`) | Theme, Layout, Focus |
+| Something none of these has | Add it: see below | |
+
+## The import rule
+
+The sections are layers. Each imports only the ones below it, in this order:
+**Primitives → Components → Charts → Forms → Patterns → Shell → Vault | Admin | Setup | Auth → Templates** (Vault, Admin, Setup and Auth are the four product areas, peers that don't import each other; Shell is shared chrome under all of them). Only Components, Charts and Forms import **Base**. `npm run check:layers` fails on an upward or sideways import and on a cycle.
+
+The app imports only the package's named entry points (`@paige/ui/forms/field`, `@paige/ui/components/inputs/select`…): the path is the file's path under `src`. Files in an `internal/` folder are not exported. `npm run check:exports` fails otherwise.
+
+## When the piece you need is missing
+
+1. **A shadcn component we have not added yet**: add it with the shadcn CLI (it writes to `src/base`), then wrap it in `src/components/<group>` with only the variants a screen needs.
+2. **A variant of an existing component**: add a named variant to the Paige component. Never pass classes from a screen to restyle it.
+3. **A new piece built from existing components**: put it in the lowest section that fits: generic → Patterns, chrome the products share → Shell, the customer product → Vault, the admin site → Admin (one page's setup → Admin › Pages), Essential Setup → Setup, the door → Auth, with a story for each state.
+4. **A form for one feature**: it lives with the feature in the app (`apps/web/features/<feature>/forms/`), built from Forms.
+5. **A new page shape**: that is a template change. Ask first.
+
+Every new piece comes with a story file next to it; the folder decides where it shows here (one exception: `src/charts` shows under Components).

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-paige.com/schemas/rich-text-value.schema.json",
+  "title": "RichTextValue",
+  "description": "A rich text value as the web stores and sends it: the editor's ProseMirror JSON document, never HTML (R1-27, R2-37). The one schema shared by the web (packages/ui/src/components/rich-text.tsx: the RichTextValue type, the editor and the RichText renderer) and the API (validate on write; render HTML for emails and QuestPDF spans for PDFs). Unknown node types, unknown marks, extra properties and link schemes other than http(s), mailto and tel are rejected.",
+  "type": "object",
+  "required": ["type"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "doc" },
+    "content": { "type": "array", "items": { "$ref": "#/$defs/block" } }
+  },
+  "$defs": {
+    "block": {
+      "oneOf": [{ "$ref": "#/$defs/paragraph" }, { "$ref": "#/$defs/bulletList" }, { "$ref": "#/$defs/orderedList" }]
+    },
+    "paragraph": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "paragraph" },
+        "content": { "type": "array", "items": { "$ref": "#/$defs/inline" } }
+      }
+    },
+    "bulletList": {
+      "type": "object",
+      "required": ["type", "content"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "bulletList" },
+        "content": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/listItem" } }
+      }
+    },
+    "orderedList": {
+      "type": "object",
+      "required": ["type", "content"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "orderedList" },
+        "attrs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "start": { "type": "integer", "minimum": 0 }, "type": { "type": ["string", "null"] } }
+        },
+        "content": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/listItem" } }
+      }
+    },
+    "listItem": {
+      "type": "object",
+      "required": ["type", "content"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "listItem" },
+        "content": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } }
+      }
+    },
+    "inline": {
+      "oneOf": [{ "$ref": "#/$defs/text" }, { "$ref": "#/$defs/hardBreak" }]
+    },
+    "text": {
+      "type": "object",
+      "required": ["type", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "minLength": 1 },
+        "marks": { "type": "array", "items": { "$ref": "#/$defs/mark" } }
+      }
+    },
+    "hardBreak": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": { "type": { "const": "hardBreak" } }
+    },
+    "mark": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": { "type": { "enum": ["bold", "italic"] } }
+        },
+        {
+          "type": "object",
+          "required": ["type", "attrs"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "link" },
+            "attrs": {
+              "type": "object",
+              "required": ["href"],
+              "additionalProperties": false,
+              "properties": {
+                "href": { "type": "string", "pattern": "^(?:[Hh][Tt][Tt][Pp][Ss]?:|[Mm][Aa][Ii][Ll][Tt][Oo]:|[Tt][Ee][Ll]:)" },
+                "target": { "type": ["string", "null"] },
+                "rel": { "type": ["string", "null"] },
+                "class": { "type": ["string", "null"] },
+                "title": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

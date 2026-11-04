@@ -1,0 +1,4 @@
+/* The app adds nothing: every token, utility and base style comes from @paige/ui. */
+@import "@paige/ui/theme.css";
+@source "../features";
+@source "../app";

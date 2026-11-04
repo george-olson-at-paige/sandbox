@@ -1,0 +1,17 @@
+/* Brand fonts, self-hosted, matching apps/web/app/layout.tsx: Montserrat for UI
+   (next/font/google there; the @fontsource copy here, so no runtime Google fetch)
+   and the app's own Roboto Slab file as the display face. The theme reads the two
+   host variables these set (GAPS.md #14). */
+@import "@fontsource-variable/montserrat";
+
+@font-face {
+  font-family: "Paige Display";
+  src: url("../../../apps/web/app/fonts/RobotoSlab-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --font-brand-sans: "Montserrat Variable";
+  --font-brand-display: "Paige Display";
+}

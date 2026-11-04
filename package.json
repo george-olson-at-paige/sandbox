@@ -1,0 +1,26 @@
+{
+  "name": "paige-ui-test-pass",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run typecheck -w @paige/ui && npm run build -w apps/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "check:layers": "node scripts/check-layers.mjs",
+    "check": "npm run check:tokens && npm run check:layers && npm run check:exports && npm run check:reuse && npm run check:vocab && npm run check:scripts && npm run check:deps",
+    "check:exports": "node scripts/check-exports.mjs",
+    "check:reuse": "node scripts/check-reuse.mjs",
+    "check:vocab": "node scripts/check-vocab.mjs",
+    "check:scripts": "node scripts/check-scripts.mjs",
+    "check:deps": "node scripts/check-deps.mjs",
+    "audit": "node scripts/audit.mjs && node scripts/audit-tokens.mjs && node scripts/audit-reuse.mjs",
+    "audit:components": "node scripts/audit.mjs",
+    "audit:tokens": "node scripts/audit-tokens.mjs",
+    "audit:reuse": "node scripts/audit-reuse.mjs"
+  }
+}

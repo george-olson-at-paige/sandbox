@@ -1,0 +1,136 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks"
+
+import * as ItemStories from "./item.stories"
+
+<Meta of={ItemStories} />
+
+# Item
+
+> **Labs, level 0.** A sketch that will replace [Components › Display › Item](?path=/docs/components-display-item--docs) when approved (STACK-REVIEW S-27). Nothing in the package uses it yet.
+
+**One of the most basic components:** media, a title and a description, actions. It stands on its own (a card's content, a line in a panel) or in a group; a list is one use of it, not what it is. You give it regions, and it places them. It doesn't know what it is showing, or what its media is. A part that does (FactItem knows a person, a pet, a document) builds those and fills Item's regions, so a screen never assembles one by hand.
+
+**Built on shadcn's Item.** Where shadcn has a part, the region takes its name and means what it means there: [shadcn Item](https://ui.shadcn.com/docs/components/item) · our copy of it, unchanged: [Base › Item](?path=/docs/base-item--docs). One region is ours (details), and it gets a line of its own (below).
+
+## Layout
+
+The dashed line is the Item's bounds; the tint between it and the regions is its padding (12px at the sides, and its size's top and bottom).
+
+The drawing is `ItemFrame`, Item's layout with every region a plain slot. Screens use `Item`, which fills the frame from typed parameters.
+
+<Canvas of={ItemStories.Anatomy} />
+
+{/* HTML tables: this Storybook's MDX has no remark-gfm, so Markdown tables don't render (S-30). */}
+<table>
+  <thead>
+    <tr><th>#</th><th>Region</th><th>shadcn part</th><th>Where</th><th>How it behaves</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><strong>media</strong></td><td><code>ItemMedia</code></td><td>Leading, in a fixed 40px column</td><td>The caller's content (an avatar, an icon), centred in the column so media lines up down a list. Moves to the top when there is a description, as in shadcn. Optional.</td></tr>
+    <tr><td>2</td><td><strong>title</strong></td><td><code>ItemTitle</code></td><td>First line of the text column</td><td>What it is. Wraps; never truncates. The only required region.</td></tr>
+    <tr><td>3</td><td><strong>description</strong></td><td><code>ItemDescription</code></td><td>Under the title</td><td>A short line about it. Never clamps. Ends with the <strong>context</strong> when there is one (see Context, below).</td></tr>
+    <tr><td>4</td><td><strong>details</strong></td><td>none (ours)</td><td>Under the description, in the text column</td><td>More lines about it (a number to call). They don't move the actions or the media.</td></tr>
+    <tr><td>5</td><td><strong>actions</strong></td><td><code>ItemActions</code></td><td>Trailing, centred on title and description</td><td>One kind only: a button, a link, or icon actions (see Actions, below). They take no more width than they need.</td></tr>
+    <tr><td>6</td><td><strong>footer</strong></td><td><code>ItemFooter</code></td><td>A full line under everything</td><td>Part of the Item, always shown when given: a decline, or other content (see Footer, below). Not expanded content: whatever expands an Item puts that around it, not in it.</td></tr>
+  </tbody>
+</table>
+
+**How details stay out of the way.** The main line is laid out as in shadcn (one flex line): media, title and description, actions. Details are a line of their own under it, indented to the text column. In one flex line the actions would centre on the whole text column, and every extra line would push them down.
+
+## Context
+
+`context` is why it is here, shown only where the place has a purpose for saying so. A person's role is the usual case: a role is a relationship to one place, so an Item never shows every role someone holds, and on a list that is all one role (Emergency contacts) it says nothing. For now it is plain text after the description, **"Spouse · Emergency contact"**; it has a slot of its own (`item-context`), so when it gets a treatment, it changes in one place.
+
+<Canvas of={ItemStories.WithContext} />
+
+## Spacing when regions are absent
+
+An absent region takes no space and leaves no gap: the gaps sit only between regions that are there. Without a description, the actions centre on the title alone; without details or a footer, the Item ends at the main line.
+
+<Canvas of={ItemStories.AnatomyTitleOnly} />
+
+**Settings:** `size` is *default* or *sm* (tighter top and bottom), shadcn's sizes. **In a list, dividers belong to the list**, not the Item: put Items in an `ItemGroup`.
+
+## Actions
+
+`actions` takes exactly one of four kinds; its type allows nothing else. Never two together (a button and a chevron, a chevron and a ⋯): two ways in on one Item make a person stop and work out which does what.
+
+<table>
+  <thead>
+    <tr><th>Kind</th><th>What it is</th><th>Use it for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{"{ kind: \"button\", label, onClick, emphasis? }"}</code></td><td>One labelled button: a pill (<code>secondary</code>, the default), or blue text (<code>text</code>)</td><td>The one thing to do here. The pill for a full action ("Invite"); blue text for an action an icon wouldn't say clearly enough ("Add a number")</td></tr>
+    <tr><td><code>{"{ kind: \"link\", href, label }"}</code></td><td>The open chevron, a link to the thing's own page</td><td>Going to it. <code>label</code> is said to screen readers ("Open David Reyes"); <code>as</code> takes the router's link</td></tr>
+    <tr><td><code>{"{ kind: \"icons\", items: [{ action, label, onClick }] }"}</code></td><td>One or two icon buttons. Each names an <strong>action</strong> and Item draws its icon; <code>label</code> is said to screen readers</td><td>One or two small actions on it (edit, remove). Two at most: more push the text left, so more go in a menu</td></tr>
+    <tr><td><code>{"{ kind: \"menu\", label, actions }"}</code></td><td>A ⋯ opening the actions, and the same menu on right-click of the Item</td><td>Several actions. Typed <code>ListAction</code>s: destructive last and confirmed, red only if irreversible; an action that can't apply shows why. A <code>link</code> action takes the place of the chevron ("View David Reyes")</td></tr>
+  </tbody>
+</table>
+
+<Canvas of={ItemStories.ActionsButton} />
+<Canvas of={ItemStories.ActionsText} />
+<Canvas of={ItemStories.ActionsLink} />
+<Canvas of={ItemStories.ActionsIcons} />
+
+### Icon actions
+
+**The same action always has the same icon.** An icon action names its action (edit, remove, reveal, hide, copy, download), and Item draws the icon from one list, `labs/icons/action-icons.ts`. A caller never picks a glyph. That list is the action slice of REVIEW-14's R14-03 (the full icon inventory by role is still open). There's no delete: × asks whether to take someone off or delete them (ADR 0076 rule 6), so a trash icon would be a second removal icon.
+
+<Canvas of={ItemStories.ActionIcons} />
+
+**Quiet until reached.** Icon actions are Button's `quiet` variant: muted ink, no background, and the icon turns blue when the pointer is on it. They rest at 75% and come up to full while their Item is hovered or has focus inside it, so in a group the names read first. Only with a mouse: touch has no hover, so on touch they stay full. 75% is the floor: muted ink at 75% keeps at least 3.2:1 on white, the muted surface and the blue wash, over the 3:1 an icon button needs (WCAG 1.4.11). The labelled button and the link are never quieted: a dimmed button reads as disabled.
+
+<Canvas of={ItemStories.ActionsIconsInAGroup} />
+
+## Menu
+
+The menu is the fourth kind of actions: a ⋯ instead of the chevron, never beside it. **Right-clicking the Item opens the same menu** (a long press on touch; Shift+F10 or the Menu key from something focused in it). Right-click is a shortcut only: the ⋯ is always there.
+
+Both come from `useActionMenu` ([Components › Actions › ContextMenu](?path=/docs/components-actions-contextmenu--docs) for right-click), the same rules a table row's ⋯ uses: destructive actions last behind a confirm (red only when irreversible), however they were chosen; actions that can't apply shown with their reason; focus back on the ⋯ when it closes. Like icon actions, the ⋯ is quiet until the Item is reached.
+
+<Canvas of={ItemStories.WithContext} />
+
+## Footer
+
+`footer` takes one of two kinds.
+
+<table>
+  <thead>
+    <tr><th>Kind</th><th>What it is</th><th>Use it for</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{"{ kind: \"decline\", label, onClick }"}</code></td><td>The decline: ink and underlined, never blue (Button <code>quiet</code> + <code>underline</code>, R2-14), lined up with the title</td><td>The way out: skip, ignore, not this one ("Not this person"). It never sits beside the actions</td></tr>
+    <tr><td><code>{"{ kind: \"content\", content }"}</code></td><td>A full line under the Item</td><td>Anything else that belongs to it</td></tr>
+  </tbody>
+</table>
+
+The two together, a blue text action and the decline, are how a suggestion is answered:
+
+<Canvas of={ItemStories.FooterDecline} />
+
+## Hooks
+
+What the Item does is one parameter, `hooks`, not event handlers on the root.
+
+<table>
+  <thead>
+    <tr><th>Hook</th><th>When</th><th>What it changes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>onActivate</code></td><td>The Item is pressed</td><td>The title becomes the Item's button, and the whole Item is its target. Actions, details and the footer stay their own controls.</td></tr>
+  </tbody>
+</table>
+
+<Canvas of={ItemStories.Activates} />
+
+## Example
+
+With details: a number under the description; the actions stay where they were.
+
+<Canvas of={ItemStories.WithDetails} />
+
+## Specifics
+
+- shadcn's Item, which the names come from: [ui.shadcn.com/docs/components/item](https://ui.shadcn.com/docs/components/item); our copy: [Base › Item](?path=/docs/base-item--docs).
+- Today's Paige parts over that base: [Components › Display › Item](?path=/docs/components-display-item--docs). The list around Items, `ItemGroup`, is on the same page.
+- An Item that knows its fact and fills these regions: [Vault › FactItem](?path=/docs/vault-factitem--docs) (being redefined on top of this, S-27).

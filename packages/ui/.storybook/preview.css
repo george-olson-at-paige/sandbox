@@ -1,0 +1,6 @@
+@import "./fonts.css";
+@import "../src/theme.css";
+/* Story-only utilities: the plan lines Wireframes are drawn with (stories/guides.tsx). Never in theme.css. */
+@import "../src/stories/guides.css";
+/* Stories live next to components; Foundations live in src/foundations. */
+@source "../src";

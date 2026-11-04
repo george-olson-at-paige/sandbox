@@ -1,0 +1,65 @@
+/* Guides (stories/guides.tsx): the plan lines' CSS that Tailwind has no utility for — masks,
+   pattern fills, the mark offsets. Story-only: .storybook/preview.css imports this file, theme.css
+   never does, so none of it ships (REVIEW-18 § Guides; INTAKE.md I-04). Colours come from the
+   theme's --border (the lines' colour in guides.tsx too); lengths are literal rems named by their
+   spacing step, as theme.css's layout tokens are. */
+
+/* fade: the side lines, inner lines and gutters come in from nothing at one or both ends. */
+@utility guides-fade-top {
+  mask-image: linear-gradient(to bottom, transparent, black 40%);
+}
+@utility guides-fade-bottom {
+  mask-image: linear-gradient(to top, transparent, black 40%);
+}
+@utility guides-fade-both {
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+}
+
+/* inset: how far the inner lines and gutters sit from the sides. */
+@utility guides-inset-sm {
+  --guides-inset: 0.75rem; /* 12 (spacing 3) */
+}
+@utility guides-inset-md {
+  --guides-inset: 1rem; /* 16 (spacing 4) */
+  @variant sm { --guides-inset: 2rem; } /* 32 (spacing 8) */
+}
+@utility guides-inset-lg {
+  --guides-inset: 1.5rem; /* 24 (spacing 6) */
+  @variant sm { --guides-inset: 3rem; } /* 48 (spacing 12) */
+}
+
+/* gutter: the band between the sides and the inner lines. */
+@utility guides-gutter-hatch {
+  background-image: repeating-linear-gradient(-45deg, var(--border) 0 1px, transparent 1px 7px);
+}
+@utility guides-gutter-dots {
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* mark: centred on the crossing of two 1px lines that sit just outside the box's edges. */
+@utility guides-mark-top-start {
+  top: 0;
+  inset-inline-start: 0;
+  translate: calc(-50% - 0.5px) calc(-50% - 0.5px);
+}
+@utility guides-mark-top-end {
+  top: 0;
+  inset-inline-end: 0;
+  translate: calc(50% + 0.5px) calc(-50% - 0.5px);
+}
+@utility guides-mark-bottom-start {
+  bottom: 0;
+  inset-inline-start: 0;
+  translate: calc(-50% - 0.5px) calc(50% + 0.5px);
+}
+@utility guides-mark-bottom-end {
+  bottom: 0;
+  inset-inline-end: 0;
+  translate: calc(50% + 0.5px) calc(50% + 0.5px);
+}
+
+/* bleed: the rules run far past the sides; the nearest ancestor with overflow-x-clip stops them. */
+@utility guides-bleed {
+  inset-inline: -100vw;
+}

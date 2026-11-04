@@ -1,0 +1,1000 @@
+/* ============================================================
+   @paige/ui theme — the only file in the spike allowed to hold
+   raw colour, shadow or size values (D9).
+   Layers: 1 palette (raw) · 2 shadcn semantic roles · 3 Paige
+   extras (tones, areas) · 4 @theme inline (Tailwind utilities) ·
+   5 contextual area tone · 6 shared-rule utilities.
+   Units: rem for type and spacing, px for borders, radii, shadows.
+
+   Brand fonts (R2-20): the package ships no font files. The HOST loads the two brand fonts
+   and defines two CSS variables on an ancestor of everything it renders (usually <html>):
+     --font-brand-sans     the UI face (Montserrat)
+     --font-brand-display  the slab display face (Roboto Slab, standing in for Museo Slab)
+   `font-sans` / `font-display` read them, with named and generic fallbacks when they're
+   missing. apps/web sets them with next/font (app/layout.tsx); Storybook with @fontsource
+   (.storybook/fonts.css).
+
+   Every custom utility below (and every Paige-named token class that tailwind-merge can't
+   infer) has an entry in `extendTailwindMerge` (src/lib/utils.ts) and a case in
+   src/lib/utils.test.ts (R2-21). A new utility gets both.
+
+   Light only (R2-11, George 2026-10-18): iteration 2 ships light values only. The prototype
+   has no dark set; the layers above already allow one (a second block of layer 2-3 values
+   under .dark) once design supplies it. `@custom-variant dark` stays so `dark:` compiles.
+   ============================================================ */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* The package's components are scanned from the consumer's build. */
+@source "./base";
+@source "./primitives";
+@source "./components";
+@source "./forms";
+@source "./patterns";
+@source "./shell";
+@source "./vault";
+@source "./charts";
+@source "./admin";
+@source "./templates";
+
+@custom-variant dark (&:is(.dark *));
+
+/* `toggled:` is a toggle that is on, read from ARIA (a single group's `aria-checked`, a multiple
+   group's or a lone toggle's `aria-pressed`) rather than Radix's `data-state`, which a Tooltip
+   trigger around the same element overwrites with its own open/closed (U-04). */
+@custom-variant toggled (&:is([aria-checked="true"], [aria-pressed="true"]));
+
+/* ---------- 1 · Palette (raw values, from prototype tokens.css) ---------- */
+:root {
+  --paige-blue: #2b81d7;
+  --paige-blue-pressed: #3260c3;
+  --paige-blue-100: #bfd7f0;
+  --paige-blue-50: #e2effd;
+  --paige-blue-bg: #f0f4fc;
+
+  --ink-800: #253456; /* merged with ink-700 */
+  --ink-600: #414e6b; /* merged with ink-500 */
+  --ink-400: #5a657e;
+  --ink-300: #9fb1c8;
+
+  --neutral-700: #595959;
+  --neutral-300: #d9d9d9;
+  --neutral-100: #f7f7f7;
+  --neutral-50: #fefcfb;
+  --surface-muted: #f3f6fc;
+  /* The page off-white (R9-01, 2026-10-19): one step between white and --surface-muted, on the
+     same blue-white hue (220°, as --surface-muted and --paige-blue-bg): lightness 98.0% against
+     muted's 97.1% and white's 100%. The admin's content area sits on it so white cards, tables
+     and charts read as surfaces on a page. Customer pages stay on white. */
+  --surface-page: #f7f9fd;
+  --hairline-tint: #e4eaf5; /* #E4EAF5, #DFE6F1, #DDE6F4 merged */
+  /* The hairline one step up (R21-01, the Journeys mock's own control border): the hover border of
+     a card you can choose on the admin page (FilterCardRow, InsightCard), a step that is neither the
+     grey ink of --border-strong nor blue (blue means chosen). */
+  --hairline-strong: #d4d8e4;
+
+  /* status raws (inventory: success / notice-sand / warm) */
+  --green-600: #1f8a5b;
+  --green-800: #14603f;
+  --sand-800: #8a5a23;
+  --sand-100: #f7ede0;
+  --warm-800: #8a4510;
+  --warm-100: #fff0e2;
+  --warm-500: #c6873f;
+  --doc-blue-800: #1c60a6;
+  --pet-800: #6e5730;
+  --pet-100: #f4e8d2;
+  --red-600: #c23b4a; /* the old Vue app's error red (Paige.Webapp tailwind.css:62-77) */
+  --red-700: #ab3441; /* the pressed red (T-08): --red-600 one step darker, as --paige-blue-pressed is to --paige-blue; white on it 6.4:1 */
+
+  /* nine Life Area colours: display (c) and text-safe ink (ci) — areas.ts:29-37.
+     Money moved off the success green (R2-05, George 2026-10-18): a status colour means one
+     thing on every page, Money's own included. The plum below is a PROVISIONAL stand-in, a hue
+     none of the other eight areas use; Design picks the final Money hue.
+     Area/status pairs that still share a value, kept because none shows as a status inside its
+     own area today (R2-05, GAPS #7):
+       Assets #c6873f = --warm-500 (--warning, the conflict border)
+       Estate ink #a85400 ≈ the warm checkbox accent (prototype vault.css:192,265)
+       Final ink #6e5730 = --pet-800 (the pet avatar foreground) */
+  --area-personal: #2b81d7;  --area-personal-ink: #1c60a6;
+  --area-family: #e0644e;    --area-family-ink: #b03a25;
+  --area-household: #7b9e5a; --area-household-ink: #4f6b33;
+  --area-money: #9a4d8f;     --area-money-ink: #7a3672; /* provisional (R2-05); was #1f8a5b / #157048 */
+  --area-assets: #c6873f;    --area-assets-ink: #8a5a17;
+  --area-health: #3e8e93;    --area-health-ink: #276c70;
+  --area-insurance: #5367e8; --area-insurance-ink: #4453cc;
+  --area-estate: #f07c00;    --area-estate-ink: #a85400;
+  --area-final: #a18452;     --area-final-ink: #6e5730;
+}
+
+/* ---------- 2 · shadcn semantic roles (light) ---------- */
+:root {
+  --radius: 12px;
+
+  --background: #ffffff;
+  --foreground: var(--ink-600);
+  --card: #ffffff;
+  --card-foreground: var(--ink-800);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink-800);
+  --primary: var(--paige-blue);
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff; /* "secondary" button = the prototype's white outline button (.vt-btn--a) */
+  --secondary-foreground: var(--ink-600);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--ink-400);
+  --accent: var(--paige-blue-bg);
+  --accent-foreground: var(--paige-blue);
+  --destructive: var(--red-600); /* destructive actions only (delete); same hue as --error (R1-02) */
+  --border: var(--neutral-300);
+  --input: var(--neutral-300);
+  --ring: var(--paige-blue);
+
+  /* Sidebar roles (R8-07): shadcn's sidebar base reads these. Mapped onto Paige's roles (the
+     shadcn CLI's own hsl and .dark values were not taken: light only, R2-11). The rail was the
+     muted surface; the active item is the accent (blue tint, dark blue ink for 4.5:1), as TabsPill's active pill.
+     R9-01: the rail is white with its 1px border (upstream's border-r in --border), so it reads
+     apart from the admin content on --surface-page. */
+  --sidebar: var(--background);           /* base only: bg-sidebar in base/sidebar.tsx (T-10) */
+  --sidebar-foreground: var(--ink-600);
+  --sidebar-accent: var(--paige-blue-bg);
+  --sidebar-accent-foreground: var(--doc-blue-800); /* the info ink: brand blue on the tint is 3.64:1 */
+  --sidebar-border: var(--neutral-300);
+  --sidebar-ring: var(--paige-blue);      /* base only: ring-sidebar-ring in base/sidebar.tsx (T-10) */
+  /* --sidebar-primary(-foreground) were defined and never read by any file; deleted (T-10). */
+}
+
+/* ---------- 3 · Paige extras ---------- */
+:root {
+  --foreground-strong: var(--ink-800); /* display headings */
+  --body-muted: var(--neutral-700);    /* lede text (grey, not slate) */
+  --placeholder: var(--ink-300);
+  --primary-hover: var(--paige-blue-pressed);
+  --primary-subtle: var(--paige-blue-100);
+  --divider: var(--neutral-100);       /* row separators (--border-card) */
+  /* A stronger neutral border (R15-13): the hover border of a card you can choose or open
+     (FilterCardRow, the interactive Card). Never blue on hover: blue means chosen. */
+  --border-strong: var(--ink-300);
+  --divider-tint: var(--hairline-tint);
+  /* A Surface's edge (R21-01, TOKENS.md §4's context model, its first variable): the border a
+     Card, a DataTable's box or a DagFrame draws, by the surface it sits on. --border by default;
+     the admin page (`data-surface="page"`, layer 5) makes it the hairline tint, so white
+     surfaces on the off-white page read by their fill, not by a grey outline. */
+  --surface-edge: var(--border);
+  --track: var(--neutral-100);         /* progress / step rail off */
+  --surface-warm: var(--neutral-50);
+
+  /* stacking (T-12): read by the z-raised / z-sticky / z-overlay utilities (section 6). */
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-overlay: 50;
+
+  /* tones: neutral · info · success · warning · attention · area */
+  --info: var(--paige-blue);
+  --info-foreground: var(--doc-blue-800);
+  --info-subtle: var(--paige-blue-50);
+  --info-border: var(--paige-blue-100);
+  --success: var(--green-600);
+  --success-foreground: var(--green-800);
+  --success-subtle: color-mix(in oklab, var(--green-600) 13%, transparent);
+  --success-border: color-mix(in oklab, var(--green-600) 28%, transparent);
+  --warning: var(--warm-500);
+  --warning-foreground: var(--sand-800);
+  --warning-subtle: var(--sand-100);
+  --warning-border: color-mix(in oklab, var(--warm-500) 35%, transparent);
+  --attention: var(--warm-800);
+  --attention-foreground: var(--warm-800);
+  --attention-subtle: var(--warm-100);
+  --attention-border: var(--warm-500);
+
+  /* Chart series (R8-09): five categorical colours for data series, in order, from the palette
+     (brand blue first, then area hues distinct from it and from each other). A series is never
+     told apart by colour alone: the legend and the tooltip name each series. */
+  --chart-1: var(--paige-blue);
+  --chart-2: var(--area-health);
+  --chart-3: var(--area-estate);
+  --chart-4: var(--area-money);
+  --chart-5: var(--area-final);
+  --chart-grid: var(--neutral-100);
+  --chart-axis: var(--ink-400);
+
+  --pet: var(--pet-800);
+  --pet-subtle: var(--pet-100);
+
+  /* overlay (R3-06): the one darkening layer, ink at low alpha. Relative hover and press lay it
+     over a button; it is not a button's own fill. */
+  --overlay: var(--ink-800);
+  /* Relative hover and press (R4-01, George 2026-10-19): the same ink laid over whatever an
+     interactive surface already is, as a background-image layer above its background colour,
+     so hover is always one step darker than what is under it, on any surface (white, muted,
+     card, an Area wash, a Callout tone). Used by the layer-hover / layer-press utilities (layer 6). */
+  --overlay-hover: color-mix(in oklab, var(--overlay) 8%, transparent);
+  --overlay-press: color-mix(in oklab, var(--overlay) 14%, transparent);
+  /* The scrim under a Dialog or ConfirmDialog (T-08): the same ink at 40%, so the page shows
+     through dimmed; bg-overlay-scrim. */
+  --overlay-scrim: color-mix(in oklab, var(--overlay) 40%, transparent);
+  /* Scrollbar thumb (R10-08): the same ink at 24%, so it reads on any surface; the track is
+     transparent. Used by the scrollbar-thin utility (layer 7). */
+  --scrollbar-thumb: color-mix(in oklab, var(--overlay) 24%, transparent);
+
+  /* The destructive Button's hover (T-08): the pressed red, one step darker, as --primary-hover
+     is for brand. It was `bg-destructive/90` (the red letting 10% of the white through), which
+     put the button's white text at 4.45:1 on hover, under AA's 4.5; theme-contrast.test.mjs
+     found it the day the alpha got a name. Design may pick another step; the test holds 4.5. */
+  --destructive-hover: var(--red-700);
+  /* The focus halo (T-08, R15-17): the ring colour at 50%, the 2px soft halo on things you type
+     into and on cards that open or choose (`controlFocus`, `cardFocus`); ring-focus-halo. 2px,
+     not upstream's 3px, since George 2026-10-31. */
+  --focus-halo: color-mix(in oklab, var(--ring) 50%, transparent);
+  /* On-tone ink (T-09): the glyph or text on a solid tone fill (Dot, AreaIcon solid, the done
+     badge). text-on-tone · ring-on-tone. --primary-foreground is the same white for brand;
+     this one is for every tone, so "white on a tone" is one fact. Contrast per tone is in
+     scripts/theme-contrast.test.mjs (estate is the one under 3:1, T-14). */
+  --on-tone: #ffffff;
+
+  /* State (T-07): the three opacities a component's state uses. Tailwind has no opacity theme
+     namespace, so they are utilities (layer 6): opacity-disabled · opacity-quiet · opacity-dim.
+     disabled: a control that can't be used now. quiet: the floor for an icon action at rest
+     (S-35: muted ink at 75% keeps 3:1 on white, the muted surface and the blue wash, the WCAG
+     1.4.11 graphic minimum; theme-contrast.test.mjs holds it). dim: a series or a node pushed
+     back while another is in front (Sparkline, DagFrame). */
+  --opacity-disabled: 0.5;
+  --opacity-quiet: 0.75;
+  --opacity-dim: 0.4;
+  /* art: decorative art behind content (the auth page's watercolor, R18-02), at half strength so
+     the card and the footer read over it. Not a state: a surface's own setting. */
+  --opacity-art: 0.5;
+
+  /* error (R1-02, from the old Vue app): text and labels (5.23:1). The resting 1px stroke is
+     3.61:1 on white, so a control that shows an error by its border alone (a radio, a
+     checkbox) still meets WCAG 1.4.11's 3:1 (R2-01, George 2026-10-18; it was the old app's
+     lighter 2.68:1 stroke). Hover and focus while invalid darken it to --error itself. */
+  --error: var(--red-600);
+  --error-border: color-mix(in srgb, var(--error) 78%, white);
+
+  /* Area tone (R3-15): CSS context, not React. Every area-toned utility (bg-area, text-area-ink,
+     bg-area-tint, bg-area-wash, border-area) reads these variables, and the nearest
+     [data-area="…"] ancestor sets them (layer 5): AreaPage sets it on the page, AreaTile and
+     AreaIcon on themselves, Badge/FactItem through an `area` prop. With no [data-area] above,
+     the tone is this neutral fallback (slate fill, body ink), never another area's colour or
+     the brand blue, so a missing context reads as "no area" rather than as Personal. */
+  --area: var(--ink-400);
+  --area-ink: var(--ink-600);
+  --area-tint: color-mix(in oklab, var(--area) 12%, transparent);
+  --area-wash: color-mix(in oklab, var(--area) 7%, transparent);
+
+  /* layout (R1-23): the one side gutter, shared by AppHeader, bands and page content so the
+     logo and the content line up. 16 below sm · 24 from sm · 32 from lg · 48 from xl. */
+  --gutter: 1rem;
+  @variant sm { --gutter: 1.5rem; }
+  @variant lg { --gutter: 2rem; }
+  @variant xl { --gutter: 3rem; }
+}
+
+/* File kinds (R20-17, ReUI file-type; light only): one colour per kind of file, the page outline
+   and the label band of FileIcon (lib/file-kind's seven kinds). Palette values where Paige has
+   one (document is the doc blue, archive the sand, text the slate, other the neutral); image,
+   pdf and spreadsheet are their own. White on each is 4.5:1 or better, the band's text.
+   text-file-pdf · bg-file-pdf. */
+:root {
+  --file-image: #6d4fc2;
+  --file-pdf: #c2410c;
+  --file-document: var(--doc-blue-800);
+  --file-spreadsheet: #1b7a50;
+  --file-archive: var(--sand-800);
+  --file-text: var(--ink-400);
+  --file-other: var(--neutral-700);
+}
+
+/* ---------- 4 · Tailwind utilities ---------- */
+@theme inline {
+  /* Only Paige's scales exist: Tailwind's default palette, type, radius,
+     shadow and weight scales are removed so `bg-blue-500`, `text-5xl`,
+     `shadow-md` do not compile. */
+  --color-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --font-weight-*: initial;
+  --breakpoint-*: initial;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-foreground-strong: var(--foreground-strong);
+  --color-body-muted: var(--body-muted);
+  --color-placeholder: var(--placeholder);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-divider: var(--divider);
+  --color-border-strong: var(--border-strong);
+  --color-divider-tint: var(--divider-tint);
+  --color-surface-edge: var(--surface-edge);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-track: var(--track);
+  --color-surface-warm: var(--surface-warm);
+  --color-surface-page: var(--surface-page);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-axis: var(--chart-axis);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-subtle: var(--info-subtle);
+  --color-info-border: var(--info-border);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-border: var(--warning-border);
+  --color-attention: var(--attention);
+  --color-attention-foreground: var(--attention-foreground);
+  --color-attention-subtle: var(--attention-subtle);
+  --color-attention-border: var(--attention-border);
+  --color-pet: var(--pet);
+  --color-pet-subtle: var(--pet-subtle);
+  --color-overlay: var(--overlay);
+  /* The overlay steps as colours too (T-08): bg-overlay-scrim under dialogs; layer-hover/layer-press
+     stay the relative hover (R4-01). */
+  --color-overlay-hover: var(--overlay-hover);
+  --color-overlay-press: var(--overlay-press);
+  --color-overlay-scrim: var(--overlay-scrim);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-focus-halo: var(--focus-halo);
+  --color-on-tone: var(--on-tone);
+  --color-error: var(--error);
+  --color-error-border: var(--error-border);
+
+  --color-area: var(--area);
+  --color-area-ink: var(--area-ink);
+  --color-area-tint: var(--area-tint);
+  --color-area-wash: var(--area-wash);
+
+  --color-file-image: var(--file-image);
+  --color-file-pdf: var(--file-pdf);
+  --color-file-document: var(--file-document);
+  --color-file-spreadsheet: var(--file-spreadsheet);
+  --color-file-archive: var(--file-archive);
+  --color-file-text: var(--file-text);
+  --color-file-other: var(--file-other);
+
+  /* radius: --radius 12px → sm 8 · md 10 · lg 12 · xl 16 (+ full, built in).
+     xs is the step for controls under 24px (the checkbox box and its mixed dash; R20-01): a fixed
+     4px, not derived from --radius, so a 16px box keeps a square corner whatever the page radius
+     is. sm (8) on a 16px box is a circle. */
+  --radius-xs: 4px;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* type: 11 · 12 · 14 · 16 · 18 · 20 · 24 · 30 · 40 (Tailwind names; rem values).
+     12px is the floor for text (R2-08, George 2026-10-18): labels, chips, badges and every
+     line of body text use text-xs or larger.
+     text-2xs (R3-02, George 2026-10-19) is the one step below it, for adornments only: Badge
+     size xs ("Optional", "Auto-filled") inside its 16px height, where 12px looked crammed.
+     11px at 600 with +0.02em tracking (the step sets all three). Body text never uses it. */
+  --text-2xs: 0.6875rem; --text-2xs--line-height: 1rem;
+  --text-2xs--font-weight: 600; --text-2xs--letter-spacing: 0.02em;
+  --text-xs: 0.75rem;   --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;    --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;  --text-lg--line-height: 1.625rem;
+  --text-xl: 1.25rem;   --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;   --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem; --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.5rem;   --text-4xl--line-height: 2.875rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --font-sans: var(--font-brand-sans), "Montserrat", "Inter", system-ui, sans-serif;
+  --font-display: var(--font-brand-display), "Roboto Slab", Georgia, serif;
+
+  --tracking-eyebrow: 0.05em;
+  /* Display (slab) titles (R2-19): the prototype's -0.01 to -0.018em and 1.12-1.3 line height
+     (vault.css:36,47, setup.css:206), one value each. tracking-display · leading-display. */
+  --tracking-display: -0.015em;
+  --leading-display: 1.2;
+
+  /* spacing: Tailwind's 4px grid (p-4 = 1rem = 16px). Kept as the default. */
+  --spacing: 0.25rem;
+
+  /* layout (R1-23): named once, used by templates/* (and AppHeader's row via page-frame).
+     px-gutter · gap-column (main and rail, any two columns) · gap-grid (tiles, card grids) ·
+     gap-section (page sections) · pt-page-top · pb-page-bottom · w-rail. */
+  --spacing-gutter: var(--gutter);
+  --spacing-column: 1.5rem;      /* 24 */
+  --spacing-grid: 1rem;          /* 16 */
+  --spacing-section: 1.5rem;     /* 24 */
+  --spacing-page-top: 1.5rem;    /* 24 */
+  --spacing-page-top-roomy: 3rem; /* 48: Page top="roomy", SetupBeat (R2-04; prototype .vf-body 44) */
+  --spacing-page-bottom: 3rem;   /* 48 */
+  --spacing-rail: 21rem;         /* 336; below lg the rail stacks under the main column */
+
+  /* Control scale (T-01): the height of a thing you press or type into, named once so "make
+     controls 40" is one line. control-sm 36: Button sm, the icon button, a toolbar's field and
+     the toolbar's own floor (ListToolbar, BulkActionBar, DataTable's, DagFrame's header), a
+     picker pill. control 44: Input, Select, MultiSelect, Button md, InlineEdit's row, the rich
+     text toolbar. control-lg 48: Button lg. textarea 72: Textarea's, the rich text area's and
+     InlineEdit multiline's floor. The leading-icon and trailing-control insets of a field
+     (`pl-control-sm`, `pr-control-sm`) are the same 36: room for a small control.
+     h-control · size-control-sm · min-h-textarea · pl-control-sm. */
+  --spacing-control-sm: 2.25rem; /* 36 */
+  --spacing-control: 2.75rem;    /* 44 */
+  --spacing-control-lg: 3rem;    /* 48 */
+  --spacing-textarea: 4.5rem;    /* 72 */
+
+  /* Icon scale (T-02): a glyph's box. icon-xs 12: the check in a badge, a pill or AreaIcon sm,
+     StatusMark md's glyph, Avatar's badge glyph. icon-sm 14: DataTable's sort glyph, FormSection's
+     heading glyph, UploadRow's check. icon 16: the glyph in a button, a menu item, a row, a
+     field, a Callout. icon-lg 20: Spinner md, a tile's or well's glyph, AreaIcon lg. icon-xl 24:
+     Spinner lg, AreaIcon xl. Glyphs below 12 (StatusMark sm's 10, Avatar lg's badge 8) have no
+     name: they are not on the scale. size-icon · [&_svg]:size-icon-lg. */
+  --spacing-icon-xs: 0.75rem;    /* 12 */
+  --spacing-icon-sm: 0.875rem;   /* 14 */
+  --spacing-icon: 1rem;          /* 16 */
+  --spacing-icon-lg: 1.25rem;    /* 20 */
+  --spacing-icon-xl: 1.5rem;     /* 24 */
+
+  /* Chart scale (T-05): the heights a Chart, a DagFrame body, a DataTable box and a Sparkline
+     take. The component and its lazy skeleton read one map (charts/internal/heights.ts,
+     Sparkline's sparklineHeight), so the page can't jump when the real one loads. chart-sm 160 ·
+     chart 256 · chart-lg 320; dag 448 · dag-lg 640 (height="auto" is its own ladder in
+     dag-shape.ts); table 384 · table-lg 640 (max heights); spark-sm 24 · spark 32 · spark-lg 48
+     (Sparkline's three, and Stat's skeleton and no-data ghost). h-chart · h-dag-lg · max-h-table
+     · h-spark. */
+  --spacing-chart-sm: 10rem;     /* 160 */
+  --spacing-chart: 16rem;        /* 256 */
+  --spacing-chart-lg: 20rem;     /* 320 */
+  --spacing-dag: 28rem;          /* 448 */
+  --spacing-dag-lg: 40rem;       /* 640 */
+  --spacing-table: 24rem;        /* 384 */
+  --spacing-table-lg: 40rem;     /* 640 */
+  --spacing-spark-sm: 1.5rem;    /* 24 */
+  --spacing-spark: 2rem;         /* 32 */
+  --spacing-spark-lg: 3rem;      /* 48 */
+
+  /* Row and bar scale (T-06): row-header 40, DataTable's header row and where its scrollbar track
+     starts (scrollbar-below-header reads it, layer 7); bar 56, a chrome strip inside the page
+     (Sidebar's header, AdminPage's top bar, StackEntry's row); app-header 64, AppHeader's row. A
+     36 row is a small control (T-01). h-row-header · h-bar · h-app-header. */
+  --spacing-row-header: 2.5rem;  /* 40 */
+  --spacing-bar: 3.5rem;         /* 56 */
+  --spacing-app-header: 4rem;    /* 64 */
+
+  /* widths: max-w-page (gutters inside) · max-w-focused · max-w-wide (centered columns) ·
+     max-w-measure (prose). */
+  --container-page: 87.5rem;     /* 1400 */
+  --container-focused: 48rem;    /* 768 */
+  --container-wide: 60rem;       /* 960 */
+  /* max-w-card: one card alone on a page, centred inside focused (R18-18: the auth card; 448,
+     the width dialog-sm also has — a form's one comfortable column). */
+  --container-card: 28rem;       /* 448 */
+  --container-measure: 60ch;
+  /* max-w-display: a display title's measure (R2-23, GAPS #59). The prototype wraps the Hero at
+     19ch (home.css .vt-hero h1) and setup questions at 22ch; one step between them. ch follows
+     the title's own font size, so it scales with page and display sizes. */
+  --container-display: 20ch;
+
+  /* Overlay scale (T-04): the widths of what floats. menu 192: a submenu's floor; menu-wide 224:
+     a menu's floor (popoverContent, AccountMenu, MultiSelect's list); popover 320 and
+     popover-wide 384: Popover, HeaderSearch's results and DagFrame's details panel (both step up
+     to wide with room); dialog-sm 448 · dialog 672 · dialog-lg 896: Dialog md/lg/xl and
+     ConfirmDialog (sm); FiltersPopover is a form panel a small dialog wide. min-w-menu ·
+     w-popover · max-w-dialog. */
+  --container-menu: 12rem;         /* 192 */
+  --container-menu-wide: 14rem;    /* 224 */
+  --container-popover: 20rem;      /* 320 */
+  --container-popover-wide: 24rem; /* 384 */
+  --container-dialog-sm: 28rem;    /* 448 */
+  --container-dialog: 42rem;       /* 672 */
+  --container-dialog-lg: 56rem;    /* 896 */
+
+  /* breakpoints (R1-05): rem, Tailwind's values, named once here. The prototype's one media
+     query (860px, vault.css:354) maps to md. */
+  --breakpoint-sm: 40rem;  /* 640 */
+  --breakpoint-md: 48rem;  /* 768 */
+  --breakpoint-lg: 64rem;  /* 1024 */
+  --breakpoint-xl: 80rem;  /* 1280 */
+
+  /* shadows: card · lift · pop · avatar. Focus is never a shadow: the `focus-ring` utility
+     (an outline) or the typed controls' halo (`ring-3`). lift (R1-03) sits between card and pop: a soft
+     two-layer shadow (the prototype's own --shadow-card, tokens.css:71, in ink) for surfaces
+     that would otherwise blend into the background. */
+  --shadow-card: 0 1px 2px rgb(37 52 86 / 0.06);
+  --shadow-lift: 0 1px 2px rgb(37 52 86 / 0.04), 0 4px 12px rgb(37 52 86 / 0.07);
+  --shadow-pop: 0 8px 24px rgb(37 52 86 / 0.12);
+  /* avatar (R3-07): the soft shadow under a ringed avatar, the prototype's graph node
+     (setup.css:223, 0 3px 12px rgba(37,52,86,.13)). With ring-3 white or blue. */
+  --shadow-avatar: 0 3px 12px rgb(37 52 86 / 0.13);
+  /* Upstream names (R2-18): shadcn bases use shadow-xs/sm/md/lg. They alias card and pop, so
+     `shadcn add` output casts real shadows without an edit (values repeated: @theme inline
+     substitutes values, it can't point one theme variable at another). xs/sm = card, md/lg = pop. */
+  --shadow-xs: 0 1px 2px rgb(37 52 86 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(37 52 86 / 0.06);
+  --shadow-md: 0 8px 24px rgb(37 52 86 / 0.12);
+  --shadow-lg: 0 8px 24px rgb(37 52 86 / 0.12);
+
+  /* Motion (T-12): one speed. Every `transition-*` runs at 200ms unless it says otherwise;
+     Tailwind's default is 150ms, and four components used to write `duration-200` to get this
+     one. A component writes `duration-*` only for a deliberate departure (none today). */
+  --default-transition-duration: 200ms;
+
+  /* Progress indeterminate (R1-13): slide, or a still pulse under reduced motion. */
+  --animate-progress-slide: progress-slide 1.4s ease-in-out infinite;
+  --animate-progress-pulse: progress-pulse 2s ease-in-out infinite;
+  @keyframes progress-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+  }
+  @keyframes progress-pulse {
+    0%, 100% { transform: translateX(75%); opacity: 0.4; }
+    50% { transform: translateX(75%); opacity: 1; }
+  }
+  /* Shimmer (R19-01): a highlight sweeping across text while a thing is in flight (an
+     Attachment's name while it uploads or is read). The background moves, not the glyphs. */
+  @keyframes shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: 0 0; }
+  }
+}
+
+/* A field error eases open: its height, and a quiet fade. The 8px above it, when another
+   line is already there, grows with it. Reduced motion shows it at once. */
+.field-reveal {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition-property: grid-template-rows, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
+.field-reveal[data-open="false"] {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+@starting-style {
+  .field-reveal {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+}
+.field-error-clip,
+.field-reveal-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+[data-slot="field-after"] > :nth-child(n + 2):not([data-slot="field-error"]) {
+  margin-top: calc(var(--spacing) * 2);
+}
+/* Chrome's suggestion list paints the control blue and drops a key into a password
+   field as the list comes up. Cover the blue with our own fill (the ring stays a
+   separate shadow layer) and keep the key out of the layout. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:focus-visible,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--card-foreground);
+  caret-color: var(--card-foreground);
+  -webkit-box-shadow:
+    inset 0 0 0 1000px var(--background),
+    var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow, 0 0 #0000);
+  box-shadow:
+    inset 0 0 0 1000px var(--background),
+    var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow, 0 0 #0000);
+  transition: background-color 99999s ease-out 0s;
+}
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-strong-password-auto-fill-button {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  inset-inline-end: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+[data-slot="field-after"] > :nth-child(n + 2)[data-slot="field-error"] > .field-error-clip {
+  padding-top: calc(var(--spacing) * 2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-reveal {
+    transition: none;
+  }
+  @starting-style {
+    .field-reveal {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+  }
+}
+
+/* ---------- 5 · Contextual area tone ----------
+   The nearest [data-area] wins (custom properties inherit), so a nested element can wear a
+   different area by setting its own data-area. Outside any, the neutral fallback in layer 3. */
+[data-area] {
+  --area-tint: color-mix(in oklab, var(--area) 12%, transparent);
+  --area-wash: color-mix(in oklab, var(--area) 7%, transparent);
+}
+[data-area="personal"]  { --area: var(--area-personal);  --area-ink: var(--area-personal-ink); }
+[data-area="family"]    { --area: var(--area-family);    --area-ink: var(--area-family-ink); }
+[data-area="household"] { --area: var(--area-household); --area-ink: var(--area-household-ink); }
+[data-area="money"]     { --area: var(--area-money);     --area-ink: var(--area-money-ink); }
+[data-area="assets"]    { --area: var(--area-assets);    --area-ink: var(--area-assets-ink); }
+[data-area="health"]    { --area: var(--area-health);    --area-ink: var(--area-health-ink); }
+[data-area="insurance"] { --area: var(--area-insurance); --area-ink: var(--area-insurance-ink); }
+[data-area="estate"]    { --area: var(--area-estate);    --area-ink: var(--area-estate-ink); }
+[data-area="final"]     { --area: var(--area-final);     --area-ink: var(--area-final-ink); }
+
+/* The surface context (R21-01, TOKENS.md §4): what a Surface on this background draws. Set by the
+   template that owns the background (AdminPage's content: `data-surface="page"`), as data-area is. */
+[data-surface="page"] { --surface-edge: var(--divider-tint); }
+
+/* ---------- 6 · Shared rules (Collapse iteration 1) ---------- */
+/* The gapped focus ring: 2px --ring, 2px offset. For buttons, links, toggles, menu triggers,
+   checkboxes and switches (R15-17). Things you type into use the border and halo
+   (`controlFocus`, components/internal/control.ts); rows and cards that open or choose use their
+   own cue (the hover wash or the halo, `cardFocus`). The rule: packages/ui/CLAUDE.md § Focus. */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+/* One eyebrow: 12px, 600, uppercase, 0.05em, muted. */
+@utility eyebrow {
+  font-size: --theme(--text-xs);
+  line-height: --theme(--text-xs--line-height);
+  font-weight: --theme(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: --theme(--tracking-eyebrow);
+  color: var(--muted-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    /* Body 400 (R2-17, GAPS #60). Secondary text that the prototype sets at 500 (ledes, a
+       tile's line, panel and row descriptions, source lines) says font-medium where it's drawn. */
+    @apply bg-background font-sans font-normal text-foreground antialiased;
+  }
+}
+
+/* ---------- 7 · Layout utilities the collapse did not name (spike additions, see GAPS.md) ---------- */
+/* Scrollbars (R10-08): native CSS, no wrapper and no script. scrollbar-thin is the one look
+   for every scrollable region in the package (DataTable's box, the graph's list and details
+   panel, Menu/Select/DropdownMenu content, the Sidebar's nav): thin, the thumb in
+   --scrollbar-thumb, the track transparent. scrollbar-stable reserves the gutter where content
+   that comes and goes must not shift the layout (a table that pages, a panel whose content
+   changes). Browsers without scrollbar-color keep their own (macOS overlay scrollbars, already
+   thin). shadcn's ScrollArea only where an overlay scrollbar is truly needed. */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+@utility scrollbar-stable {
+  scrollbar-gutter: stable;
+}
+/* No scrollbar at all (R19-01): a horizontal strip that snaps (the Attachment group) scrolls by
+   wheel, swipe and tab; the bar would be chrome on a row of chips. Content must still be
+   reachable without it. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+/* A scroll box under a sticky table header (R13-12): scrollbar-thin's look, but the vertical track
+   starts below the header row (--spacing-row-header, 40) and stops short of the rounded corner, so the scrollbar sits
+   inside the box, under the header. Chromium and Safari take a track margin only through the
+   ::-webkit-scrollbar pseudo-elements, which they ignore once scrollbar-width/-color are set, so
+   there the thin look is drawn with them instead; Firefox has no track margin and keeps the thin
+   standard scrollbar over the whole height (GAPS #137). Used instead of scrollbar-thin. */
+@utility scrollbar-below-header {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  @supports selector(::-webkit-scrollbar) {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+    &::-webkit-scrollbar {
+      width: calc(var(--spacing) * 2.5);
+      height: calc(var(--spacing) * 2.5);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      background-clip: content-box;
+      border: calc(var(--spacing) * 0.5) solid transparent;
+      border-radius: 9999px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin-top: var(--spacing-row-header); /* the header row (T-06) */
+      margin-bottom: var(--radius-sm);
+    }
+    &::-webkit-scrollbar-track:horizontal {
+      margin-top: 0;
+      margin-inline: var(--radius-sm);
+    }
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+}
+/* A sticky header's bottom line (R13-12): drawn by the header cells themselves (an inset shadow),
+   so it moves with the sticky header when the body scrolls; a collapsed-border table leaves a
+   row's border behind. One line whether scrolled or not; the first body row has none on top. */
+@utility header-rule {
+  box-shadow: inset 0 -1px 0 var(--color-border);
+}
+/* A pinned column's inner edge (R20-23): the last start-pinned and the first end-pinned cell draw
+   a 1px line on the side the rest of the table scrolls under, as a pseudo-element so it stacks
+   with `header-rule`'s shadow on a header cell and rides with the sticky cell. */
+@utility pinned-edge-start {
+  &::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: 1px;
+    background: var(--color-border);
+    pointer-events: none;
+  }
+}
+@utility pinned-edge-end {
+  &::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 1px;
+    background: var(--color-border);
+    pointer-events: none;
+  }
+}
+/* AreaTile's radial wash in the top-right corner (prototype vault.css:42). */
+@utility bg-wash-corner {
+  background-image: radial-gradient(ellipse 300px 190px at 100% 0%, var(--area-wash), transparent 70%);
+}
+/* Button size inline (R2-25, GAPS #32): the parent's font size and line height, so an action
+   inside a 12px source line is 12px. Not `text-inherit`: Tailwind already has that as
+   `color: inherit`. */
+@utility text-size-inherit {
+  font-size: inherit;
+  line-height: inherit;
+}
+/* Area glyphs below 20px (R5-07, GAPS #93): the hand-drawn set's 1.85-unit stroke on a 24 grid
+   scales to 0.93px at 12 and 1.23px at 16, thin enough to fade. This holds the stroke at 1.5
+   CSS px (non-scaling) at any size: a little heavier at 12-16px, so the small glyph reads.
+   AreaIcon sm and md apply it to the svg (`[&>svg]:icon-stroke-small`); from 20px the glyph's
+   own stroke stands. (An `icon-stroke-fixed` that held lucide's stroke at 2px for the Callout's
+   20px icon, R3-04, went 2026-10-30: at 1× it read as heavy and jaggy; lucide's glyphs keep
+   their own weight at 16px, as in every button.) */
+@utility icon-stroke-small {
+  stroke-width: 1.5;
+  & * {
+    vector-effect: non-scaling-stroke;
+  }
+}
+/* Relative hover and press (R4-01, R4-02): an ink layer over the element's own background (a
+   background-image, so the background colour underneath stays). Pair with `hover:` (Tailwind's
+   hover only applies under @media (hover: hover), so touch never shows a stuck hover),
+   `active:` and the open state (`aria-expanded:`, `data-[state=open]:`). layer-press is the
+   stronger step: pressed, and the trigger of an open panel. */
+@utility layer-hover {
+  background-image: linear-gradient(var(--overlay-hover), var(--overlay-hover));
+}
+@utility layer-press {
+  background-image: linear-gradient(var(--overlay-press), var(--overlay-press));
+}
+/* In flight (R19-01, the Attachment base's `shimmer`, written here as Paige's; shadcn's own
+   lives in shadcn/tailwind.css, which the package does not import): a highlight sweeping
+   across the text every two seconds while a thing uploads or is read. The text is clipped
+   over a moving gradient of its own colour with a lighter band in the middle, so the glyphs
+   keep their colour and only the band moves. The one looping animation on text in the theme
+   — a deliberate departure from T-12's one speed, said here — and it stops under reduced
+   motion, where the text just sits in its colour. Light only. */
+@utility shimmer {
+  --shimmer-spread: calc(3ch + 40px);
+  --shimmer-highlight: color-mix(in oklab, currentColor 20%, transparent);
+  background-image: linear-gradient(
+    110deg,
+    currentColor calc(50% - var(--shimmer-spread)),
+    color-mix(in oklab, var(--shimmer-highlight), currentColor 50%) calc(50% - var(--shimmer-spread) * 0.5),
+    var(--shimmer-highlight) 50%,
+    color-mix(in oklab, var(--shimmer-highlight), currentColor 50%) calc(50% + var(--shimmer-spread) * 0.5),
+    currentColor calc(50% + var(--shimmer-spread))
+  );
+  background-repeat: no-repeat;
+  background-size: calc(200% + var(--shimmer-spread) * 2) 100%;
+  background-position: 0 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+/* Edge fade on a horizontal scroll box (R19-01, the Attachment group's `scroll-fade-x`,
+   Paige's version of shadcn's): the content fades out at whichever edge has more to scroll.
+   A mask, not an overlay, so nothing sits over the content. Where the browser has
+   scroll-driven animations the fade appears only on the side that can scroll; elsewhere both
+   edges fade a fixed 40px. */
+@property --scroll-fade-s {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --scroll-fade-e {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes scroll-fade-reveal-s {
+  from { --scroll-fade-s: 0px; }
+  to { --scroll-fade-s: var(--scroll-fade-size); }
+}
+@keyframes scroll-fade-reveal-e {
+  from { --scroll-fade-e: var(--scroll-fade-size); }
+  to { --scroll-fade-e: 0px; }
+}
+@utility scroll-fade-x {
+  --scroll-fade-size: calc(var(--spacing) * 10);
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black var(--scroll-fade-s, 0px),
+    black calc(100% - var(--scroll-fade-e, 0px)),
+    transparent 100%
+  );
+  mask-repeat: no-repeat;
+  @supports (animation-timeline: scroll()) {
+    animation: scroll-fade-reveal-s 1ms ease-in-out, scroll-fade-reveal-e 1ms ease-in-out;
+    animation-timeline: scroll(self inline), scroll(self inline);
+    animation-range: 0 calc(var(--spacing) * 24), calc(100% - var(--spacing) * 24) 100%;
+    animation-fill-mode: both;
+  }
+  @supports not (animation-timeline: scroll()) {
+    --scroll-fade-s: var(--scroll-fade-size);
+    --scroll-fade-e: var(--scroll-fade-size);
+  }
+}
+/* Stacking (T-12): three named steps, no bare z-n in component code.
+   z-raised  — above siblings inside one surface: an avatar's badge, a chart's floating controls,
+               a pill's label over the sliding thumb, a sticky table header inside its pane.
+   z-sticky  — chrome that stays while the page scrolls under it: the admin top bar.
+   z-overlay — a layer over the page: dialogs, a field's own suggestion list. Radix overlays in
+               src/base write z-50, the same value. */
+@utility z-raised { z-index: var(--z-raised); }
+@utility z-sticky { z-index: var(--z-sticky); }
+@utility z-overlay { z-index: var(--z-overlay); }
+/* State opacities (T-07): the values are in layer 3 with their reasons. Pair with the state
+   (`disabled:opacity-disabled`, `aria-disabled:`, `data-[disabled]:`) or with a boolean in cn(). */
+@utility opacity-disabled { opacity: var(--opacity-disabled); }
+@utility opacity-quiet { opacity: var(--opacity-quiet); }
+@utility opacity-dim { opacity: var(--opacity-dim); }
+@utility opacity-art { opacity: var(--opacity-art); }
+/* StatusDot stroke: the prototype's 1.5px (vault.css:333; R1-14). */
+@utility border-dot {
+  border-width: 1.5px;
+}
+/* AreaPage: main column + right rail (prototype vault.css:119, 1fr / 336px). */
+@utility grid-cols-area-page {
+  grid-template-columns: minmax(0, 1fr) --theme(--spacing-rail);
+}
+/* AddressField's street and apt (George 2026-10-28): 80/20, the apt never under 6rem (a phone's
+   20% is too narrow for "Apt 12B" and its label). */
+@utility grid-cols-street-unit {
+  grid-template-columns: minmax(0, 4fr) minmax(6rem, 1fr);
+}
+/* Grid auto-fit (R1-29): as many columns as fit at the minimum item width, never wider than the
+   container (min(…, 100%)). <Grid minItemWidth="…"> picks one: 10 · 14 · 18 · 22 rem. */
+@utility grid-cols-fit-xs {
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+}
+@utility grid-cols-fit-sm {
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+}
+@utility grid-cols-fit-md {
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+}
+@utility grid-cols-fit-lg {
+  grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+}
+/* The page frame (R1-23): max width 1400 with the side gutter inside it. Page, PageBand and
+   AppHeader's row use it, so the logo, a band's content and the page content share one edge. */
+@utility page-frame {
+  margin-inline: auto;
+  width: 100%;
+  max-width: --theme(--container-page);
+  padding-inline: var(--gutter);
+}
+/* Rich text (R1-27): the text styles of the rich Textarea's editor and of the read-only
+   RichText renderer, so a value looks the same while edited and when shown. Paragraphs 8 apart,
+   lists indented with their markers, links in the primary colour and underlined, and the
+   editor's placeholder (Tiptap marks the empty first paragraph with data-placeholder). */
+/* Plain CSS values only: --theme() takes a theme variable, not a function. */
+@utility rich-text {
+  overflow-wrap: anywhere;
+  & p + p,
+  & p + ul,
+  & p + ol,
+  & ul + p,
+  & ol + p {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  & ul,
+  & ol {
+    padding-left: calc(var(--spacing) * 5);
+  }
+  & ul {
+    list-style-type: disc;
+  }
+  & ol {
+    list-style-type: decimal;
+  }
+  & li + li {
+    margin-top: calc(var(--spacing) * 1);
+  }
+  & strong {
+    font-weight: --theme(--font-weight-semibold);
+  }
+  & a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  & .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-weight: --theme(--font-weight-normal);
+    color: var(--placeholder);
+  }
+}

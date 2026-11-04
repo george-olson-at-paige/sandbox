@@ -1,0 +1,38 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Introduction" />
+
+# Paige UI
+
+`@paige/ui` is the component library for the Paige web app: one Tailwind v4 theme (`theme.css`), upstream shadcn components as the base, a Paige layer over them with a narrower API, forms, patterns, the app shell, the four product areas' own pieces (Vault, Admin, Setup, Auth), and the page templates every route sits in. The app imports from it and builds screens; it does not style things of its own.
+
+## The sidebar is the folder tree
+
+Each section is a folder in `packages/ui/src`, and each entry is a `*.stories.tsx` file next to its component. Nothing sets a title by hand, so what you see here is where the file is (one exception: `src/charts` shows under Components, as a seventh group, because it is a bundle split rather than a kind of its own).
+
+| Section | Folder | Import as | What is in it |
+|---|---|---|---|
+| Foundations | `src/foundations` | (stories only) | Colour roles, tones, Life Area colours, type, spacing, radius, shadows, focus, icons and the breakpoints, read live from the CSS variables |
+| Primitives | `src/primitives` | `@paige/ui/primitives/*` | Arrangers: Stack, Inline, Grid, Split, Flex |
+| Components | `src/components` | `@paige/ui/components/<group>/*` | The Paige layer over each base the app uses, in six groups: Actions, Inputs, Display, Feedback, Navigation, Overlays |
+| Components › Charts | `src/charts` | `@paige/ui/charts/*` | Line and bar charts (Recharts) and the DAG frame (steps and their dependencies), loaded lazily through LazyChart and LazyDagFrame so pages without one never load the library |
+| Forms | `src/forms` | `@paige/ui/forms/*` | Form, Field, FormSection, FormFooter, ErrorSummary, InlineEdit; **Fields**: the value-shaped inputs (DateField, DateRangeField, PhoneField, CurrencyField…) |
+| Patterns | `src/patterns` | `@paige/ui/patterns/*` | Generic page blocks: Panel, PageIntro, KpiCard, KpiRow, and the list page's blocks (FilterCardRow, ListToolbar, FiltersPopover, FilterChips, BulkActionBar) |
+| Shell | `src/shell` | `@paige/ui/shell/*` | Chrome the products share: AppHeader, AccountMenu, NotificationBell, HeaderSearch |
+| Vault | `src/vault` | `@paige/ui/vault/*` | Paige's domain pieces: AreaTile, AreaIcon, ChoiceCard, FactField, FactItem, ItemRow, RailPanels, CaptureCard… |
+| Admin | `src/admin` | `@paige/ui/admin/*` | The admin site's parts: AdminSidebar, MetricCard, PipelineGraph, PartnerOffers, RevShare; **Pages** (`src/admin/pages`, `@paige/ui/admin/pages/*`): Pulse, and the People, Partners, Plans, Subscriptions and Promotion codes lists' page setups |
+| Setup | `src/setup` | `@paige/ui/setup/*` | Essential Setup's pieces: StepRail (step progress) and FlowFooter (the steps' footer); then the composed steps, stories only: Welcome (its two columns, content and illustration, and how they stack) and About you |
+| Auth | `src/auth` | `@paige/ui/auth/*` (none yet) | The door, stories only so far: Sign in, Register, Forgot password, Set new password, Enroll phone, Verify code, Verify email, Confirm email, Accept invite — each state a story on the AuthPage template, built from Forms and Components; a part lands here when two pages share one |
+| Templates | `src/templates` | `@paige/ui/templates/*` | The page frames: Page, PageHeader, HomePage, AreaPage, SetupBeat, AdminPage, ListPage (the list page pattern), and AuthPage (one centred card, the watercolor, a LegalFooter) |
+| Base | `src/base` | (not exported) | Upstream shadcn, as it ships. Shown for reference; screens never use it directly |
+
+Which one to reach for: **Overview → Which section do I use?**
+
+## How to read a component page
+
+- **Docs** (the first entry under each component) opens with the component's one-line purpose (the `/** … */` comment above it), then a live canvas, and the props table. Prop descriptions come from the `/** … */` comments on each prop.
+- **Stories** are the states that matter: each tone, size, empty, error, long content, narrow widths. The story name says what it shows.
+- **Dashed blocks** in layout stories are placeholders: story-only stand-ins for a slot, never part of the UI. The first line names the slot; the second, where shown, says what matters about it, such as its rendered width × height, which changes with the viewport.
+- **Controls** let you change props live on the canvas; **Viewport** in the toolbar switches between the layout's breakpoints (phone, sm, lg, xl, desktop).
+- **Accessibility** runs axe on every story. It reports and does not fail yet (see the package `CLAUDE.md`).
+- Review tracking ids (`r1-29`, `gaps-80`) are **tags** on the file (and on a story only when that story answers one id), not part of the names.

@@ -1,0 +1,132 @@
+import { ArgTypes, Canvas, Controls, Meta, Source } from "@storybook/addon-docs/blocks"
+
+import * as DataTableStories from "./data-table.stories"
+
+<Meta of={DataTableStories} />
+
+# DataTable
+
+**One table for every admin list.** Rows and typed columns in; sorting, paging, a Columns menu, a sticky header and the loading, empty and error states out. Everything past that is a switch, **off by default**: resizing, reordering, pinning, density, expansion, virtualization, selection and row actions. Filters and search are not here — they are the screen's ([ListPage](?path=/docs/templates-listpage--docs) carries them, `lib/list-query.ts` runs them), so a table never grows a second toolbar.
+
+**Built on TanStack Table 9** (`packages/ui/STACK.md`, D-11): the engine holds sort, page, visibility, size, order, pin and open state; this part decides how each reads. Nothing of TanStack's reaches a caller.
+
+## Recipe
+
+Flip the switches. The code under the table is written from them — what you see set is what you copy. (How this page is organised: one recipe, a story per capability with its play, a story per state no switch shows; never a story per combination — REVIEW-20 R20-24.)
+
+<Canvas of={DataTableStories.Recipe} />
+<Controls of={DataTableStories.Recipe} />
+
+## How to make one
+
+A table is `rows`, `columns`, `getRowId` and a `label` (its accessible name). A column is one of two kinds.
+
+| A column is… | Write | What follows |
+|---|---|---|
+| **Typed** (a count, an amount, a date, a duration, a percent, a file size) | `{ id, header, type, value: (row) => raw }` — `type` is a `Formatted` kind; `value` returns the raw number, cents or ISO string, `null` when absent | The kind formats the cell (`Formatted`, `lib/format-kind.ts`), sorts by the raw value, right-aligns, shows a dash for `null`. Add the kind's own options beside `type` (`currency: "USD"`, `precision`, `compact`) |
+| **Custom** (a name, a badge, anything else) | `{ id, header, cell: (row) => ReactNode, sortValue?: (row) => string \| number \| null }` | Sortable only with `sortValue`; left-aligned unless `numeric: true` |
+
+Either kind also takes:
+
+| Setting | Does |
+|---|---|
+| `width`, `minWidth` | Its width in px when the table is sized (`resizable`, or any column pinned); the last unpinned column takes what is left. Default 150 / 48 |
+| `resizable: false` | Keeps its width while the others drag |
+| `pin: "start" \| "end"` | Sticks it to that edge while the rest scroll under it (a rule marks the edge) |
+| `hideable: false` | Keeps it out of the Columns menu (the first column is never hideable) |
+| `defaultHidden: true` | Starts hidden; the Columns menu brings it back |
+
+<Source
+  language="tsx"
+  dark
+  code={`const columns: DataTableColumn<JobRun>[] = [
+  { id: "pipeline", header: "Pipeline", width: 220, pin: "start", cell: (r) => r.pipeline, sortValue: (r) => r.pipeline },
+  { id: "status", header: "Status", width: 120, cell: (r) => <Badge tone={toneOf(r.status)}>{r.status}</Badge>, sortValue: (r) => r.status },
+  { id: "started", header: "Started", type: "datetime", width: 200, value: (r) => r.startedAt },
+  { id: "duration", header: "Duration", type: "duration", width: 110, value: (r) => r.durationSeconds },
+  { id: "rows", header: "Rows", type: "count", width: 110, value: (r) => r.rows },
+  { id: "cost", header: "Cost", type: "currency", width: 110, value: (r) => r.costCents },
+  { id: "trigger", header: "How it started", width: 140, cell: (r) => r.trigger, defaultHidden: true },
+]
+
+<DataTable
+  rows={runs}
+  columns={columns}
+  getRowId={(r) => r.id}
+  label="Job runs"
+  initialSort={{ id: "started", desc: true }}
+  resizable
+  density="compact"
+  expandable={{ rowLabel: (r) => r.pipeline, content: (r) => <RunDetail run={r} /> }}
+/>`}
+/>
+
+Sort and paging are the table's own until you give it `sorting` / `paging`, when the rows arrive sorted and paged (the Controlled story, below). `pageSize="all"` is one page of everything — pair it with `virtualize` and a `maxHeight`.
+
+## Capabilities
+
+Each is the Recipe's fixture with one switch on, and each has a play that holds its behaviour.
+
+**Typed columns** — the kind decides the cell, the sort and the alignment; a missing value is a dash, never 0.
+
+<Canvas of={DataTableStories.TypedColumns} />
+
+**Resizable** — drag the header's edge, or focus it and press the arrows (16px a step, Home resets). The header's name stays its label; the handle is named apart.
+
+<Canvas of={DataTableStories.Resizable} />
+
+**Pinned** — a column's `pin` holds it to an edge while the rest scroll under; the selection and expand columns stay with it.
+
+<Canvas of={DataTableStories.Pinned} />
+
+**Density** — `compact` for a list read as a grid (the Item axis, carried by the table); the header row keeps its height.
+
+<Canvas of={DataTableStories.Compact} />
+
+**Expandable** — a chevron column opens a detail under the row, one cell across; `aria-expanded` and `aria-controls` on the toggle, named "Show details for …" / "Hide details for …" with the row's `rowLabel`.
+
+<Canvas of={DataTableStories.Expandable} />
+
+**Virtualized** — only the rows in view are in the DOM; two spacer rows hold the scroll height; rows are measured once rendered, so a two-line cell or an open detail counts for what it is.
+
+<Canvas of={DataTableStories.Virtualized} />
+
+**Reorderable** — a grip at the start of each unpinned header; drag it, or Space · arrows · Space (Escape cancels), the same words as [Sortable](?path=/docs/components-inputs-sortable--docs). Pinned columns stay put.
+
+<Canvas of={DataTableStories.Reorderable} />
+
+**Selection, row click and row actions** — a checkbox column (select the page; mixed when some are), a row click that never fires from a control inside the row, and a ⋯ column at the end.
+
+<Canvas of={DataTableStories.Selection} />
+
+**Header** — a title, a description and actions share the toolbar row with the Columns menu.
+
+<Canvas of={DataTableStories.WithHeader} />
+
+## States
+
+What no switch shows.
+
+<Canvas of={DataTableStories.Loading} />
+<Canvas of={DataTableStories.Empty} />
+<Canvas of={DataTableStories.ErrorState} />
+<Canvas of={DataTableStories.Phone} />
+
+Not a state: every column hidden — the first column is never hideable, so the Columns menu can't empty the table.
+
+## Controlled
+
+The rows arrive sorted and paged; the table reports the sort and the page and renders what it is given.
+
+<Canvas of={DataTableStories.Controlled} />
+
+## Props
+
+<ArgTypes of={DataTableStories.Default} />
+
+## Specifics
+
+- The engine: [TanStack Table 9](https://tanstack.com/table/v9) — `useTable` + `tableFeatures` with the sorting, pagination, visibility, sizing, resizing, pinning, ordering and expanding features; `@tanstack/react-virtual` for `virtualize`; `@dnd-kit` for `reorderable` (the kit Sortable uses).
+- The screen around it: [ListPage](?path=/docs/templates-listpage--docs) — the filters, the search, the chips and the URL state.
+- Where the kinds come from: [Formatted](?path=/docs/components-display-formatted--docs) and `lib/format-kind.ts`.
+- Decisions: REVIEW-20 R20-21…R20-25, D-11 (the v9 move).

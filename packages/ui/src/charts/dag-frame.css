@@ -1,0 +1,98 @@
+/* DagFrame (R9-06): what Tailwind classes can't reach inside React Flow's own DOM. Loaded only
+   with dag-frame.tsx (the lazy chunk), never on customer pages. Colours are theme variables
+   only (no raw values outside theme.css). React Flow's base.css (structure, no look) comes first;
+   its default theme (style.css) is not used. */
+
+.dag-canvas .react-flow {
+  --xy-background-color: transparent;
+}
+.dag-canvas .react-flow__pane {
+  cursor: grab;
+}
+.dag-canvas .react-flow__pane.dragging {
+  cursor: grabbing;
+}
+/* The node wrapper is ours to draw: no React Flow chrome around the button. */
+.dag-canvas .react-flow__node {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Edges: right angles with rounded corners (getSmoothStepPath), the arrowhead in the same tone. */
+.dag-edge {
+  fill: none;
+  stroke: var(--placeholder);
+  stroke-width: 1.5;
+  transition:
+    stroke 200ms ease,
+    opacity 200ms ease;
+}
+.dag-edge[data-tone="path"] {
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+.dag-edge[data-tone="failure"] {
+  stroke: var(--attention);
+  stroke-dasharray: 6 4;
+}
+.dag-edge[data-dim] {
+  opacity: 0.2;
+}
+.dag-arrow {
+  fill: var(--placeholder);
+}
+.dag-arrow[data-tone="path"] {
+  fill: var(--primary);
+}
+.dag-arrow[data-tone="failure"] {
+  fill: var(--attention);
+}
+/* An edge into a running node flows, only when motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  .dag-edge[data-running]:not([data-tone="failure"]) {
+    stroke: var(--primary);
+    stroke-dasharray: 6 4;
+    animation: dag-flow 0.8s linear infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dag-edge {
+    transition: none;
+  }
+}
+@keyframes dag-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* React Flow's attribution stays (its maintainers ask organisations that hide it to subscribe to
+   Pro; DagFrame's header comment), drawn small and muted in the corner. */
+.dag-canvas .react-flow__attribution {
+  background: transparent;
+  font-size: var(--text-2xs);
+  line-height: var(--text-2xs--line-height);
+  padding: 2px 6px;
+}
+.dag-canvas .react-flow__attribution a {
+  color: var(--muted-foreground); /* 5.9:1 on white: small, but readable */
+}
+
+/* Full screen: the frame fills the screen on the card colour. */
+[data-slot="dag-frame"]:fullscreen {
+  background: var(--card);
+}
+
+/* The minimap (R12-07): shown only while part of the graph is outside the canvas, bottom right
+   (opposite the controls), 160 × 120 (React Flow's 4:3 at four-fifths of its 200 × 150), clear
+   of the attribution under it. React Flow sizes its SVG from props, so the size is set here. */
+.dag-canvas .react-flow__minimap.dag-minimap {
+  margin: 0 calc(var(--spacing) * 3) calc(var(--spacing) * 6) 0;
+}
+.dag-canvas .react-flow__minimap.dag-minimap svg {
+  display: block;
+  width: calc(var(--spacing) * 40);
+  height: calc(var(--spacing) * 30);
+}
