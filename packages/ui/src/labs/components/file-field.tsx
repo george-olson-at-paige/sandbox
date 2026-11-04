@@ -94,9 +94,9 @@ export function FileField({
           actions={
             <>
               {f.status === "failed" && onRetry && (
-                <AttachmentAction icon={<RotateCcwIcon />} aria-label={copy.retry(f.name)} onClick={() => onRetry(f.id)} disabled={disabled} />
+                <AttachmentAction type="button" icon={<RotateCcwIcon />} aria-label={copy.retry(f.name)} onClick={() => onRetry(f.id)} disabled={disabled} />
               )}
-              <AttachmentAction icon={<XIcon />} aria-label={copy.remove(f.name)} onClick={() => onRemove(f.id)} disabled={disabled} />
+              <AttachmentAction type="button" icon={<XIcon />} aria-label={copy.remove(f.name)} onClick={() => onRemove(f.id)} disabled={disabled} />
             </>
           }
         />

@@ -82,6 +82,7 @@ export function RepeatField<T>({
               <div className="min-w-0 flex-1">{row(item, (next) => onChange(items.map((it, j) => (j === i ? next : it))), i)}</div>
               {i >= min && (
                 <IconButton
+                  type="button"
                   variant="ghost"
                   shape="rect"
                   icon={<XIcon />}

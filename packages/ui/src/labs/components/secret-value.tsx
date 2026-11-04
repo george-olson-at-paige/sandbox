@@ -119,6 +119,7 @@ export function SecretValue({
           )}
         </span>
         <IconButton
+          type="button"
           variant="ghost"
           shape="rect"
           icon={shown ? <EyeOffIcon /> : <EyeIcon />}
@@ -128,6 +129,7 @@ export function SecretValue({
           onClick={() => void toggle()}
         />
         <IconButton
+          type="button"
           variant="ghost"
           shape="rect"
           icon={copied ? <CheckIcon /> : <CopyIcon />}

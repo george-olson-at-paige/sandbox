@@ -119,3 +119,11 @@ So it's mostly composition. **New: 1 template** (ItemPage) **+ 1 page pattern** 
 - **Data:** `labs/vault/collections/data.ts`. A credential carries `hasSecret`, not the secret: the shape the API should take (§4.3).
 - **Copy marked ⟨new⟩** in `collections/fixtures.ts` needs Product.
 
+**2026-11-04: Memories, in labs** (`labs/vault/collections/memories-view.tsx`), on the same shape as Passwords.
+- **The list:** the header with Add, search plus category Chips, then memories by the year they happened (newest first) as **MemoryCard**s, two across from sm. The picture leads; a video shows a play mark, a file its glyph, a story alone a quote mark. One view, no switcher.
+- **A memory:** the header (when · category, Edit, ⋯ Delete), the picture at the column's width, then a RecordCard: the note as its lead, each part of the story as a section under its own title, a non-picture file as an Attachment, and the "only you can see this for now" line (sharing deferred, D10).
+- **Add and edit:** The memory (category, when it happened, title, one-line note), The story (**SectionsField**: parts with ↑ ↓ ×, the category's prompts offered as "Start a part with …", a used prompt not offered again), one photo, video or file (FileField `max` 1).
+- **Bug found and fixed:** the icon buttons inside SectionsField, RepeatField and FileField had no `type="button"`, so in a form ↑, ↓ and × submitted it. SectionsField's story now checks that nothing submits.
+- **Still no ItemPage or CollectionPage template:** Page plus PageHeader carried Memories too. The find row (search plus Chips) and the hrefs-as-routes plumbing are now repeated in two views; extract them when Messages makes it three.
+- **The categories and prompts are stand-ins.** The real catalog is the API's (`GET memories/categories`).
+
