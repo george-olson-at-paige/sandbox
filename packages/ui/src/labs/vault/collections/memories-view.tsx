@@ -1,33 +1,32 @@
 "use client"
 
-import type { ComponentProps, ElementType, MouseEvent, ReactNode } from "react"
-import { useMemo, useState } from "react"
-import { CameraIcon, GitCommitVerticalIcon, LayoutGridIcon, LockIcon, PencilIcon, PlusIcon, SearchIcon, Trash2Icon, XIcon } from "lucide-react"
+import type { ComponentProps, ElementType } from "react"
+import { useCallback, useState } from "react"
+import { CameraIcon, GitCommitVerticalIcon, LayoutGridIcon, LockIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { useActionMenu, type ListAction } from "../../../components/actions/action-menu"
 import { Attachment } from "../../../components/display/attachment"
 import { EmptyState } from "../../../components/feedback/empty-state"
 import { Input } from "../../../components/inputs/input"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../../../components/inputs/input-group"
 import { Select } from "../../../components/inputs/select"
 import { ToggleGroup, ToggleGroupItem } from "../../../components/inputs/toggle-group"
 import { Tooltip } from "../../../components/overlays/tooltip"
 import { Field } from "../../../forms/field"
 import { FieldGroup } from "../../../forms/field-group"
 import { DateField } from "../../../forms/fields/date-field"
-import { FieldAction } from "../../../forms/fields/field-action"
 import { Form } from "../../../forms/form"
 import { FormFooter } from "../../../forms/form-footer"
 import { FormSection } from "../../../forms/form-section"
 import { Page } from "../../../templates/page"
 import { PageHeader } from "../../../templates/page-header"
-import { Chip, ChipGroup } from "../../components/chip"
 import { FileField, type FileFieldFile } from "../../components/file-field"
 import { SectionsField, type Section } from "../../components/sections-field"
 import { AlternatingTimeline } from "../../patterns/alternating-timeline"
+import { FindRow } from "../../patterns/find-row"
 import { ListGroup } from "../../patterns/list-group"
 import { RecordCard, RecordSection } from "../record-section"
+import { useRoutes } from "./use-routes"
 import { MemoryCard } from "./memory-card"
 import type { Memory, MemoryCategory } from "./memories"
 import type { MEMORIES_COPY } from "./memories-fixtures"
@@ -82,32 +81,11 @@ export function MemoriesView({
   hrefs?: Hrefs
   linkAs?: ElementType
 }) {
-  const [route, setRoute] = useState<Route>(initialRoute)
+  const resolve = useCallback((href: string) => routeOf(href, hrefs, memories), [hrefs, memories])
+  const { route, setRoute, NavLink } = useRoutes<Route>(initialRoute, resolve, linkAs)
   const [query, setQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
   const [view, setView] = useState(initialView)
-
-  const NavLink = useMemo<ElementType>(
-    () =>
-      function NavLink({ href, children, ...rest }: { href: string; children: ReactNode }) {
-        const Link = linkAs
-        return (
-          <Link
-            href={href}
-            {...rest}
-            onClick={(e: MouseEvent) => {
-              const to = routeOf(href, hrefs, memories)
-              if (e.metaKey || e.ctrlKey || e.shiftKey || !to) return
-              e.preventDefault()
-              setRoute(to)
-            }}
-          >
-            {children}
-          </Link>
-        )
-      },
-    [linkAs, hrefs, memories],
-  )
 
   if (route.name === "view") {
     const memory = memories.find((m) => m.id === route.id)
@@ -162,27 +140,15 @@ export function MemoriesView({
         <EmptyState size="md" icon={<CameraIcon />} title={copy.emptyTitle} description={copy.emptyLine} />
       ) : (
         <section aria-label={copy.title} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <InputGroup className="min-w-0 flex-1">
-                <InputGroupAddon>
-                  <SearchIcon aria-hidden />
-                </InputGroupAddon>
-                <InputGroupInput
-                  type="search"
-                  aria-label={copy.search}
-                  placeholder={copy.search}
-                  value={query}
-                  autoComplete="off"
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="[&::-webkit-search-cancel-button]:hidden"
-                />
-                {query && (
-                  <InputGroupAddon align="inline-end">
-                    <FieldAction aria-label="Clear search" icon={<XIcon />} onClick={() => setQuery("")} />
-                  </InputGroupAddon>
-                )}
-              </InputGroup>
+          <FindRow
+            search={{ value: query, onChange: setQuery, label: copy.search }}
+            filters={{
+              label: copy.categories,
+              items: present.map((c) => ({ value: c.id, label: c.label, count: memories.filter((m) => m.category.id === c.id).length })),
+              value: categoryFilter,
+              onChange: setCategoryFilter,
+            }}
+            tools={
               <ToggleGroup
                 type="single"
                 variant="icon"
@@ -201,17 +167,8 @@ export function MemoriesView({
                   </ToggleGroupItem>
                 </Tooltip>
               </ToggleGroup>
-            </div>
-            {present.length > 1 && (
-              <ChipGroup type="multiple" label={copy.categories} value={categoryFilter} onValueChange={setCategoryFilter}>
-                {present.map((c) => (
-                  <Chip key={c.id} value={c.id} count={memories.filter((m) => m.category.id === c.id).length}>
-                    {c.label}
-                  </Chip>
-                ))}
-              </ChipGroup>
-            )}
-          </div>
+            }
+          />
           {shown.length === 0 ? (
             <EmptyState
               kind="no-results"

@@ -1,7 +1,7 @@
 "use client"
 
-import type { ComponentProps, ElementType, MouseEvent, ReactNode } from "react"
-import { useMemo, useState } from "react"
+import type { ComponentProps, ElementType, ReactNode } from "react"
+import { useCallback, useState } from "react"
 import {
   AtSignIcon,
   ChevronRightIcon,
@@ -12,10 +12,8 @@ import {
   LockIcon,
   PencilIcon,
   RepeatIcon,
-  SearchIcon,
   SmartphoneIcon,
   Trash2Icon,
-  XIcon,
 } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
@@ -26,11 +24,9 @@ import { Attachment } from "../../../components/display/attachment"
 import { Callout, CalloutAction } from "../../../components/feedback/callout"
 import { EmptyState } from "../../../components/feedback/empty-state"
 import { Input } from "../../../components/inputs/input"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../../../components/inputs/input-group"
 import { Select } from "../../../components/inputs/select"
 import { Textarea } from "../../../components/inputs/textarea"
 import { Field } from "../../../forms/field"
-import { FieldAction } from "../../../forms/fields/field-action"
 import { PasswordField } from "../../../forms/fields/password-field"
 import { FieldGroup } from "../../../forms/field-group"
 import { Form } from "../../../forms/form"
@@ -38,12 +34,13 @@ import { FormFooter } from "../../../forms/form-footer"
 import { FormSection } from "../../../forms/form-section"
 import { PageHeader } from "../../../templates/page-header"
 import { Page } from "../../../templates/page"
-import { Chip, ChipGroup } from "../../components/chip"
 import { FileField, type FileFieldFile } from "../../components/file-field"
 import { RepeatField } from "../../components/repeat-field"
 import { SecretValue } from "../../components/secret-value"
+import { FindRow } from "../../patterns/find-row"
 import { ListGroup } from "../../patterns/list-group"
 import { RecordCard, RecordSection } from "../record-section"
+import { useRoutes } from "./use-routes"
 import type { Account, AccountSummary, AccountsPrompt, AccountType } from "./data"
 import type { PASSWORDS_COPY } from "./fixtures"
 
@@ -172,32 +169,10 @@ export function PasswordsView({
   /** Link component for in-app links (Next's `Link`). */
   linkAs?: ElementType
 }) {
-  const [route, setRoute] = useState<Route>(initialRoute)
+  const resolve = useCallback((href: string) => routeOf(href, hrefs, accounts), [hrefs, accounts])
+  const { route, setRoute, NavLink } = useRoutes<Route>(initialRoute, resolve, linkAs)
   const [query, setQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState<string[]>([])
-
-  // In labs the view keeps its own route: a link to one of its hrefs changes it in place.
-  const NavLink = useMemo<ElementType>(
-    () =>
-      function NavLink({ href, children, ...rest }: { href: string; children: ReactNode }) {
-        const Link = linkAs
-        return (
-          <Link
-            href={href}
-            {...rest}
-            onClick={(e: MouseEvent) => {
-              const to = routeOf(href, hrefs, accounts)
-              if (e.metaKey || e.ctrlKey || e.shiftKey || !to) return
-              e.preventDefault()
-              setRoute(to)
-            }}
-          >
-            {children}
-          </Link>
-        )
-      },
-    [linkAs, hrefs, accounts],
-  )
 
   if (route.name === "view") {
     const account = getAccount(route.id)
@@ -278,36 +253,15 @@ export function PasswordsView({
         <EmptyState size="md" icon={<KeyRoundIcon />} title={copy.emptyTitle} description={copy.emptyLine} />
       ) : (
         <section aria-label={copy.title} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            <InputGroup>
-              <InputGroupAddon>
-                <SearchIcon aria-hidden />
-              </InputGroupAddon>
-              <InputGroupInput
-                type="search"
-                aria-label={copy.search}
-                placeholder={copy.search}
-                value={query}
-                autoComplete="off"
-                onChange={(e) => setQuery(e.target.value)}
-                className="[&::-webkit-search-cancel-button]:hidden"
-              />
-              {query && (
-                <InputGroupAddon align="inline-end">
-                  <FieldAction aria-label="Clear search" icon={<XIcon />} onClick={() => setQuery("")} />
-                </InputGroupAddon>
-              )}
-            </InputGroup>
-            {present.length > 1 && (
-              <ChipGroup type="multiple" label={copy.types} value={typeFilter} onValueChange={setTypeFilter}>
-                {present.map((t) => (
-                  <Chip key={t.id} value={t.id} count={accounts.filter((a) => a.type.id === t.id).length}>
-                    {t.label}
-                  </Chip>
-                ))}
-              </ChipGroup>
-            )}
-          </div>
+          <FindRow
+            search={{ value: query, onChange: setQuery, label: copy.search }}
+            filters={{
+              label: copy.types,
+              items: present.map((t) => ({ value: t.id, label: t.label, count: accounts.filter((a) => a.type.id === t.id).length })),
+              value: typeFilter,
+              onChange: setTypeFilter,
+            }}
+          />
           {shown.length === 0 ? (
             <EmptyState
               kind="no-results"
