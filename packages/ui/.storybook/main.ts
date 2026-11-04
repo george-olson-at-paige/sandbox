@@ -23,6 +23,8 @@ const SECTIONS = [
   { directory: "../src/patterns", titlePrefix: "Patterns" },
   { directory: "../src/shell", titlePrefix: "Shell" },
   { directory: "../src/vault", titlePrefix: "Vault" },
+  // The cross-area views and modes: People, Documents, Passwords, Messages, Memories, Will builder.
+  { directory: "../src/views", titlePrefix: "Views" },
   { directory: "../src/admin", titlePrefix: "Admin" },
   // Essential Setup: its parts (StepRail, FlowFooter) and its composed steps (Welcome, About you).
   { directory: "../src/setup", titlePrefix: "Setup" },

@@ -31,6 +31,7 @@ const preview: Preview = {
           "Patterns",
           "Shell",
           "Vault", ["ItemRow", "FactItem", "FactField", "StatusDot", "CaptureCard", "ChoiceCard", "RemoveDialog", "Areas", "People", "Documents"],
+          "Views", ["People", "Documents", "Passwords", "Messages", "Memories", "WillBuilder"],
           "Admin", ["AdminSidebar", "MetricCard", "PipelineGraph", "PartnerOffers", "RevShare", "Pages", ["Pulse", "People", "Partners", "Plans", "Subscriptions", "PromotionCodes"]],
           // The flow's parts, then its steps in the order a person meets them.
           "Setup", ["StepRail", "FlowFooter", "Welcome", "AboutYou"],
