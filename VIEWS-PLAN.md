@@ -143,3 +143,36 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - Wiring to the real API; the screens run on fixtures, like the rest of the spike.
 - Telemetry (`place.viewed` / `left`, `person.added`, `document.provided`); the webapp's events are listed in the inventory for when the React app goes live.
 - The Will Builder, Passwords, Business.
+
+## 7. Progress and findings (2026-11-04)
+
+**Built, level 0 in `src/labs/` (D-V5), as Storybook stories on Maya's fixtures:**
+- **Shared pieces:** Chip and ChipGroup; ListGroup, StageBar and PickPanel; ViewList, ViewRow, AreaDots and StatusLine.
+- **Record frame:** RecordCard, and RecordSection with an audience (shared · owner); AreaLines.
+- **People:** PersonRow, PersonLetterhead, ReachForm and PersonRecord.
+- **Documents:** DocumentRow, DocumentPreview, ValuesToCheck and DocumentRecord.
+- **The two screens:** PeopleView and DocumentsView. They are Labs › Vault › Views in the Storybook.
+
+**Changed in place:**
+- WorkspacePage, which now centres the stage at the record width.
+- PageHeader, which gets `density="compact"`.
+- Button (`shape`) and useActionMenu, which now passes `shape` to the ⋯.
+
+**Not built yet:**
+- Edit details, waiting on PersonAddForm (finding 2).
+- The add-document dialog, and "Someone new" on the band. Both Add buttons are left out until then.
+- The Area chips as their own pattern: Chip is in use and the Areas are its first job.
+- EmailField.
+- The app's `/people` and `/documents`. `labs/` isn't public, so they stay the skeleton until the pieces move.
+
+**Findings:**
+1. **Item (labs) has no link mode** (`onActivate` is a button) and no trailing region for information. ViewRow builds on ItemFrame and puts the Area dots in `actions`.
+2. **PersonAddForm only starts empty.** Edit details needs it to take a saved person.
+3. **Avatar's initials keep honorifics.** "Rev. Ellen Hart" shows RE, and "Dr. Anita Patel" shows DA.
+4. **Remove behaves differently from the webapp.** It now confirms in ConfirmDialog, where the webapp asked inline in Edit. The library's rule: destructive actions are always confirmed.
+5. **Some copy is new,** marked ⟨new⟩ in `labs/vault/views/fixtures.ts`:
+   - the accessible names for search, the Area chips and the ⋯;
+   - "Clear search and filters";
+   - the remove confirms' descriptions.
+
+   It goes to the copy pass.

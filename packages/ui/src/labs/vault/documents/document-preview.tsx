@@ -13,7 +13,7 @@ import type { VaultDocument } from "../views/data"
    right side of some text", the way a résumé carries a photo). Every file the same size: a strip
    150 high. An image shows whole, scaled into it; a page (a PDF, a will) shows its top, with a
    fade for the rest. Expand shows all of it in place (the record lays it out full width under the
-   text); Collapse puts the strip back. Under it, what a file needs: Expand, Open full size, and
+   text); Collapse puts the strip back. Under it, as text links (three fit the 240 column), what a file needs: Expand, Open full size, and
    Download (an `a download`). A document recorded by name only says so instead, in the strip's
    place, never cropped. The words are the caller's. */
 
@@ -57,16 +57,16 @@ export function DocumentPreview({
           className={cn("block w-full", expanded ? "h-auto" : page ? "h-auto" : "h-full object-contain p-2")}
         />
       </div>
-      <figcaption className="flex flex-wrap gap-1">
-        <Button variant="ghost" size="sm" shape="rect" aria-expanded={expanded} onClick={() => onExpandedChange(!expanded)}>
+      <figcaption className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        <Button variant="link" size="inline" aria-expanded={expanded} onClick={() => onExpandedChange(!expanded)}>
           {expanded ? copy.collapse : copy.expand}
         </Button>
-        <Button asChild variant="ghost" size="sm" shape="rect">
+        <Button asChild variant="link" size="inline">
           <a href={file.src} target="_blank" rel="noreferrer">
             {copy.openFull}
           </a>
         </Button>
-        <Button asChild variant="ghost" size="sm" shape="rect">
+        <Button asChild variant="link" size="inline">
           <a href={file.src} download={document.fileName ?? document.title}>
             {copy.download}
           </a>

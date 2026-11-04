@@ -64,6 +64,7 @@ export function PeopleView({
   onAssign,
   onRemove,
   onShare,
+  onAdd,
   hrefFor = (id) => `?id=${id}`,
   linkAs,
 }: {
@@ -77,6 +78,8 @@ export function PeopleView({
   onAssign?: (id: string) => void
   onRemove?: (id: string) => Promise<void>
   onShare?: (id: string) => void
+  /** Add someone (opens "Someone new"). Without it, the band has no Add: absent beats broken. */
+  onAdd?: () => void
   /** A person's record link. */
   hrefFor?: (id: string) => string
   linkAs?: ElementType
@@ -174,9 +177,11 @@ export function PeopleView({
             description={copy.lead}
             meta={copy.count(people.length)}
             actions={
-              <Button size="sm" icon={<PlusIcon />}>
-                {copy.add}
-              </Button>
+              onAdd && (
+                <Button size="sm" icon={<PlusIcon />} onClick={onAdd}>
+                  {copy.add}
+                </Button>
+              )
             }
           />
         }
