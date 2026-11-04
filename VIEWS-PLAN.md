@@ -200,3 +200,13 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - The stage bar's lozenge has the list Chip's metrics (24 high, 8 a side, 12 semibold); the 56 minimum is gone. People on a document use the small Avatar. Share it left the record (the stage bar's Share does it). Documents' stage bar: Download (a link to the file), Share, ⋯; below sm Download and Share are icon-only, People's Share too.
 - Back on a phone: an arrow icon button left of the stage bar's name ("Back to Documents" / "Back to People", ⟨new⟩), as a phone app's top bar; WorkspacePage's separate `back` row is gone.
 
+**What it says (George 2026-11-04):**
+- A document's values follow a sequence: scanned and read → the owner approves the read (is that what it says?) → the read values are proposed as Vault facts → the owner uses each or keeps their own. The record draws the last two steps. Each value has a state (`SaidValue`, labs/vault/views/data.ts): proposed · used (with its Area and link) · kept · unused (read, no Vault fact for it).
+- Proposed values are in **Needs you** (Use this / Keep mine). Answered, a value moves to **What it says**: one line each, name · value · where it went ("Open in Personal"), "You kept yours" or "Not in your Vault"; "Read Oct 2, 2026" at the legend's right. A value is in one place at a time. Not a tab: a record is short, and a tab would hide what needs the owner.
+- **In your Vault** is back to what the document is, Area by Area (no values under it).
+- Owner view only for now, so no masking of sensitive values (licence, policy, account numbers) yet; that comes with the shared view.
+- Open, not drawn:
+  - **Approving the read.** No step for "is this what it says?" before the values are proposed. Essential Setup skips it too (George: worth fixing if we can).
+  - **The API.** The fixtures carry each value's state, its Area and when it was read. Whether the API returns these (state per value, read date, the Area a value went to) is unverified: a contract question before this leaves labs.
+  - The list row's "2 values to check" comes from `needs`, which the record doesn't change when values are answered in place (fixture only; the real list refetches).
+  - Long documents (a will's 30 values): "Show all 30" after the first six, when a fixture needs it.

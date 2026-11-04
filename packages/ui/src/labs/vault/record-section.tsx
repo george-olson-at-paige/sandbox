@@ -56,6 +56,7 @@ export function RecordSection({
   title,
   ownerLabel,
   attention = false,
+  aside,
   empty,
   children,
 }: {
@@ -67,6 +68,8 @@ export function RecordSection({
   ownerLabel?: string
   /** The owner's to-dos ("Needs you"): the legend in the attention ink, with the alert. */
   attention?: boolean
+  /** shared: a quiet note at the legend's right ("Read Oct 2, 2026"). */
+  aside?: string
   /** The line it shows with nothing in it. The caller passes it only then; it sits above any children (an action that fills it). */
   empty?: string
   /** The section's lines (View) or fields and actions (Edit). */
@@ -99,15 +102,13 @@ export function RecordSection({
   }
   return (
     <section data-slot="record-section" data-audience="shared" aria-label={title} className="flex flex-col gap-2">
-      <h3
-        className={cn(
-          "flex items-center gap-1.5 border-b border-divider pb-2 eyebrow [&_svg]:size-icon-xs",
-          attention ? "text-attention" : "text-foreground",
-        )}
-      >
-        {attention && <CircleAlertIcon aria-hidden />}
-        {title}
-      </h3>
+      <div className="flex items-center justify-between gap-3 border-b border-divider pb-2">
+        <h3 className={cn("flex items-center gap-1.5 eyebrow [&_svg]:size-icon-xs", attention ? "text-attention" : "text-foreground")}>
+          {attention && <CircleAlertIcon aria-hidden />}
+          {title}
+        </h3>
+        {aside && <span className="text-xs font-semibold text-muted-foreground">{aside}</span>}
+      </div>
       {body}
     </section>
   )
@@ -120,16 +121,6 @@ function Line({ line, linkAs: Link }: { line: RecordLine; linkAs: ElementType })
       <span className="min-w-0">
         <span className="text-sm font-semibold">{line.label}</span>
         {line.detail && <span className="block text-sm font-medium text-muted-foreground">{line.detail}</span>}
-        {line.facts && line.facts.length > 0 && (
-          <dl className="mt-1 grid grid-cols-record-fact gap-x-3 gap-y-0.5 text-sm">
-            {line.facts.map((f) => (
-              <div key={f.key} className="contents">
-                <dt className="font-medium text-muted-foreground">{f.label}</dt>
-                <dd className="font-semibold">{f.value}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
       </span>
       {line.open && (
         <Link

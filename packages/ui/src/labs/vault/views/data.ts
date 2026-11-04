@@ -20,8 +20,6 @@ export type RecordLine = {
   detail?: string
   /** Where it lives, and the link's words ("Open in Family"). */
   open?: { href: string; label: string }
-  /** Values under it, name and value ("Date of birth · Mar 14, 1988"): what a document filled in. */
-  facts?: Array<{ key: string; label: string; value: string }>
 }
 
 /** Lines grouped under an Area: "Who they are to you", "What it's for". */
@@ -64,6 +62,24 @@ export type WaitingValue = {
   current?: string
 }
 
+/* What a document says goes through a sequence (George 2026-11-04): the document is scanned and
+   read; the owner approves the read (is that what it says?); what was read is proposed as Vault
+   facts; the owner uses each or keeps their own. The record draws the last two steps; approving
+   the read isn't drawn yet (Essential Setup skips it too, VIEWS-PLAN.md).
+   - proposed  waits for the owner: Use this / Keep mine ("Needs you").
+   - used      in the Vault, in an Area (`area`, `open`).
+   - kept      the owner kept what the Vault had (`current`).
+   - unused    read, but there's no Vault fact for it (a licence number). */
+export type SaidState = "proposed" | "used" | "kept" | "unused"
+
+/** One value a document says, and what became of it. */
+export type SaidValue = WaitingValue & {
+  state: SaidState
+  /** used: the Area it went to, and the way there ("Open in Personal"). */
+  area?: AreaRef
+  open?: { href: string; label: string }
+}
+
 export type Share = {
   id: string
   who: string
@@ -87,9 +103,8 @@ export type VaultDocument = {
   facts: Array<{ label: string; value: string }>
   note?: string
   forWhat: AreaGroup[]
-  waiting: WaitingValue[]
-  /** What was read and where it shows up. */
-  read: AreaGroup[]
+  /** What it says, once it has been read: when ("Read Oct 2, 2026", the View's words) and each value. Absent until read. */
+  said?: { readOn: string; values: SaidValue[] }
   names: Array<{ id: string; name: string; href: string }>
   shares: Share[]
 }

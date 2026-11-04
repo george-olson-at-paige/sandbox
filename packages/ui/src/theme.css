@@ -951,9 +951,9 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-workspace {
   grid-template-columns: --theme(--spacing-workspace-list-md) minmax(0, 1fr);
 }
-/* A record's filled-in values (VIEWS-PLAN.md): the field's name as wide as the longest, the value. */
-@utility grid-cols-record-fact {
-  grid-template-columns: max-content minmax(0, 1fr);
+/* What a document says (VIEWS-PLAN.md): the value's name in a 120 column, the value, and where it went. */
+@utility grid-cols-record-said {
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
 }
 /* A View's list row (VIEWS-PLAN.md): the mark in a 36 column, the text, the Area dots. */
 @utility grid-cols-view-row {

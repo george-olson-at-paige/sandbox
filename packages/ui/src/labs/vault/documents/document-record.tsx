@@ -1,27 +1,31 @@
 "use client"
 
 import type { ComponentProps, ElementType, ReactNode } from "react"
+import { useState } from "react"
 import { ArrowUpRightIcon } from "lucide-react"
 
 import { Avatar } from "../../../components/display/avatar"
 import { AreaLines, RecordCard, RecordSection } from "../record-section"
-import type { AreaGroup, VaultDocument } from "../views/data"
+import type { SaidState, SaidValue, VaultDocument } from "../views/data"
 import { StatusLine } from "../views/row-parts"
 import { DocumentLetterhead } from "./document-letterhead"
 import { ValuesToCheck, type ValuesToCheckProps } from "./values-to-check"
 
 /* @archetype Composite (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md §1a "Record card" (D-V5: lands in labs, for
-   vault/documents/). A document's record on the stage, top to bottom:
+   vault/documents/). A document's record on the stage, the owner's view, top to bottom:
    - its head, DocumentLetterhead: PersonLetterhead's shape with a file-type tile for the
      avatar, the file as its link, the facts and note (George 2026-11-04). No preview of the
      document for now; DocumentPreview stays in labs until we have real previews.
-   - "Needs you", the owner's to-dos, only when there are any (George 2026-11-04: it is why most
-     people open a document just after adding it): the values waiting for a yes, then anything
-     else it needs ("No file yet"), in the attention ink.
-   - "In your Vault", shared: Area by Area, what the document is there and, under it, what it
-     filled in, name and value (one section: "What it's for" and "What we read from it" said
-     the same Area twice). A value joins it once it's accepted.
+   - "Needs you", the owner's to-dos, only when there are any (it is why most people open a
+     document just after adding it): the values proposed for the Vault (Use this / Keep mine),
+     then anything else it needs ("No file yet"), in the attention ink.
+   - "In your Vault": Area by Area, what the document is there ("A government photo ID").
+   - "What it says", once it has been read: every value it says, one line each, its name, the
+     value and what became of it: the Area it went to (a link), "You kept yours", or "Not in
+     your Vault". A value is in one place at a time: proposed ones are in Needs you, and move
+     here once answered. When it was read sits at the legend's right. Not a tab: a record is
+     short, and a tab would hide what needs the owner (George 2026-11-04).
    - "Who it names", when it names anyone: each person's avatar and name, a link to their record.
    - "Who it's shared with": each person's avatar, name and when it takes effect. Sharing is the
      stage bar's Share. A plain section, not the owner's set-back one (George 2026-11-04).
@@ -31,8 +35,12 @@ import { ValuesToCheck, type ValuesToCheckProps } from "./values-to-check"
 export type DocumentRecordCopy = {
   /** The to-dos' legend ("Needs you"). */
   needs: string
-  /** Where it is filed and what it filled in ("In your Vault"). */
+  /** What it is, Area by Area ("In your Vault"). */
   inVault: string
+  /** Every value it says ("What it says"), and a line's words when the owner kept theirs or there's no Vault fact for it. */
+  says: string
+  kept: string
+  unused: string
   names: string
   /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
   sharedWith: string
@@ -58,20 +66,34 @@ function PersonLine({ name, detail, end }: { name: string; detail?: string; end?
   )
 }
 
-/* What it's for and what it filled in, as one set of Area groups: an Area's facts (the read
-   lines' name and value) sit under its first line. An Area it filled in but isn't filed for
-   keeps the read lines as lines. */
-function inVault(forWhat: AreaGroup[], read: AreaGroup[]): AreaGroup[] {
-  const groups = forWhat.map((g) => {
-    const filled = read.find((r) => r.area.id === g.area.id)?.lines ?? []
-    if (!filled.length || !g.lines.length) return g
-    const [first, ...rest] = g.lines
-    return { area: g.area, lines: [{ ...first, facts: filled.map((l) => ({ key: l.key, label: l.label, value: l.detail ?? "" })) }, ...rest] }
-  })
-  return [...groups, ...read.filter((r) => !forWhat.some((g) => g.area.id === r.area.id))]
+/** One value the document says: its name, the value, and what became of it. Stacks below sm. */
+function SaidLine({ value, copy, linkAs: Link }: { value: SaidValue; copy: Pick<DocumentRecordCopy, "kept" | "unused">; linkAs: ElementType }) {
+  return (
+    <li
+      data-slot="said-line"
+      data-state={value.state}
+      className="flex flex-col gap-x-3 gap-y-0.5 py-1 text-sm sm:grid sm:grid-cols-record-said sm:items-baseline"
+    >
+      <span className="font-medium text-muted-foreground">{value.label}</span>
+      <span className="font-semibold wrap-anywhere">{value.value}</span>
+      {value.state === "used" && value.open ? (
+        <Link
+          href={value.open.href}
+          className="inline-flex items-center gap-1 self-start rounded-sm text-xs font-semibold text-muted-foreground focus-ring hover:text-primary [&_svg]:size-icon-xs"
+        >
+          {value.open.label}
+          <ArrowUpRightIcon aria-hidden />
+        </Link>
+      ) : (
+        <span className="text-xs font-semibold text-muted-foreground">
+          {value.state === "kept" ? copy.kept : value.state === "unused" ? copy.unused : null}
+        </span>
+      )}
+    </li>
+  )
 }
 
-/** A document's record: its letterhead, what needs you, where it is in your Vault, who it names, and (owner only) who can see it. */
+/** A document's record (the owner's): its letterhead, what needs you, where it is in your Vault, what it says, who it names, and who it's shared with. */
 export function DocumentRecord({
   document,
   copy,
@@ -82,28 +104,50 @@ export function DocumentRecord({
   document: VaultDocument
   /** The record's words (docs/views.md). */
   copy: DocumentRecordCopy
+  /** Use a proposed value. Resolving without an error moves it from Needs you to What it says, used. */
   onUse: ValuesToCheckProps["onUse"]
+  /** Keep the Vault's own. Resolving without an error moves it to What it says, kept. */
   onKeep: ValuesToCheckProps["onKeep"]
   /** Link component for in-app links (Next's `Link`). */
   linkAs?: ElementType
 }) {
+  // What the owner answered here, until the caller hands back the document with it.
+  const [answered, setAnswered] = useState<Record<string, SaidState>>({})
+  const said = (document.said?.values ?? []).map((v) => (answered[v.key] ? { ...v, state: answered[v.key] } : v))
+  const proposed = said.filter((v) => v.state === "proposed")
+  const settled = said.filter((v) => v.state !== "proposed")
+  const answer = (state: SaidState, act: ValuesToCheckProps["onUse"]) => async (key: string) => {
+    const result = await act(key)
+    if (!(result && "error" in result)) setAnswered((a) => ({ ...a, [key]: state }))
+    return result
+  }
   // The values to check are their own to-do; the other needs are lines under them.
   const needs = document.needs.filter((n) => n.kind !== "review")
-  const vault = inVault(document.forWhat, document.read)
   return (
     <RecordCard label={document.title}>
       <DocumentLetterhead document={document} />
-      {needs.length > 0 || document.waiting.length > 0 ? (
+      {needs.length > 0 || proposed.length > 0 ? (
         <RecordSection audience="shared" attention title={copy.needs}>
-          {document.waiting.length > 0 && <ValuesToCheck values={document.waiting} onUse={onUse} onKeep={onKeep} copy={copy.values} />}
+          {proposed.length > 0 && (
+            <ValuesToCheck values={proposed} onUse={answer("used", onUse)} onKeep={answer("kept", onKeep)} copy={copy.values} />
+          )}
           {needs.map((n) => (
             <StatusLine key={n.kind} need={n.text} />
           ))}
         </RecordSection>
       ) : null}
-      {vault.length > 0 && (
+      {document.forWhat.length > 0 && (
         <RecordSection audience="shared" title={copy.inVault}>
-          <AreaLines groups={vault} linkAs={Link} />
+          <AreaLines groups={document.forWhat} linkAs={Link} />
+        </RecordSection>
+      )}
+      {document.said && settled.length > 0 && (
+        <RecordSection audience="shared" title={copy.says} aside={document.said.readOn}>
+          <ul className="flex flex-col">
+            {settled.map((v) => (
+              <SaidLine key={v.key} value={v} copy={copy} linkAs={Link} />
+            ))}
+          </ul>
         </RecordSection>
       )}
       {document.names.length > 0 && (
