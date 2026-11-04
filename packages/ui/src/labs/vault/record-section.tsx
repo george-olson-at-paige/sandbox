@@ -49,12 +49,17 @@ export function RecordSection({
   title: string
   /** owner only: the words over it ("Only visible to you"). */
   ownerLabel?: string
-  /** The line it shows with nothing in it. Drawn when `children` is empty. */
+  /** The line it shows with nothing in it. The caller passes it only then; it sits above any children (an action that fills it). */
   empty?: string
   /** The section's lines (View) or fields and actions (Edit). */
   children?: ReactNode
 }) {
-  const body = children ? children : empty && <p className="text-sm text-muted-foreground italic">{empty}</p>
+  const body = (
+    <>
+      {empty && <p className="text-sm text-muted-foreground italic">{empty}</p>}
+      {children}
+    </>
+  )
   if (audience === "owner") {
     return (
       <section data-slot="record-section" data-audience="owner" aria-label={title} className="flex flex-col gap-2 rounded-lg border border-dashed border-surface-edge bg-muted px-4 py-3.5">

@@ -940,6 +940,10 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-workspace {
   grid-template-columns: --theme(--spacing-workspace-list-md) minmax(0, 1fr);
 }
+/* A document record's head (VIEWS-PLAN.md): its text, then the document as a 240-wide strip. */
+@utility grid-cols-document-head {
+  grid-template-columns: minmax(0, 1fr) 15rem;
+}
 /* A record's résumé lines (VIEWS-PLAN.md): the Area's name in a 120 column, the lines beside it. */
 @utility grid-cols-record-line {
   grid-template-columns: 7.5rem minmax(0, 1fr);

@@ -38,7 +38,7 @@ const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "fo
     classGroups: {
       "border-w": ["border-dot"],
       shadow: [{ shadow: ["card", "lift", "pop", "avatar"] }],
-      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit", "workspace", "workspace-wide", "record-line"] }],
+      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit", "workspace", "workspace-wide", "record-line", "document-head"] }],
       // Named stacking steps (T-12): the same group as z-10, so a later z-* replaces one.
       z: [{ z: ["raised", "sticky", "overlay"] }],
       // State opacities (T-07) and the decorative-art opacity (R18-02): the same group as opacity-50.

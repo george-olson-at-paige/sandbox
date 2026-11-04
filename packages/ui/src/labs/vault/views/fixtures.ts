@@ -122,6 +122,65 @@ export const PEOPLE_COPY = {
   },
 }
 
+/** Documents' words for DocumentsView: docs/views.md and the webapp's own; ⟨new⟩ as for People. */
+export const DOCUMENTS_COPY = {
+  title: VIEW_COPY.documents.title,
+  lead: VIEW_COPY.documents.lead,
+  add: VIEW_COPY.documents.add,
+  count: (n: number) => (n === 0 ? "None yet" : n === 1 ? "1 document" : `${n} documents`),
+  search: VIEW_COPY.documents.search,
+  searchLabel: "Search documents", // ⟨new⟩
+  areas: "Filter by Area", // ⟨new⟩
+  filters: VIEW_COPY.filters,
+  needs: "Needs",
+  show: "Show",
+  shared: "Shared",
+  generated: "Made by Paige",
+  groupNeeds: VIEW_COPY.documents.groupNeeds,
+  groupReady: VIEW_COPY.documents.groupReady,
+  ready: VIEW_COPY.documents.ready,
+  none: VIEW_COPY.documents.none,
+  clear: "Clear search and filters", // ⟨new⟩
+  pickTitle: VIEW_COPY.documents.pickTitle,
+  pickLead: VIEW_COPY.documents.pickLead,
+  pickEmpty: VIEW_COPY.documents.pickEmpty,
+  startWith: VIEW_COPY.startWith,
+  back: VIEW_COPY.documents.title,
+  share: VIEW_COPY.share,
+  more: (title: string) => `Actions for ${title}`, // ⟨new⟩
+  editDetails: VIEW_COPY.editDetails,
+  remove: "Remove this document",
+  removeConfirm: (title: string) => ({
+    title: `Remove “${title}”?`,
+    description: "The file goes, and what it filled in loses it.",
+    confirmLabel: "Remove it",
+  }),
+  record: {
+    forWhat: VIEW_COPY.documents.forWhat,
+    read: VIEW_COPY.documents.read,
+    names: VIEW_COPY.documents.names,
+    canSee: VIEW_COPY.documents.canSee,
+    canSeeEmpty: VIEW_COPY.documents.canSeeEmpty,
+    ownerOnly: VIEW_COPY.ownerOnly,
+    shareIt: "Share it",
+    openPerson: "Open in People",
+    preview: {
+      expand: VIEW_COPY.documents.expand,
+      collapse: VIEW_COPY.documents.collapse,
+      openFull: VIEW_COPY.documents.openFull,
+      download: VIEW_COPY.documents.download,
+      noFile: VIEW_COPY.documents.noFile,
+    },
+    values: {
+      useThis: VIEW_COPY.documents.useThis,
+      keepMine: VIEW_COPY.documents.keepMine,
+      saving: "Saving…",
+      youHave: (current: string) => `You have ${current}`,
+      notYet: "Not in your Vault yet",
+    },
+  },
+}
+
 export const PEOPLE: Person[] = [
   {
     id: "david",

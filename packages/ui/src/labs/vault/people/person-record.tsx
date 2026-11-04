@@ -70,11 +70,11 @@ export function PersonRecord({
           )
         }
       />
-      <RecordSection audience="shared" title={person.pet ? copy.rolesPet : copy.roles} empty={copy.rolesEmpty}>
+      <RecordSection audience="shared" title={person.pet ? copy.rolesPet : copy.roles} empty={person.groups.length ? undefined : copy.rolesEmpty}>
         {person.groups.length > 0 && <AreaLines groups={person.groups} linkAs={linkAs} />}
       </RecordSection>
       {!person.pet && (
-        <RecordSection audience="owner" ownerLabel={copy.ownerOnly} title={copy.canSee} empty={copy.canSeeEmpty}>
+        <RecordSection audience="owner" ownerLabel={copy.ownerOnly} title={copy.canSee} empty={person.canSee.length ? undefined : copy.canSeeEmpty}>
           {person.canSee.length > 0 && (
             <ul className="flex flex-col gap-1.5">
               {person.canSee.map((line) => (
