@@ -61,7 +61,7 @@ These are container widths, not the window's, so the template behaves the same i
 | Value states incl. conflict / auto-filled | `vault/fact-field` | base for "values to check" |
 | Row base | `vault/fact-item`; labs `components/item` | base for the list rows |
 | Empty states | `feedback/empty-state` | base for the Pick panel |
-| Callout | `feedback/callout` | base for the owner callout (needs a variant) |
+| FieldSet (legend over a rule) | `forms/field-set` | base for a record section, shared or owner (D-V3) |
 | File glyph, file row | `display/file-icon`, `display/attachment`, `vault/documents/upload-row` | doc tile, add-document file row |
 | Dialog, popover, tooltip | `overlays/*` | as is |
 | Page header slots | `templates/page-header` | header band (needs density) |
@@ -69,14 +69,23 @@ These are container widths, not the window's, so the template behaves the same i
 ## 3. Decisions first
 
 - **D-V1 · A workspace template. Decided (George 2026-11-04): yes.** `templates/workspace-page.tsx`, full bleed under the app header. Slots: `band`, `list`, `stage`, `stageBar`. Each column scrolls on its own; below md it becomes two screens, driven by `open`. The regions and breakpoints are in §1a.
-- **D-V2 · A tool button.** Every Button is a pill. The webapp added a slightly rounded "tool" look for actions that aren't the call to action (Share, ⋯, the funnel, Assign/Remove, Expand). Proposal: a `shape` axis on Button and IconButton (`pill` default · `rect`), in `lib/vocabulary.ts`, not a new variant (`variant` is a retired word).
-- **D-V3 · A quiet callout.** "Only visible to you" is muted and dashed, with a lock. Proposal: Callout `tone="private"` (dashed line, muted surface, lock icon, eyebrow title) rather than a one-off box.
-- **D-V4 · Area filter chips.** These are pressed toggles with a dot and a count, not removable applied filters. Proposal: `patterns/area-chips.tsx`, built on ToggleGroup's multi-select, so GAPS #62's "no chip variant" holds. Or revive ToggleGroup `chip`.
-- **D-V5 · Where the record cards live.** Proposal: `vault/people/` and `vault/documents/` hold the domain parts. The stage bar and the Pick panel are generic, so they go in `patterns/`.
+- **D-V2 · A tool button. Decided (George 2026-11-04): a `shape` axis.** Button and IconButton get `shape` (`pill`, the default, · `rect`, an 8px radius), in `lib/vocabulary.ts`. A pill is the page's call to action (Add someone); a rect is a tool (Share, ⋯, the filter button, Expand, Assign, Remove). It is an axis, not a variant (`variant` is a retired word), so any emphasis can be rect.
+- **D-V3 · "Only visible to you" is a section, not a callout (George 2026-11-04).** It was the webapp fieldset's intent: a group under one legend, closer to a form section than a short note. It reads in View and holds fields and actions in Edit. **Proposed meaning, for George to confirm:** a record is made of sections, and each section has an **audience**:
+  - `shared`: what the people the owner shares with would read. "Who they are to you", "What it's for".
+  - `owner`: only the owner sees it. "What they can see", "Who can see it".
+
+  The audience is the axis, and the look follows from it: an owner section is set back, dashed and muted, with a lock and "Only visible to you" in its legend. One frame (`record-section`, built from FieldSet's legend-and-rule) serves both, so what the owner sees and what they share stay visibly different without a second component.
+- **D-V4 · Chips: define the archetype first, then specialize (George 2026-11-04).** No Area-only piece up front. First a general **Chip**:
+  - **Archetype:** a Control (it holds a state, as ToggleGroup does).
+  - **Parts:** a label, an optional leading mark (a Dot, an icon or an Avatar) and an optional count, with pressed and disabled states.
+  - **ChipGroup:** single or multi choice, arrow keys, `aria-pressed`.
+
+  The stories show it in several jobs (a status filter, needs, Areas) to see how it holds up across them. Area chips are the first specialization once it does. This reopens GAPS #62 on the archetype, not as a fourth ToggleGroup look.
+- **D-V5 · Everything starts in `labs/` (George 2026-11-04).** Every new piece lands at level 0 in `src/labs/` (`INTAKE.md`'s route) with an `@from` / purpose header, and moves to its layer when George approves it. §4's "Layer" column is where each piece is expected to end up, not where it starts. Changes to existing components (Button `shape`) are the exception: they land in place, as a change to that component.
 
 ## 4. Pieces to add, by layer
 
-Level is the target for the first pass. Everything starts at level 1 (shaped: in its folder, one story per state, a Wireframe where required); plays come in the approve pass.
+Every new piece starts in `src/labs/` at level 0 (D-V5). The first column is where it is expected to land once approved. Level 1 (shaped: one story per state, a Wireframe where required) comes with the move. Plays come in the approve pass.
 
 | Layer · file | Piece | Built from | States in stories |
 |---|---|---|---|
@@ -84,25 +93,25 @@ Level is the target for the first pass. Everything starts at level 1 (shaped: in
 | `fixtures/vault-documents.ts` | ID, insurance card, will (generated), untyped scan, no-file record; read values, waiting values, shares | `DocumentRow` / `DocumentDetail` shapes | — |
 | `icons` (action icons) | `download`, `lock` | — | Foundations › Icons |
 | `components/actions/button` | `shape="rect"` (D-V2) | Button, IconButton | sizes × shape |
-| `components/feedback/callout` | `tone="private"` (D-V3) | Callout | with section title, empty line |
+| `components/inputs/chip.tsx` + `chip-group` | Chip (D-V4): label, leading mark, count, pressed; group single · multi | ToggleGroup's item model, Dot, Avatar | a status filter · needs · Areas · with and without counts · disabled · wraps · keyboard |
 | `forms/fields/email-field.tsx` | Email field | Input type email + Field | empty, invalid, filled |
-| `patterns/area-chips.tsx` | Area toggle chips (D-V4) | ToggleGroup, Dot | none · some picked · zero counts hidden · wraps |
+| `patterns/area-chips.tsx` | Area chips: the first Chip specialization (D-V4), once Chip holds up | Chip, ChipGroup, Dot | none · some picked · zero counts hidden · wraps |
 | `patterns/list-group.tsx` | Group heading with count, flat rows under it | Separator, Eyebrow | grouped · flat · one empty group dropped |
 | `patterns/stage-bar.tsx` | Title, chip, steady sub line, actions slot | Badge, Button rect, RowActions | View · Edit (Done) · long title · no sub · phone |
 | `patterns/pick-panel.tsx` | Ring icon, title, lead, "Start with these" links | EmptyState, Item | with items · none needing · nothing at all |
 | `templates/page-header` | `density="compact"` (the band) | PageHeader | desktop · phone (Add under) |
 | `templates/workspace-page.tsx` | Band · list \| stage (D-V1) | Split, scroll regions | Wireframe · nothing open · open · phone list · phone record · long list |
 | `vault/record-card.tsx` | The centred card on the stage | Card | View · Edit |
-| `vault/record-section.tsx` | Résumé section: eyebrow over rule, Area label column, line, "Open in" | Eyebrow, Separator, Dot | groups · sided lines · empty (View / Edit flag) · phone stack |
+| `vault/record-section.tsx` | A record's section with an `audience` (D-V3): `shared` (résumé: legend over rule, Area label column, line, "Open in") · `owner` (set back: dashed, muted, lock, "Only visible to you") | FieldSet's legend, Separator, Dot | shared · owner · groups · sided lines · empty (View / Edit flag) · with fields (Edit) · phone stack |
 | `vault/people/person-row.tsx` | List row: avatar, title, sub, status line, Area dots | FactItem / labs Item, Avatar, Dot | need · none · selected · pet · long name |
 | `vault/people/person-letterhead.tsx` | Contact card + inline "Add a phone or email" | Avatar | spouse · minor · adult child · pet · no reach · photo |
 | `vault/people/reach-form.tsx` | Mobile + email, one save | PhoneField, EmailField, Form | empty · saving · error · field error |
-| `vault/people/person-record.tsx` | Letterhead + sections + owner callout + Edit fields + remove | the above | View · Edit by kinship · removing · notices |
+| `vault/people/person-record.tsx` | Letterhead + sections (shared and owner) + Edit fields + remove | the above | View · Edit by kinship · removing · notices |
 | `vault/people/placement-dialog.tsx` | Where {first} fits | Dialog, Switch | suggested · saving row · row error |
 | `vault/documents/document-row.tsx` | List row: doc tile, title, sub, status (alert or Ready), dots | FactItem / Item, FileIcon | needs · ready · generated · untyped · no Area |
 | `vault/documents/document-preview.tsx` | 150px strip, Expand, Open full size, Download | — | image · PDF · text · other · no file · opening · didn't open · expanded |
 | `vault/documents/values-to-check.tsx` | Waiting value with Use this / Keep mine | FactField (conflict) | differs · not in Vault · busy |
-| `vault/documents/share-form.tsx` | Who can see it + Share it form | Callout private, Input, Select | none · shared · form · sharing · error |
+| `vault/documents/share-form.tsx` | Who can see it + Share it form, in an owner section | record-section (owner), Input, Select | none · shared · form · sharing · error |
 | `vault/documents/document-record.tsx` | Text \| preview, the sections, remove | the above | View · Edit · will · no file · values waiting |
 | `vault/documents/add-document-dialog.tsx` | File first, then name and type | Dialog, Attachment | picked · too big · adding · failed |
 | `apps/web/app/people/page.tsx` + `features/people/people-screen.tsx` | The page on fixtures, `?id=` / `?mode=` | WorkspacePage + the above | — |
@@ -110,15 +119,15 @@ Level is the target for the first pass. Everything starts at level 1 (shaped: in
 
 ## 5. Order
 
-1. **D-V1–D-V5 answered.**
+1. **D-V1–D-V5 answered** (2026-11-04; D-V3's audience meaning to confirm).
 2. **Walking skeleton.**
    - Fixtures.
    - `WorkspacePage` with a Wireframe story.
    - `/people` in `apps/web` with placeholder rows and stage.
    - This proves the frame, the phone two screens, and the scrolling.
-3. **List.** `area-chips`, `list-group`, `person-row`, `document-row`. The toolbar is reused.
+3. **List.** Chip and ChipGroup first (the archetype, several jobs), then `area-chips`, `list-group`, `person-row`, `document-row`. The toolbar is reused.
 4. **Stage shell.** `stage-bar` (with Button `rect`), `pick-panel`, `record-card`.
-5. **Person.** `record-section`, Callout `private`, `person-letterhead`, `reach-form` (with EmailField), `person-record`, `placement-dialog`.
+5. **Person.** `record-section` (shared · owner), `person-letterhead`, `reach-form` (with EmailField), `person-record`, `placement-dialog`.
 6. **Document.** `document-preview`, `values-to-check`, `share-form`, `document-record`, `add-document-dialog`.
 7. **Screens.** Both routes end to end on fixtures, with every state from the table reachable by `?as=` / `?id=`.
 8. **Approve pass.**
