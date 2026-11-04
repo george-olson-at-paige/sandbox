@@ -9,17 +9,17 @@ import { Input } from "../../../components/inputs/input"
 import type { SaidValue } from "../views/data"
 
 /* @archetype Item (ARCHETYPES.md).
-   @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md "What it says" (George 2026-11-04): every value a
-   document says, one line each, in the document's order, and the one place the owner acts on
-   it. A line is its name, the value, and what is next for it by its state (data.ts SaidState):
+   @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md "Checking the read" (George 2026-11-04): values
+   read off a document, one line each, in the document's order. A line is its name, the value, and what is next for it by its state (data.ts SaidState):
    - read      not checked yet: Looks right, and Fix.
    - proposed  checked, and the Vault holds something else or nothing: why ("You have …",
                "Not in your Vault yet", the attention ink) under the value; Use this, and Keep
                mine when the Vault holds something.
-   - used      in the Vault: the way to its Area ("Open in Personal"), and Fix.
-   - kept      the owner kept theirs: "You kept yours", and Fix.
-   - unused    no Vault fact for it: "Not in your Vault", and Fix.
-   Fix is there in every state but proposed: the value turns into an input with Save and Cancel
+   - used      in the Vault: the way to its Area ("Open in Personal").
+   - kept      the owner kept theirs: "You kept yours".
+   - unused    no Vault fact for it: "Not in your Vault".
+   The record shows the waiting ones (read, proposed) in Needs you and the settled ones in What
+   we read, which has no acts. Fix is only on a value not checked yet: the value turns into an input with Save and Cancel
    (Escape cancels). One line acts at a time (`busy`): its buttons off, its own says so ("Saving…").
    A failed act stays on its line with the reason; the input keeps what was typed. Below sm a line
    stacks: name, value, then what's next. */
@@ -84,7 +84,7 @@ export function SaidList({
       {values.map((v) => {
         const editing = fixing?.key === v.key
         const saving = busy === v.key || (busy === "*" && v.state === "read")
-        const fixButton = onFix && v.state !== "proposed" && (
+        const fixButton = onFix && v.state === "read" && (
           <Button variant="link" size="inline" className="text-xs" disabled={off} onClick={() => setFixing({ key: v.key, value: v.value })}>
             {copy.fix}
           </Button>

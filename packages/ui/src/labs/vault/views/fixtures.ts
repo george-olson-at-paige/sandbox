@@ -166,9 +166,8 @@ export const DOCUMENTS_COPY = {
   }),
   record: {
     needs: VIEW_COPY.documents.groupNeeds,
-    toCheck: (n: number) => (n === 1 ? "1 value to check" : `${n} values to check`), // ⟨new⟩
     inVault: "In your Vault", // ⟨new⟩ (replaces "What it’s for")
-    says: "What it says", // ⟨new⟩ (replaces "What we read from it"; George 2026-11-04)
+    read: "What we read", // ⟨new⟩ (replaces "What we read from it"; George 2026-11-04)
     waiting: (n: number) => `${n} to check`, // ⟨new⟩
     confirmAll: "Confirm all", // ⟨new⟩
     said: {

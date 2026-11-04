@@ -211,10 +211,10 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
   - The list row's "2 values to check" comes from `needs`, which the record doesn't change when values are answered in place (fixture only; the real list refetches).
   - Long documents (a will's 30 values): "Show all 30" after the first six, when a fixture needs it.
 
-**Checking the read (George 2026-11-04):**
-- Values stay on their own line in **What it says**; that is where every act happens (SaidList, labs/vault/documents/said-list.tsx). New state `read` (not checked): Looks right · Fix. Checked, a value goes on by what the Vault holds: no Vault field → unused; same value → used; otherwise proposed (Use this / Keep mine). Used, kept and unused lines keep Fix. Fix turns the value into an input with Save and Cancel (Escape cancels).
-- The legend's right says how many wait ("4 to check", attention) and has **Confirm all** when more than one is unchecked; no decline all. With nothing waiting it says when it was read. Order: the document's own (consistent).
-- **Needs you** is a pointer: "4 values to check ↓", a link to the section, then the other needs.
+**Checking the read (George 2026-11-04, second pass):**
+- **Needs you** stays at the top and is the queue: every value waiting, one line each (SaidList, labs/vault/documents/said-list.tsx), and the only place a value is acted on. Not checked yet (`read`): Looks right · Fix. Checked, for the Vault (`proposed`): Use this / Keep mine. Its legend's right: "4 to check" and **Confirm all** (when more than one is unchecked; no decline all). Then the other needs ("No file yet").
+- Checked, a value goes on by what the Vault holds: no Vault field → unused; same value → used; otherwise proposed (stays in the queue). Fix turns the value into an input with Save and Cancel (Escape cancels).
+- Once settled (used, kept, unused) a value moves to **What we read** (⟨new⟩, was "What it says": Paige speaking, a relationship), with what became of it and no acts; "Read Oct 2, 2026" at its right. Order: the document's own in both.
 - A review queue elsewhere (notifications, the list's group) can gather the same lines later.
 - **EmptyState `size="xs"`** (in a section): one muted line where a section's content would be, its action on the same line; RecordSection's `empty` uses it.
 - Not drawn: "Couldn't read" (a label found, no value: Add it); "Not this document"; changing a used value asking "Change it in Personal too?". ValuesToCheck is gone (SaidList replaces it).

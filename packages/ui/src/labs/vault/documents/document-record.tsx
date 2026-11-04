@@ -2,7 +2,7 @@
 
 import type { ComponentProps, ElementType, ReactNode } from "react"
 import { useState } from "react"
-import { ArrowDownIcon, ArrowUpRightIcon } from "lucide-react"
+import { ArrowUpRightIcon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { Avatar } from "../../../components/display/avatar"
@@ -18,16 +18,15 @@ import { SaidList, type SaidListCopy } from "./said-list"
    - its head, DocumentLetterhead: PersonLetterhead's shape with a file-type tile for the
      avatar, the file as its link, the facts and note (George 2026-11-04). No preview of the
      document for now; DocumentPreview stays in labs until we have real previews.
-   - "Needs you", the owner's to-dos, only when there are any (it is why most people open a
-     document just after adding it), in the attention ink: how many values wait in What it says
-     (a link down to it), then anything else it needs ("No file yet").
+   - "Needs you", the owner's to-dos, only when there are any, in the attention ink, at the top
+     (George 2026-11-04: the queue): the values waiting, each on its own line (SaidList) with its
+     act, Looks right or Fix (not checked yet) or Use this / Keep mine (checked, for the
+     Vault); its right says how many and has Confirm all when more than one isn't checked (no
+     decline all). Then anything else it needs ("No file yet"). The only place a value is acted on.
    - "In your Vault": Area by Area, what the document is there ("A government photo ID").
-   - "What it says", once it has been read: every value it says (SaidList), in the document's
-     order, each with what is next for it on its own line: Looks right or Fix (not checked
-     yet), Use this / Keep mine (checked, for the Vault), or what became of it, with Fix. The one
-     place a value is acted on (George 2026-11-04: a value stays where it is; a review queue can
-     gather the same lines later). The legend's right says how many wait, with Confirm all
-     when more than one hasn't been checked (no decline all), or when it was read.
+   - "What we read" (George 2026-11-04: Paige speaking, "we", the relationship, not the paper):
+     a value once settled moves here from Needs you, with what became of it: the Area it went to
+     (a link), "You kept yours" or "Not in your Vault". No acts. When it was read at its right.
    - "Who it names", when it names anyone: each person's avatar and name, a link to their record.
    - "Who it's shared with": each person's avatar, name and when it takes effect, or a compact
      empty line. Sharing is the stage bar's Share.
@@ -37,15 +36,14 @@ import { SaidList, type SaidListCopy } from "./said-list"
 type Result = void | { error: string }
 
 export type DocumentRecordCopy = {
-  /** The to-dos' legend ("Needs you"), and its line for values waiting ("3 values to check"). */
+  /** The to-dos' legend ("Needs you"); its right: how many values wait ("3 to check"), Confirm all. */
   needs: string
-  toCheck: (n: number) => string
-  /** What it is, Area by Area ("In your Vault"). */
-  inVault: string
-  /** Every value it says ("What it says"); the legend's right: how many wait ("3 to check"), Confirm all. */
-  says: string
   waiting: (n: number) => string
   confirmAll: string
+  /** What it is, Area by Area ("In your Vault"). */
+  inVault: string
+  /** The values settled ("What we read"); its right says when it was read. */
+  read: string
   said: SaidListCopy
   names: string
   /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
@@ -129,23 +127,46 @@ export function DocumentRecord({
     if (result && "error" in result) setConfirmError(result.error)
     else change(keys, (v) => ({ state: checked(v) }))
   }
-  const saysId = `says-${document.id}`
-  // Values have their own line in Needs you (waiting.length); the list's "review" need is that.
+  const settled = said.filter((v) => v.state !== "read" && v.state !== "proposed")
+  const lists = {
+    copy: copy.said,
+    busy,
+    onBusy: setBusy,
+    linkAs: Link,
+    onConfirm: onConfirm && ((key: string) => then(onConfirm([key]), () => change([key], (v) => ({ state: checked(v) })))),
+    onFix: onFix && ((key: string, value: string) => then(onFix(key, value), () => change([key], () => ({ value })))),
+    onUse: (key: string) => then(onUse(key), () => change([key], () => ({ state: "used" }))),
+    onKeep: (key: string) => then(onKeep(key), () => change([key], () => ({ state: "kept" }))),
+  }
+  // The values waiting are Needs you's own lines; the list's "review" need is that.
   const needs = document.needs.filter((n) => n.kind !== "review")
   return (
     <RecordCard label={document.title}>
       <DocumentLetterhead document={document} />
       {needs.length > 0 || waiting.length > 0 ? (
-        <RecordSection audience="shared" attention title={copy.needs}>
-          {waiting.length > 0 && (
-            <a
-              href={`#${saysId}`}
-              className="inline-flex items-center gap-1 self-start rounded-sm text-sm font-semibold text-attention focus-ring hover:underline [&_svg]:size-icon-xs"
-            >
-              {copy.toCheck(waiting.length)}
-              <ArrowDownIcon aria-hidden />
-            </a>
+        <RecordSection
+          audience="shared"
+          attention
+          title={copy.needs}
+          aside={
+            waiting.length > 0 && (
+              <>
+                <span className="text-attention">{copy.waiting(waiting.length)}</span>
+                {onConfirm && unchecked.length > 1 && (
+                  <Button variant="link" size="inline" className="eyebrow" disabled={busy !== null} onClick={confirmAll}>
+                    {busy === "*" ? copy.said.saving : copy.confirmAll}
+                  </Button>
+                )}
+              </>
+            )
+          }
+        >
+          {confirmError && (
+            <p role="alert" className="text-xs font-semibold text-destructive">
+              {confirmError}
+            </p>
           )}
+          {waiting.length > 0 && <SaidList values={waiting} {...lists} />}
           {needs.map((n) => (
             <StatusLine key={n.kind} need={n.text} />
           ))}
@@ -156,42 +177,9 @@ export function DocumentRecord({
           <AreaLines groups={document.forWhat} linkAs={Link} />
         </RecordSection>
       )}
-      {document.said && said.length > 0 && (
-        <RecordSection
-          id={saysId}
-          audience="shared"
-          title={copy.says}
-          aside={
-            waiting.length > 0 ? (
-              <>
-                <span className="text-attention">{copy.waiting(waiting.length)}</span>
-                {onConfirm && unchecked.length > 1 && (
-                  <Button variant="link" size="inline" className="eyebrow" disabled={busy !== null} onClick={confirmAll}>
-                    {busy === "*" ? copy.said.saving : copy.confirmAll}
-                  </Button>
-                )}
-              </>
-            ) : (
-              document.said.readOn
-            )
-          }
-        >
-          {confirmError && (
-            <p role="alert" className="text-xs font-semibold text-destructive">
-              {confirmError}
-            </p>
-          )}
-          <SaidList
-            values={said}
-            copy={copy.said}
-            busy={busy}
-            onBusy={setBusy}
-            linkAs={Link}
-            onConfirm={onConfirm && ((key) => then(onConfirm([key]), () => change([key], (v) => ({ state: checked(v) }))))}
-            onFix={onFix && ((key, value) => then(onFix(key, value), () => change([key], () => ({ value }))))}
-            onUse={(key) => then(onUse(key), () => change([key], () => ({ state: "used" })))}
-            onKeep={(key) => then(onKeep(key), () => change([key], () => ({ state: "kept" })))}
-          />
+      {document.said && settled.length > 0 && (
+        <RecordSection audience="shared" title={copy.read} aside={document.said.readOn}>
+          <SaidList values={settled} {...lists} />
         </RecordSection>
       )}
       {document.names.length > 0 && (
