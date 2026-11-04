@@ -23,10 +23,14 @@ const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "fo
         "chart-sm", "chart", "chart-lg", "dag", "dag-lg", "table", "table-lg", "spark-sm", "spark", "spark-lg",
         // Row and bar scale (T-06): h-row-header, h-bar, h-app-header.
         "row-header", "bar", "app-header",
+        // WorkspacePage: h-workspace, the list column's two widths.
+        "workspace", "workspace-list-md", "workspace-list",
       ],
       container: [
         // max-w-card: one card alone on a page (the auth card, R18-18).
         "page", "focused", "wide", "card", "measure", "display",
+        // max-w-record: a record card on a WorkspacePage's stage.
+        "record",
         // Overlay scale (T-04): min-w-menu, w-popover, max-w-dialog.
         "menu", "menu-wide", "popover", "popover-wide", "dialog-sm", "dialog", "dialog-lg",
       ],
@@ -34,7 +38,7 @@ const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "fo
     classGroups: {
       "border-w": ["border-dot"],
       shadow: [{ shadow: ["card", "lift", "pop", "avatar"] }],
-      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit"] }],
+      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit", "workspace", "workspace-wide"] }],
       // Named stacking steps (T-12): the same group as z-10, so a later z-* replaces one.
       z: [{ z: ["raised", "sticky", "overlay"] }],
       // State opacities (T-07) and the decorative-art opacity (R18-02): the same group as opacity-50.

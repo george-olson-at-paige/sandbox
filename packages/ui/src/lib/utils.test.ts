@@ -26,8 +26,8 @@ test("Paige shadows replace each other and the upstream aliases", () => {
   assert.equal(cn("shadow-avatar ring-3 ring-white"), "shadow-avatar ring-3 ring-white")
 })
 
-test("grid-cols-fit-*, grid-cols-area-page and grid-cols-street-unit are column templates", () => {
-  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit"]) {
+test("grid-cols-fit-*, grid-cols-area-page, grid-cols-street-unit and grid-cols-workspace* are column templates", () => {
+  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit", "grid-cols-workspace", "grid-cols-workspace-wide"]) {
     assert.equal(cn("grid-cols-2", c), c)
   }
 })
@@ -164,4 +164,11 @@ test("border-border-strong is a border colour (R15-13), and the halo and inner r
   assert.equal(cn("inset-ring-1 inset-ring-primary focus-visible:ring-3 focus-visible:ring-ring/50"), "inset-ring-1 inset-ring-primary focus-visible:ring-3 focus-visible:ring-ring/50")
   // The typed controls' halo width replaces an earlier ring width.
   assert.equal(cn("focus-visible:ring-0", "focus-visible:ring-3"), "focus-visible:ring-3")
+})
+
+test("WorkspacePage's tokens are named sizes: h-workspace, w-workspace-list*, max-w-record", () => {
+  assert.equal(cn("h-bar", "h-workspace"), "h-workspace")
+  assert.equal(cn("w-rail", "w-workspace-list"), "w-workspace-list")
+  assert.equal(cn("w-workspace-list-md", "w-workspace-list"), "w-workspace-list")
+  assert.equal(cn("max-w-wide", "max-w-record"), "max-w-record")
 })

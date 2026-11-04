@@ -444,6 +444,10 @@
   --spacing-page-top-roomy: 3rem; /* 48: Page top="roomy", SetupBeat (R2-04; prototype .vf-body 44) */
   --spacing-page-bottom: 3rem;   /* 48 */
   --spacing-rail: 21rem;         /* 336; below lg the rail stacks under the main column */
+  /* WorkspacePage's list column (VIEWS-PLAN.md §1a): 300 from md, 360 from lg. Below md the list
+     is a screen of its own. */
+  --spacing-workspace-list-md: 18.75rem; /* 300 */
+  --spacing-workspace-list: 22.5rem;     /* 360 */
 
   /* Control scale (T-01): the height of a thing you press or type into, named once so "make
      controls 40" is one line. control-sm 36: Button sm, the icon button, a toolbar's field and
@@ -495,12 +499,17 @@
   --spacing-row-header: 2.5rem;  /* 40 */
   --spacing-bar: 3.5rem;         /* 56 */
   --spacing-app-header: 4rem;    /* 64 */
+  /* WorkspacePage from md: the window under the app header, so the list and the stage each
+     scroll on their own. h-workspace. */
+  --spacing-workspace: calc(100dvh - 4rem);
 
   /* widths: max-w-page (gutters inside) · max-w-focused · max-w-wide (centered columns) ·
      max-w-measure (prose). */
   --container-page: 87.5rem;     /* 1400 */
   --container-focused: 48rem;    /* 768 */
   --container-wide: 60rem;       /* 960 */
+  /* max-w-record: a record card on a WorkspacePage's stage, centred (VIEWS-PLAN.md §1a). */
+  --container-record: 45rem;     /* 720 */
   /* max-w-card: one card alone on a page, centred inside focused (R18-18: the auth card; 448,
      the width dialog-sm also has — a form's one comfortable column). */
   --container-card: 28rem;       /* 448 */
@@ -926,6 +935,13 @@ input::-webkit-strong-password-auto-fill-button {
 /* AreaPage: main column + right rail (prototype vault.css:119, 1fr / 336px). */
 @utility grid-cols-area-page {
   grid-template-columns: minmax(0, 1fr) --theme(--spacing-rail);
+}
+/* WorkspacePage: list | stage (VIEWS-PLAN.md §1a). 300 from md, 360 from lg (-wide). */
+@utility grid-cols-workspace {
+  grid-template-columns: --theme(--spacing-workspace-list-md) minmax(0, 1fr);
+}
+@utility grid-cols-workspace-wide {
+  grid-template-columns: --theme(--spacing-workspace-list) minmax(0, 1fr);
 }
 /* AddressField's street and apt (George 2026-10-28): 80/20, the apt never under 6rem (a phone's
    20% is too narrow for "Apt 12B" and its label). */

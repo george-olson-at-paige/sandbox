@@ -158,6 +158,7 @@
     "./templates/page": "./src/templates/page.tsx",
     "./templates/page-header": "./src/templates/page-header.tsx",
     "./templates/setup-beat": "./src/templates/setup-beat.tsx",
+    "./templates/workspace-page": "./src/templates/workspace-page.tsx",
     "./theme.css": "./src/theme.css",
     "./vault/areas/area-icon": "./src/vault/areas/area-icon.tsx",
     "./vault/areas/area-tile": "./src/vault/areas/area-tile.tsx",

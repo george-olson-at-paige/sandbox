@@ -4,7 +4,7 @@ import "./preview.css"
 
 /* Viewports at the layout's breakpoints (R1-23): phone, sm, lg, xl and a wide desktop. */
 const VIEWPORTS = Object.fromEntries(
-  ([[375, "Phone"], [640, "sm"], [1024, "lg"], [1280, "xl"], [1440, "Desktop"]] as const).map(([w, n]) => [
+  ([[375, "Phone"], [640, "sm"], [768, "md"], [1024, "lg"], [1280, "xl"], [1440, "Desktop"]] as const).map(([w, n]) => [
     `w${w}`,
     { name: `${n} (${w})`, styles: { width: `${w}px`, height: "900px" }, type: w < 640 ? "mobile" : w < 1024 ? "tablet" : "desktop" },
   ])
