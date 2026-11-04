@@ -16,7 +16,7 @@ const meta = {
   decorators: [
     (S) => (
       <div className="flex min-h-screen flex-col bg-background">
-        <StoryAppHeader frame="workspace" />
+        <StoryAppHeader />
         <S />
       </div>
     ),

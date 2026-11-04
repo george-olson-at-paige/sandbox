@@ -22,7 +22,6 @@ function AppHeader({
   logo,
   nav,
   actions,
-  frame = "page",
   className,
 }: {
   /** The product mark (usually a link home). */
@@ -31,14 +30,12 @@ function AppHeader({
   nav?: ReactNode
   /** Global actions only, at the right edge: search, notifications, account, the Mode switch. Page actions go in PageHeader. */
   actions?: ReactNode
-  /** page (default): the row in the page frame (1400, the page gutter), over a reading page. workspace: full width with the workspace gutter, over a WorkspacePage, so the logo starts on the workspace's edge. */
-  frame?: "page" | "workspace"
   /** Extra classes on the header element (sticky positioning and the like), not restyling. */
   className?: string
 }) {
   return (
     <header data-slot="app-header" className={cn("shrink-0 border-b bg-background", className)}>
-      <div className={cn("flex flex-wrap items-center gap-x-6", frame === "workspace" ? "w-full gutter-workspace" : "page-frame")}>
+      <div className="page-frame flex flex-wrap items-center gap-x-6">
         <div className="flex h-app-header shrink-0 items-center">{logo}</div>
         {nav && (
           <div

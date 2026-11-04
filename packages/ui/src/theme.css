@@ -987,8 +987,8 @@ input::-webkit-strong-password-auto-fill-button {
   max-width: --theme(--container-page);
   padding-inline: var(--gutter);
 }
-/* The workspace edge: WorkspacePage's regions and an AppHeader with frame="workspace" (no max
-   width, the workspace gutter), so the logo, the band, the list and the stage bar share it. */
+/* The workspace edge: inside WorkspacePage's ruled box (and its regions on a phone), where the
+   list's rows and the stage bar start, so they share it. */
 @utility gutter-workspace {
   padding-inline: var(--gutter-workspace);
 }

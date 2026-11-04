@@ -34,20 +34,16 @@ const ACCOUNT_ITEMS = [
 
 export function VaultShell({
   mode = "vault",
-  frame,
   owner,
   children,
 }: {
   mode?: Mode
-  /** workspace: over a WorkspacePage (People, Documents), the header on the workspace's edge. */
-  frame?: "page" | "workspace"
   owner: { name: string; email?: string; avatar: string }
   children: ReactNode
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <AppHeader
-        frame={frame}
         logo={<PaigeLogo />}
         nav={
           <TabsPillList aria-label="Modes">

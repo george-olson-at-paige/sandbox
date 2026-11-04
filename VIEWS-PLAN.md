@@ -178,9 +178,15 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
    It goes to the copy pass.
 
 **Frame pass (George 2026-11-04, the inspection's 1–6):**
-1. **One edge.** `gutter-workspace` (16; 24 from sm) is used by AppHeader `frame="workspace"`, the band, the list's controls, the group headings, the rows and the stage bar.
+1. **One edge.** `gutter-workspace` (16; 24 from sm) is used by the list's controls, the group headings, the rows and the stage bar (and the band and back row below md). *Superseded by the framed pass below for the header and the band.*
 2. **The compact band.** PageHeader's right side is centred on the title row, and the content may narrow to 12rem, so a phone keeps the count beside the title.
 3. **The selected row.** It uses `bg-accent` (the brand's lightest tint) with the 3px bar. Pressed chips use the same tint.
 4. **The ⋯.** It is now `secondary` and `rect`, bordered like Share; useActionMenu takes `secondary`.
 5. **Chips and the phone.** Chips are 24px high and tighter. Below sm the Area chips are the filter popover's first set, and the button's count includes them.
 6. **Compact rows.** ViewRow has its own layout (`grid-cols-view-row`): a 14px name over 12px lines, on the gutter. It no longer uses ItemFrame.
+
+**Framed pass (George 2026-11-04: "consistent", medium rules, a frame border left and right):**
+- From md, WorkspacePage sits in the page frame (1400, the page gutter) like Home and the Area pages. AppHeader's `frame` prop is gone; the logo, the band's title and the box's left rule share one edge.
+- The list and the stage sit in a box ruled at the region weight (`border`, neutral-300), not the hairline: the band's rule on top, the frame's rules left and right, one between list and stage. The stage bar's and the back row's rules are `border` too; rows keep the hairline (row level).
+- Inside the box the list and the stage bar keep the 24 inset; below md nothing changes (no frame, the screen is the box).
+- At 768 the frame's 48px makes item 7 (the résumé lines squeezed beside the Area label) worse: the record's lines need to stack under their label below lg.

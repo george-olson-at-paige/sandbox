@@ -6,7 +6,8 @@ import { cn } from "../lib/utils"
 /* @archetype Frame (ARCHETYPES.md).
    WorkspacePage (D-V1, George 2026-11-04; VIEWS-PLAN.md §1a): a View's workspace — find a
    record on the left, read or fix it on the right. People and Documents; the next Views too.
-   Full bleed under the app header: no page frame, no 1400 cap. A reading page uses Page.
+   It sits in the page frame (1400, the page gutter) like Home and the Area pages, so the logo,
+   the band's title and the workspace's edge line up from page to page.
 
    Each region has one job. Anything that isn't that job goes in another region.
    - band     Name the View and its one way in: icon tile, title, lead, count, the View's
@@ -20,10 +21,13 @@ import { cn } from "../lib/utils"
               Actions on one part of the record sit on that part, not here.
    - back     Below md only: the way from the record back to the list.
 
-   One edge: the band, the back row and what the caller puts in the list and the stage bar start
-   at the workspace gutter (`gutter-workspace`: 16, 24 from sm), and so does an AppHeader with
-   `frame="workspace"` over it. The list's and the stage bar's insides are the caller's; they use
-   the same utility.
+   Edges. From md the band starts on the frame's edge, under the logo, and the list and stage
+   sit in a box ruled at the region weight (`border`, not the hairline): the band's rule on
+   top, the frame's rules left and right, one between the list and the stage. Inside the box
+   the list's and the stage bar's contents start at the workspace gutter (`gutter-workspace`:
+   24 from sm), the caller's, with the same utility. Below md there is no frame: the screen is
+   the box, and the band, the back row, the list and the stage bar start at the workspace
+   gutter (16, 24 from sm).
 
    Breakpoints (theme.css, the standard ones):
    - below md (768): one column, two screens. `open` false shows the band and the list;
@@ -61,15 +65,15 @@ function WorkspacePage({
   stageLabel: string
 }) {
   return (
-    <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0">
-      <div data-slot="workspace-band" className={cn("border-b border-divider bg-background py-3 gutter-workspace", open && "max-md:hidden")}>
+    <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0 md:page-frame">
+      <div data-slot="workspace-band" className={cn("border-b border-border bg-background py-3 max-md:gutter-workspace", open && "max-md:hidden")}>
         {band}
       </div>
-      <div data-slot="workspace-columns" className="flex flex-1 flex-col md:grid md:min-h-0 md:grid-cols-workspace lg:grid-cols-workspace-wide">
+      <div data-slot="workspace-columns" className="flex flex-1 flex-col md:grid md:min-h-0 md:grid-cols-workspace md:border-x md:border-border lg:grid-cols-workspace-wide">
         <section
           data-slot="workspace-list"
           aria-label={listLabel}
-          className={cn("flex min-w-0 flex-col bg-background md:min-h-0 md:overflow-x-clip md:overflow-y-auto md:border-r md:border-divider scrollbar-thin", open && "max-md:hidden")}
+          className={cn("flex min-w-0 flex-col bg-background md:min-h-0 md:overflow-x-clip md:overflow-y-auto md:border-r md:border-border scrollbar-thin", open && "max-md:hidden")}
         >
           {list}
         </section>
@@ -79,12 +83,12 @@ function WorkspacePage({
           className={cn("flex min-w-0 flex-1 flex-col bg-surface-page md:min-h-0 md:overflow-x-clip md:overflow-y-auto scrollbar-thin", open ? "" : "max-md:hidden")}
         >
           {back && (
-            <div data-slot="workspace-back" className="border-b border-divider bg-background py-2 gutter-workspace md:hidden">
+            <div data-slot="workspace-back" className="border-b border-border bg-background py-2 gutter-workspace md:hidden">
               {back}
             </div>
           )}
           {stageBar && (
-            <div data-slot="workspace-stage-bar" className="sticky top-0 z-sticky border-b border-divider bg-background">
+            <div data-slot="workspace-stage-bar" className="sticky top-0 z-sticky border-b border-border bg-background">
               {stageBar}
             </div>
           )}
