@@ -955,6 +955,10 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-record-said {
   grid-template-columns: 7.5rem minmax(0, 1fr) auto;
 }
+/* The alternating timeline (COLLECTIONS-PLAN.md): an entry, the 40 rail between, an entry. */
+@utility grid-cols-timeline {
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+}
 /* A View's list row (VIEWS-PLAN.md): the mark in a 36 column, the text, the Area dots. */
 @utility grid-cols-view-row {
   grid-template-columns: 2.25rem minmax(0, 1fr) auto;

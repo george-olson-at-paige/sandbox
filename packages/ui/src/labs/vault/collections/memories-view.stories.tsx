@@ -42,6 +42,12 @@ type Story = StoryObj<typeof meta>
 /** The list: by the year it happened, newest first; picture-led cards. */
 export const List: Story = {}
 
+/** The alternating timeline: the cards take turns either side of the rail, the years on it. */
+export const Timeline: Story = { args: { initialView: "timeline" } }
+
+/** The timeline at phone width: one column, the rail at the start. */
+export const PhoneTimeline: Story = { tags: ["!autodocs"], name: "Phone · timeline", args: { initialView: "timeline" }, globals: { viewport: { value: "w375", isRotated: false } } }
+
 /** No memories yet. */
 export const Empty: Story = { args: { memories: [] } }
 

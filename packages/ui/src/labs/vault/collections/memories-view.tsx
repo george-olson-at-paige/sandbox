@@ -2,7 +2,7 @@
 
 import type { ComponentProps, ElementType, MouseEvent, ReactNode } from "react"
 import { useMemo, useState } from "react"
-import { CameraIcon, LockIcon, PencilIcon, PlusIcon, SearchIcon, Trash2Icon, XIcon } from "lucide-react"
+import { CameraIcon, GitCommitVerticalIcon, LayoutGridIcon, LockIcon, PencilIcon, PlusIcon, SearchIcon, Trash2Icon, XIcon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { useActionMenu, type ListAction } from "../../../components/actions/action-menu"
@@ -11,6 +11,8 @@ import { EmptyState } from "../../../components/feedback/empty-state"
 import { Input } from "../../../components/inputs/input"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../../../components/inputs/input-group"
 import { Select } from "../../../components/inputs/select"
+import { ToggleGroup, ToggleGroupItem } from "../../../components/inputs/toggle-group"
+import { Tooltip } from "../../../components/overlays/tooltip"
 import { Field } from "../../../forms/field"
 import { FieldGroup } from "../../../forms/field-group"
 import { DateField } from "../../../forms/fields/date-field"
@@ -23,6 +25,7 @@ import { PageHeader } from "../../../templates/page-header"
 import { Chip, ChipGroup } from "../../components/chip"
 import { FileField, type FileFieldFile } from "../../components/file-field"
 import { SectionsField, type Section } from "../../components/sections-field"
+import { AlternatingTimeline } from "../../patterns/alternating-timeline"
 import { ListGroup } from "../../patterns/list-group"
 import { RecordCard, RecordSection } from "../record-section"
 import { MemoryCard } from "./memory-card"
@@ -32,9 +35,12 @@ import type { MEMORIES_COPY } from "./memories-fixtures"
 /* @archetype Composite (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). COLLECTIONS-PLAN.md §2 (George 2026-11-04): Memories on the
    keep-and-compose shape Passwords set (one reading column, Page `focused`, for every screen):
-   - the list: the header (icon, title, lead, count, Add), one find row (search, the categories
-     as Chips), then the memories by the year they happened, newest first, as picture-led
-     cards (MemoryCard) two across from sm. One view, not Grid/Table/Timeline: the job is
+   - the list: the header (icon, title, lead, count, Add), one find row (search, then the view
+     switch: Grid · Timeline, our icon ToggleGroup, not pills; the categories as Chips under
+     them), then the memories by the year they happened, newest first, as picture-led cards
+     (MemoryCard): the grid, two across from sm under year headings, or the alternating
+     timeline (AlternatingTimeline: a rail down the middle, the cards taking turns either side,
+     the years on the rail; George 2026-11-04: it has to be there). No table: the job is
      "browse by when it happened" and "find one".
    - a memory: back to the list; its header (title; when and category; Edit and ⋯ Delete); its
      picture at the column's width when it has one; then a RecordCard: the note as its lead,
@@ -60,6 +66,7 @@ export function MemoriesView({
   onSave,
   onRemove,
   initialRoute = { name: "list" },
+  initialView = "grid",
   hrefs = { list: "?", view: (id) => `?id=${id}`, edit: (id) => `?id=${id}&edit`, add: "?add" },
   linkAs = "a",
 }: {
@@ -70,12 +77,15 @@ export function MemoriesView({
   onSave: (draft: MemoryDraft, id?: string) => Promise<string | { error: string }>
   onRemove?: (id: string) => Promise<void>
   initialRoute?: Route
+  /** The list's view to start in: the grid or the alternating timeline. */
+  initialView?: "grid" | "timeline"
   hrefs?: Hrefs
   linkAs?: ElementType
 }) {
   const [route, setRoute] = useState<Route>(initialRoute)
   const [query, setQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
+  const [view, setView] = useState(initialView)
 
   const NavLink = useMemo<ElementType>(
     () =>
@@ -101,7 +111,8 @@ export function MemoriesView({
 
   if (route.name === "view") {
     const memory = memories.find((m) => m.id === route.id)
-    if (memory) return <MemoryPage memory={memory} copy={copy} hrefs={hrefs} linkAs={NavLink} onRemove={onRemove} onGone={() => setRoute({ name: "list" })} />
+    if (memory)
+      return <MemoryPage memory={memory} copy={copy} hrefs={hrefs} linkAs={NavLink} onRemove={onRemove} onGone={() => setRoute({ name: "list" })} />
   }
   if (route.name === "edit" || route.name === "add") {
     const memory = route.name === "edit" ? memories.find((m) => m.id === route.id) : undefined
@@ -124,7 +135,9 @@ export function MemoriesView({
 
   const q = query.trim().toLowerCase()
   const shown = memories
-    .filter((m) => (!q || `${m.title} ${m.note ?? ""}`.toLowerCase().includes(q)) && (!categoryFilter.length || categoryFilter.includes(m.category.id)))
+    .filter(
+      (m) => (!q || `${m.title} ${m.note ?? ""}`.toLowerCase().includes(q)) && (!categoryFilter.length || categoryFilter.includes(m.category.id)),
+    )
     .sort((a, b) => b.occurredOn.localeCompare(a.occurredOn))
   const years = [...new Set(shown.map((m) => m.occurredOn.slice(0, 4)))]
   const present = categories.filter((c) => memories.some((m) => m.category.id === c.id))
@@ -150,25 +163,45 @@ export function MemoriesView({
       ) : (
         <section aria-label={copy.title} className="flex flex-col gap-4">
           <div className="flex flex-col gap-3">
-            <InputGroup>
-              <InputGroupAddon>
-                <SearchIcon aria-hidden />
-              </InputGroupAddon>
-              <InputGroupInput
-                type="search"
-                aria-label={copy.search}
-                placeholder={copy.search}
-                value={query}
-                autoComplete="off"
-                onChange={(e) => setQuery(e.target.value)}
-                className="[&::-webkit-search-cancel-button]:hidden"
-              />
-              {query && (
-                <InputGroupAddon align="inline-end">
-                  <FieldAction aria-label="Clear search" icon={<XIcon />} onClick={() => setQuery("")} />
+            <div className="flex items-center gap-2">
+              <InputGroup className="min-w-0 flex-1">
+                <InputGroupAddon>
+                  <SearchIcon aria-hidden />
                 </InputGroupAddon>
-              )}
-            </InputGroup>
+                <InputGroupInput
+                  type="search"
+                  aria-label={copy.search}
+                  placeholder={copy.search}
+                  value={query}
+                  autoComplete="off"
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="[&::-webkit-search-cancel-button]:hidden"
+                />
+                {query && (
+                  <InputGroupAddon align="inline-end">
+                    <FieldAction aria-label="Clear search" icon={<XIcon />} onClick={() => setQuery("")} />
+                  </InputGroupAddon>
+                )}
+              </InputGroup>
+              <ToggleGroup
+                type="single"
+                variant="icon"
+                aria-label={copy.view}
+                value={view}
+                onValueChange={(v) => v && setView(v as "grid" | "timeline")}
+              >
+                <Tooltip content={copy.grid}>
+                  <ToggleGroupItem value="grid" variant="icon" aria-label={copy.grid}>
+                    <LayoutGridIcon aria-hidden />
+                  </ToggleGroupItem>
+                </Tooltip>
+                <Tooltip content={copy.timeline}>
+                  <ToggleGroupItem value="timeline" variant="icon" aria-label={copy.timeline}>
+                    <GitCommitVerticalIcon aria-hidden />
+                  </ToggleGroupItem>
+                </Tooltip>
+              </ToggleGroup>
+            </div>
             {present.length > 1 && (
               <ChipGroup type="multiple" label={copy.categories} value={categoryFilter} onValueChange={setCategoryFilter}>
                 {present.map((c) => (
@@ -196,6 +229,17 @@ export function MemoriesView({
                   {copy.clear}
                 </Button>
               }
+            />
+          ) : view === "timeline" ? (
+            <AlternatingTimeline
+              label={copy.timelineLabel}
+              groups={years.map((y) => ({
+                id: y,
+                label: y,
+                entries: shown
+                  .filter((m) => m.occurredOn.startsWith(y))
+                  .map((m) => ({ id: m.id, date: m.when, content: <MemoryCard memory={m} href={hrefs.view(m.id)} linkAs={NavLink} /> })),
+              }))}
             />
           ) : (
             <div className="flex flex-col gap-2">
@@ -288,7 +332,9 @@ function MemoryPage({
             <p className="text-sm font-medium whitespace-pre-line">{s.text}</p>
           </RecordSection>
         ))}
-        {memory.file && !picture && <Attachment name={memory.file.name} kind={memory.file.kind} onOpen={() => {}} openLabel={copy.openFile(memory.file.name)} />}
+        {memory.file && !picture && (
+          <Attachment name={memory.file.name} kind={memory.file.kind} onOpen={() => {}} openLabel={copy.openFile(memory.file.name)} />
+        )}
         <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground [&_svg]:size-icon">
           <LockIcon aria-hidden />
           {copy.who}
@@ -331,7 +377,11 @@ function MemoryForm({
   let next = draft.sections.length
   return (
     <Page width="focused">
-      <PageHeader back={{ href: back, label: memory ? memory.title : copy.back }} linkAs={linkAs} title={memory ? f.editTitle(memory.title) : f.addTitle} />
+      <PageHeader
+        back={{ href: back, label: memory ? memory.title : copy.back }}
+        linkAs={linkAs}
+        title={memory ? f.editTitle(memory.title) : f.addTitle}
+      />
       <Form
         values={draft}
         validate={(v) => ({

@@ -126,4 +126,9 @@ So it's mostly composition. **New: 1 template** (ItemPage) **+ 1 page pattern** 
 - **Bug found and fixed:** the icon buttons inside SectionsField, RepeatField and FileField had no `type="button"`, so in a form ↑, ↓ and × submitted it. SectionsField's story now checks that nothing submits.
 - **Still no ItemPage or CollectionPage template:** Page plus PageHeader carried Memories too. The find row (search plus Chips) and the hrefs-as-routes plumbing are now repeated in two views; extract them when Messages makes it three.
 - **The categories and prompts are stand-ins.** The real catalog is the API's (`GET memories/categories`).
+- **The alternating timeline (George: it has to be there).** Memories' list has a view switch beside the search: Grid · Timeline, using our icon `ToggleGroup` (the joined, square bar with Tooltips), not pills.
+  - The timeline is **AlternatingTimeline** (`labs/patterns`): a rail down the middle in a 40 column (`grid-cols-timeline`), with the same MemoryCards taking turns left and right.
+  - Each card has its date over it and a dot on the rail. The years are marks on the rail. Below md it's one column with the rail at the start.
+  - The library's Timeline is the other kind (a rail at the start, for activity), so this is separate.
+- **Later (George):** more views and a better filter experience. The timeline could stagger its sides so they overlap vertically and use the space better.
 

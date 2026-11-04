@@ -27,7 +27,7 @@ test("Paige shadows replace each other and the upstream aliases", () => {
 })
 
 test("grid-cols-fit-*, grid-cols-area-page, grid-cols-street-unit and grid-cols-workspace* are column templates", () => {
-  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit", "grid-cols-workspace", "grid-cols-workspace-wide", "grid-cols-record-line", "grid-cols-record-said", "grid-cols-view-row"]) {
+  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit", "grid-cols-workspace", "grid-cols-workspace-wide", "grid-cols-record-line", "grid-cols-record-said", "grid-cols-timeline", "grid-cols-view-row"]) {
     assert.equal(cn("grid-cols-2", c), c)
   }
 })

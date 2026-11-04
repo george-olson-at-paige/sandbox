@@ -22,6 +22,10 @@ export const MEMORIES_COPY = {
   add: "Add a memory", // ⟨new⟩
   search: "Search memories", // ⟨new⟩
   categories: "Category",
+  view: "View",
+  grid: "Grid",
+  timeline: "Timeline",
+  timelineLabel: "Memories, by when they happened", // ⟨new⟩
   none: "No memory matches that.", // ⟨new⟩
   clear: "Clear search and filters",
   emptyTitle: "No memories yet", // ⟨new⟩
