@@ -3,6 +3,7 @@
 import { useRef, type ElementType, type ReactElement, type ReactNode } from "react"
 import { MoreHorizontal } from "lucide-react"
 
+import type { Shape } from "../../lib/vocabulary"
 import { Button } from "./button"
 import { ContextMenu } from "./context-menu"
 import { DropdownMenu } from "./dropdown-menu"
@@ -43,7 +44,7 @@ function useActionMenu({
   /** The ⋯'s look: `ghost` (a table row) or `quiet` (an Item). */
   variant?: "ghost" | "quiet"
   /** The ⋯'s outline: `pill` (default) or `rect`, a tool in a bar of tools (a View's stage bar, D-V2). */
-  shape?: "pill" | "rect"
+  shape?: Extract<Shape, "pill" | "rect">
 }): { trigger: ReactNode; withContextMenu: (target: ReactElement) => ReactNode; dialog: ReactNode } {
   const trigger = useRef<HTMLButtonElement>(null)
   const { start, dialog } = useListActionRunner({ onDone, returnFocusTo: () => trigger.current })

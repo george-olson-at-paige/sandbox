@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import { cn } from "../../lib/utils"
+import type { Shape } from "../../lib/vocabulary"
 import { dataFill, type DataColor } from "../internal/data-color"
 
 /* @archetype Chart (ARCHETYPES.md).
@@ -24,7 +25,7 @@ type LegendItem = {
   /** The data colour the mark is drawn in. */
   color: DataColor
   /** block (a bar or box; default) · line (a tick) · dot (a share). */
-  shape?: "block" | "line" | "dot"
+  shape?: Extract<Shape, "block" | "line" | "dot">
   /** A value after the label ("60"), bold and tabular. */
   value?: ReactNode
 }

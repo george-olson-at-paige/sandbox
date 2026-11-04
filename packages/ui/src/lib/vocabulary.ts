@@ -94,6 +94,13 @@ export type HeadingLevel = (typeof HEADING_LEVELS)[number]
 export const TRENDS = ["better", "worse", "neutral"] as const
 export type Trend = (typeof TRENDS)[number]
 
+/** The outline a part draws (D-V6, George 2026-11-04; VIEWS-PLAN.md): one word for one idea, each
+    archetype narrowing it to the outlines it has. An Action: a pill (the page's call to action)
+    or a rect (a tool beside it). A Mark: a Skeleton's form (text · number · block · circle). A
+    Chart's swatch: a Legend's (block · line · dot). */
+export const SHAPES = ["pill", "rect", "block", "line", "dot", "circle", "text", "number"] as const
+export type Shape = (typeof SHAPES)[number]
+
 /** A ring around Media. */
 export const RINGS = ["none", "default", "brand"] as const
 export type Ring = (typeof RINGS)[number]
@@ -119,6 +126,7 @@ export const AXIS_VALUES = {
   level: [...BOUNDARY_LEVELS, ...HEADING_LEVELS],
   trend: TRENDS,
   ring: RINGS,
+  shape: SHAPES,
 } as const satisfies Record<string, readonly string[]>
 export type Axis = keyof typeof AXIS_VALUES
 
@@ -126,16 +134,16 @@ export type Axis = keyof typeof AXIS_VALUES
     (`interactive`, `underline`, `framed`, `dividers`) are allowed everywhere; a Composite has none
     of its own and passes its parts' through. */
 export const ARCHETYPE_AXES: Record<Archetype, readonly Axis[]> = {
-  Action: ["emphasis", "tone", "size"],
+  Action: ["emphasis", "tone", "size", "shape"],
   Control: ["size", "presentation"],
   Surface: ["emphasis", "tone", "fill"],
-  Mark: ["tone", "fill", "size"],
+  Mark: ["tone", "fill", "size", "shape"],
   Media: ["size", "fill", "ring"],
   Text: ["tone", "level"],
   Overlay: ["size", "tone", "side", "align"],
   Frame: ["density", "width", "direction", "orientation", "align", "justify", "level"],
   Item: ["density", "state"],
-  Chart: ["height", "trend"],
+  Chart: ["height", "trend", "shape"],
   Composite: [],
 }
 

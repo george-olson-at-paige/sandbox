@@ -48,6 +48,7 @@ One list of axis names, each with one meaning and one value set. A component nar
 | `level` | A rank | boundary: `region` · `group` · `row` (Separator); heading: `h1` … `h4` | Frame, Text |
 | `trend` | Which way a number moved, and whether that is good | `better` · `worse` · `neutral` | Chart |
 | `ring` | A ring around Media | `none` · `default` · `brand` | Media |
+| `shape` | The outline a part draws (D-V6, George 2026-11-04) | `pill` · `rect` (Action: the call to action · a tool); `text` · `number` · `block` · `circle` (Mark: a Skeleton's form); `block` · `line` · `dot` (Chart: a Legend's swatch) | Action, Mark, Chart |
 | `interactive`, `underline`, `framed`, `dividers` | Booleans with one job each | `true` · `false` | as today |
 
 **Retired words** (fail `check:vocab` once it is on):

@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react"
 import { cn } from "../../lib/utils"
+import type { Shape } from "../../lib/vocabulary"
 import { Skeleton as UiSkeleton } from "../../base/skeleton"
 
 /* @archetype Mark (ARCHETYPES.md).
@@ -23,7 +24,7 @@ function Skeleton({
   width = "full",
   className,
 }: {
-  shape?: keyof typeof SHAPE
+  shape?: Extract<Shape, keyof typeof SHAPE>
   width?: keyof typeof WIDTH
   className?: string
 }) {

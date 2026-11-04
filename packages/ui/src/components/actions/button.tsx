@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 import { cn } from "../../lib/utils"
+import type { Shape } from "../../lib/vocabulary"
 import { Button as UiButton, buttonVariants as uiButtonVariants } from "../../base/button"
 
 /* @archetype Action (ARCHETYPES.md).
@@ -108,7 +109,7 @@ type ButtonProps = Omit<ComponentProps<"button">, "style"> & {
   /** Underline the label: the decline action ("Not applicable"). Applies to variant="quiet" only. */
   underline?: boolean
   /** pill (default): the page's call to action. rect: a tool — Share, ⋯, a filter button, Expand (D-V2). */
-  shape?: "pill" | "rect"
+  shape?: Extract<Shape, "pill" | "rect">
   /** Put the button styling on the child element (a router link). */
   asChild?: boolean
 }
