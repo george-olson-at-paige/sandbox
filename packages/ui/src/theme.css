@@ -458,6 +458,7 @@
      is a screen of its own. */
   --spacing-workspace-list-md: 18.75rem; /* 300 */
   --spacing-workspace-list: 22.5rem;     /* 360 */
+  --spacing-workspace-bar: 4.5rem;       /* 72: the stage bar and the list's search row, so their rules meet */
 
   /* Control scale (T-01): the height of a thing you press or type into, named once so "make
      controls 40" is one line. control-sm 36: Button sm, the icon button, a toolbar's field and

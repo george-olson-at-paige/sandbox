@@ -10,7 +10,9 @@ import { Badge } from "../../components/display/badge"
    to action (Share; ⋯ with Edit details, Assign, Remove; Done while editing), the caller's.
    The quiet line is always there, empty or not, so a record gaining its first role doesn't push
    the stage down (the webapp's 2026-11-02 fix). A long name truncates; the actions never wrap
-   under it. Nothing in it knows what kind of record it is. */
+   under it. It is `workspace-bar` high (72), the same as the list's search row, so the two
+   rules under them meet in one line across the workspace. Nothing in it knows what kind of
+   record it is. */
 
 /** The open record's name, chip and quiet line, and the actions on all of it. */
 function StageBar({
@@ -29,7 +31,7 @@ function StageBar({
   actions?: ReactNode
 }) {
   return (
-    <div data-slot="stage-bar" className="flex items-center justify-between gap-4 py-3 gutter-workspace">
+    <div data-slot="stage-bar" className="flex min-h-workspace-bar items-center justify-between gap-4 py-3 gutter-workspace">
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-2">
           <h2 data-slot="stage-bar-title" className="truncate font-display text-lg font-bold">

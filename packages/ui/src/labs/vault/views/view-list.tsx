@@ -16,7 +16,9 @@ import type { AreaRef } from "./data"
 /* @archetype Composite (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md §1a "List: find and choose" (D-V5: lands in
    labs). A View's list region, top to bottom:
-   - the search, then the filter button beside it (a tool, `shape="rect"`, D-V2), which opens the
+   - the search, then the filter button beside it, in a row `workspace-bar` high (72) with a
+     rule under it at the stage bar's weight, so it lines up with the stage bar across the
+     workspace. The filter button (a tool, `shape="rect"`, D-V2) opens the
      filters that aren't Areas (what needs doing, shared, made by Paige) as ChipGroups that apply
      on the press, no Apply (a View's list narrows as you choose; ListToolbar's Apply/Reset is the
      admin table's). The button shows how many of them are on.
@@ -101,8 +103,8 @@ export function ViewList({
   }
   return (
     <div data-slot="view-list" className="flex min-h-0 flex-1 flex-col">
-      <div data-slot="view-list-controls" className="flex flex-col gap-2.5 py-3 gutter-workspace">
-        <div className="flex items-center gap-2">
+      <div data-slot="view-list-controls" className="flex flex-col">
+        <div data-slot="view-list-search" className="flex min-h-workspace-bar items-center gap-2 border-b border-border-medium gutter-workspace">
           <InputGroup size="sm" className="min-w-0 flex-1">
             <InputGroupAddon>
               <Search aria-hidden />
@@ -166,12 +168,12 @@ export function ViewList({
           )}
         </div>
         {areas.items.length > 0 && (
-          <div className="max-sm:hidden">
+          <div data-slot="view-list-areas" className="border-b border-divider py-3 gutter-workspace max-sm:hidden">
             <AreaChipGroup areas={areas} />
           </div>
         )}
       </div>
-      <div data-slot="view-list-rows" className="min-h-0 flex-1 border-t border-divider">
+      <div data-slot="view-list-rows" className="min-h-0 flex-1">
         {matches ? (
           children
         ) : (
