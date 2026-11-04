@@ -1,9 +1,10 @@
 "use client"
 
-import type { ComponentProps, ElementType } from "react"
-import { ArrowUpRightIcon, Share2Icon, UserRoundIcon } from "lucide-react"
+import type { ComponentProps, ElementType, ReactNode } from "react"
+import { ArrowUpRightIcon, Share2Icon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
+import { Avatar } from "../../../components/display/avatar"
 import { AreaLines, RecordCard, RecordSection } from "../record-section"
 import type { AreaGroup, VaultDocument } from "../views/data"
 import { StatusLine } from "../views/row-parts"
@@ -22,8 +23,9 @@ import { ValuesToCheck, type ValuesToCheckProps } from "./values-to-check"
    - "In your Vault", shared: Area by Area, what the document is there and, under it, what it
      filled in, name and value (one section: "What it's for" and "What we read from it" said
      the same Area twice). A value joins it once it's accepted.
-   - "Who it names", shared, when it names anyone: each a link to their record.
-   - "Who can see it", owner: each share and when it takes effect; Share it (a tool).
+   - "Who it names", when it names anyone: each person's avatar and name, a link to their record.
+   - "Who it's shared with": each person's avatar, name and when it takes effect, then Share it
+     (a tool). A plain section, not the owner's set-back one (George 2026-11-04).
    View only in this pass; Edit (name, type, where the original is, the note) and Remove are the
    stage bar's (⋯). */
 
@@ -33,13 +35,29 @@ export type DocumentRecordCopy = {
   /** Where it is filed and what it filled in ("In your Vault"). */
   inVault: string
   names: string
-  canSee: string
-  canSeeEmpty: string
-  ownerOnly: string
+  /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
+  sharedWith: string
+  sharedWithEmpty: string
   shareIt: string
   /** A named person's link ("Open in People"). */
   openPerson: string
   values: ValuesToCheckProps["copy"]
+}
+
+/** A person on a document's record: their avatar, their name, a quieter line, and what sits at the end. */
+function PersonLine({ name, detail, end }: { name: string; detail?: string; end?: ReactNode }) {
+  return (
+    <li className="flex items-center justify-between gap-3 py-1">
+      <span className="flex min-w-0 items-center gap-3">
+        <Avatar name={name} size="md" />
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-sm font-semibold">{name}</span>
+          {detail && <span className="truncate text-sm font-medium text-muted-foreground">{detail}</span>}
+        </span>
+      </span>
+      {end}
+    </li>
+  )
 }
 
 /* What it's for and what it filled in, as one set of Area groups: an Area's facts (the read
@@ -95,38 +113,30 @@ export function DocumentRecord({
       )}
       {document.names.length > 0 && (
         <RecordSection audience="shared" title={copy.names}>
-          <ul className="flex flex-col">
+          <ul className="flex flex-col gap-1">
             {document.names.map((n) => (
-              <li key={n.id} className="flex items-center justify-between gap-3 py-1">
-                <span className="flex items-center gap-2 text-sm font-semibold [&_svg]:size-icon [&_svg]:text-muted-foreground">
-                  <UserRoundIcon aria-hidden />
-                  {n.name}
-                </span>
-                <Link
-                  href={n.href}
-                  className="inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-muted-foreground focus-ring hover:text-primary [&_svg]:size-icon-xs"
-                >
-                  {copy.openPerson}
-                  <ArrowUpRightIcon aria-hidden />
-                </Link>
-              </li>
+              <PersonLine
+                key={n.id}
+                name={n.name}
+                end={
+                  <Link
+                    href={n.href}
+                    className="inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-muted-foreground focus-ring hover:text-primary [&_svg]:size-icon-xs"
+                  >
+                    {copy.openPerson}
+                    <ArrowUpRightIcon aria-hidden />
+                  </Link>
+                }
+              />
             ))}
           </ul>
         </RecordSection>
       )}
-      <RecordSection
-        audience="owner"
-        ownerLabel={copy.ownerOnly}
-        title={copy.canSee}
-        empty={document.shares.length === 0 ? copy.canSeeEmpty : undefined}
-      >
+      <RecordSection audience="shared" title={copy.sharedWith} empty={document.shares.length === 0 ? copy.sharedWithEmpty : undefined}>
         {document.shares.length > 0 && (
-          <ul className="flex flex-col gap-1.5">
+          <ul className="flex flex-col gap-1">
             {document.shares.map((s) => (
-              <li key={s.id} className="text-sm">
-                <span className="font-semibold">{s.who}</span>
-                <span className="block font-medium text-muted-foreground">{s.when}</span>
-              </li>
+              <PersonLine key={s.id} name={s.who} detail={s.when} />
             ))}
           </ul>
         )}

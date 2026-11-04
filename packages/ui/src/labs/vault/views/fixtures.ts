@@ -159,9 +159,8 @@ export const DOCUMENTS_COPY = {
     needs: VIEW_COPY.documents.groupNeeds,
     inVault: "In your Vault", // ⟨new⟩ (replaces "What it’s for" and "What we read from it")
     names: VIEW_COPY.documents.names,
-    canSee: VIEW_COPY.documents.canSee,
-    canSeeEmpty: VIEW_COPY.documents.canSeeEmpty,
-    ownerOnly: VIEW_COPY.ownerOnly,
+    sharedWith: "Who it’s shared with", // ⟨new⟩ (replaces "Who can see it")
+    sharedWithEmpty: "Nobody yet — it isn’t shared with anyone.",
     shareIt: "Share it",
     openPerson: "Open in People",
     values: {
