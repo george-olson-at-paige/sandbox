@@ -2,6 +2,7 @@ import type { ComponentProps, ElementType, ReactNode } from "react"
 import { ArrowUpRightIcon, CircleAlertIcon, LockIcon } from "lucide-react"
 
 import { Dot } from "../../components/display/dot"
+import { EmptyState } from "../../components/feedback/empty-state"
 import { cn } from "../../lib/utils"
 import type { AreaGroup, RecordLine } from "./views/data"
 
@@ -57,6 +58,7 @@ export function RecordSection({
   ownerLabel,
   attention = false,
   aside,
+  id,
   empty,
   children,
 }: {
@@ -68,8 +70,10 @@ export function RecordSection({
   ownerLabel?: string
   /** The owner's to-dos ("Needs you"): the legend in the attention ink, with the alert. */
   attention?: boolean
-  /** shared: a quiet note at the legend's right ("Read Oct 2, 2026"). */
-  aside?: string
+  /** shared: what sits at the legend's right, in the legend's type ("Read Oct 2, 2026"; "3 to check · Confirm all"). */
+  aside?: ReactNode
+  /** The section's id, for a link to it ("3 values to check" in Needs you). */
+  id?: string
   /** The line it shows with nothing in it. The caller passes it only then; it sits above any children (an action that fills it). */
   empty?: string
   /** The section's lines (View) or fields and actions (Edit). */
@@ -77,7 +81,7 @@ export function RecordSection({
 }) {
   const body = (
     <>
-      {empty && <p className="text-sm font-medium text-muted-foreground">{empty}</p>}
+      {empty && <EmptyState size="xs" title={empty} />}
       {children}
     </>
   )
@@ -101,13 +105,13 @@ export function RecordSection({
     )
   }
   return (
-    <section data-slot="record-section" data-audience="shared" aria-label={title} className="flex flex-col gap-2">
+    <section id={id} data-slot="record-section" data-audience="shared" aria-label={title} className="flex scroll-mt-24 flex-col gap-2">
       <div className="flex items-center justify-between gap-3 border-b border-divider pb-2">
         <h3 className={cn("flex items-center gap-1.5 eyebrow [&_svg]:size-icon-xs", attention ? "text-attention" : "text-foreground")}>
           {attention && <CircleAlertIcon aria-hidden />}
           {title}
         </h3>
-        {aside && <span className="text-xs font-semibold text-muted-foreground">{aside}</span>}
+        {aside && <span className="flex items-center gap-3 eyebrow text-muted-foreground">{aside}</span>}
       </div>
       {body}
     </section>

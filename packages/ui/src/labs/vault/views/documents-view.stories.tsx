@@ -36,6 +36,12 @@ const meta = {
     onKeep: async () => {
       await wait(600)
     },
+    onConfirm: async () => {
+      await wait(600)
+    },
+    onFix: async () => {
+      await wait(600)
+    },
     onRemove: async () => {
       await wait(600)
     },

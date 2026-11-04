@@ -166,21 +166,29 @@ export const DOCUMENTS_COPY = {
   }),
   record: {
     needs: VIEW_COPY.documents.groupNeeds,
+    toCheck: (n: number) => (n === 1 ? "1 value to check" : `${n} values to check`), // ⟨new⟩
     inVault: "In your Vault", // ⟨new⟩ (replaces "What it’s for")
     says: "What it says", // ⟨new⟩ (replaces "What we read from it"; George 2026-11-04)
-    kept: "You kept yours", // ⟨new⟩
-    unused: "Not in your Vault", // ⟨new⟩
-    names: VIEW_COPY.documents.names,
-    sharedWith: "Who it’s shared with", // ⟨new⟩ (replaces "Who can see it")
-    sharedWithEmpty: "Nobody yet — it isn’t shared with anyone.",
-    openPerson: "Open in People",
-    values: {
+    waiting: (n: number) => `${n} to check`, // ⟨new⟩
+    confirmAll: "Confirm all", // ⟨new⟩
+    said: {
+      looksRight: "Looks right", // ⟨new⟩
+      fix: "Fix", // ⟨new⟩
+      save: "Save",
+      cancel: "Cancel",
       useThis: VIEW_COPY.documents.useThis,
       keepMine: VIEW_COPY.documents.keepMine,
       saving: "Saving…",
       youHave: (current: string) => `You have ${current}`,
       notYet: "Not in your Vault yet",
+      kept: "You kept yours", // ⟨new⟩
+      unused: "Not in your Vault", // ⟨new⟩
+      fixLabel: (label: string) => `Fix ${label}`, // ⟨new⟩
     },
+    names: VIEW_COPY.documents.names,
+    sharedWith: "Who it’s shared with", // ⟨new⟩ (replaces "Who can see it")
+    sharedWithEmpty: "Nobody yet — it isn’t shared with anyone.",
+    openPerson: "Open in People",
   },
 }
 
@@ -347,7 +355,7 @@ export const DOCUMENTS: VaultDocument[] = [
     added: "Added Oct 2, 2026",
     file: { kind: "image", src: "/assets/fixture-docs/id-card.svg" },
     areas: [area("personal")],
-    needs: [{ kind: "review", text: "2 values to check" }],
+    needs: [{ kind: "review", text: "4 values to check" }],
     facts: [{ label: "Original", value: "Wallet" }],
     forWhat: [
       {
@@ -378,12 +386,12 @@ export const DOCUMENTS: VaultDocument[] = [
           key: "addr",
           label: "Home address",
           value: "1408 Ashcroft Lane, Portland, OR",
-          state: "proposed",
+          state: "read",
           area: area("personal"),
           open: openIn("personal"),
         },
-        { key: "expires", label: "Expires", value: "Mar 14, 2029", state: "used", area: area("personal"), open: openIn("personal") },
-        { key: "number", label: "License number", value: "D4821 9933", state: "unused" },
+        { key: "expires", label: "Expires", value: "Mar 14, 2029", state: "read", area: area("personal"), open: openIn("personal") },
+        { key: "number", label: "License number", value: "D4821 9933", state: "read" },
       ],
     },
     names: [],

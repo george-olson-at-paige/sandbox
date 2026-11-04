@@ -18,6 +18,7 @@ const meta = {
         component: [
           "The one “nothing here”. `kind` says why it is empty (nothing yet, no results, error); `size` says where it sits.",
           "",
+          "- **In a section** (`xs`): one muted line where a section's content would be (a record's “Who it’s shared with” with nobody), its action on the same line.",
           "- **In a table** (`sm`, the default): one muted line in a table's body, with an action only when there is a next step (Clear all, Try again).",
           "- **In a pane** (`md`): a card or side panel; the base's 18px title and a description, with room around it.",
           "- **A page** (`lg`): the whole page has nothing to show; an icon in a 48px disc, a 20px title, one line of description, up to two actions side by side.",
@@ -29,6 +30,27 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+/* ---------- In a section (xs) ---------- */
+
+export const SectionNothingYet: Story = {
+  name: "In a section · nothing yet",
+  decorators: [(S) => <div className="p-5"><S /></div>],
+  args: {
+    size: "xs",
+    title: "Nobody yet — it isn’t shared with anyone.",
+    actions: (
+      <Button variant="link" size="inline" className="text-sm">
+        Share it
+      </Button>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const empty = canvasElement.querySelector<HTMLElement>('[data-slot="empty-state"]')!
+    await expect(empty).toHaveAttribute("data-size", "xs")
+    await expect(empty.getBoundingClientRect().height).toBeLessThan(40)
+  },
+}
 
 /* ---------- In a table (sm) ---------- */
 

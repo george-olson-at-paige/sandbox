@@ -206,7 +206,16 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - **In your Vault** is back to what the document is, Area by Area (no values under it).
 - Owner view only for now, so no masking of sensitive values (licence, policy, account numbers) yet; that comes with the shared view.
 - Open, not drawn:
-  - **Approving the read.** No step for "is this what it says?" before the values are proposed. Essential Setup skips it too (George: worth fixing if we can).
+  - ~~Approving the read~~ drawn (below). Essential Setup still skips it (George: worth fixing if we can).
   - **The API.** The fixtures carry each value's state, its Area and when it was read. Whether the API returns these (state per value, read date, the Area a value went to) is unverified: a contract question before this leaves labs.
   - The list row's "2 values to check" comes from `needs`, which the record doesn't change when values are answered in place (fixture only; the real list refetches).
   - Long documents (a will's 30 values): "Show all 30" after the first six, when a fixture needs it.
+
+**Checking the read (George 2026-11-04):**
+- Values stay on their own line in **What it says**; that is where every act happens (SaidList, labs/vault/documents/said-list.tsx). New state `read` (not checked): Looks right · Fix. Checked, a value goes on by what the Vault holds: no Vault field → unused; same value → used; otherwise proposed (Use this / Keep mine). Used, kept and unused lines keep Fix. Fix turns the value into an input with Save and Cancel (Escape cancels).
+- The legend's right says how many wait ("4 to check", attention) and has **Confirm all** when more than one is unchecked; no decline all. With nothing waiting it says when it was read. Order: the document's own (consistent).
+- **Needs you** is a pointer: "4 values to check ↓", a link to the section, then the other needs.
+- A review queue elsewhere (notifications, the list's group) can gather the same lines later.
+- **EmptyState `size="xs"`** (in a section): one muted line where a section's content would be, its action on the same line; RecordSection's `empty` uses it.
+- Not drawn: "Couldn't read" (a label found, no value: Add it); "Not this document"; changing a used value asking "Change it in Personal too?". ValuesToCheck is gone (SaidList replaces it).
+

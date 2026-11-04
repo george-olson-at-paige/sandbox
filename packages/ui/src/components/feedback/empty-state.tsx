@@ -13,7 +13,10 @@ import { Empty as UiEmpty, EmptyContent as UiEmptyContent, EmptyDescription as U
      nothing-yet (nothing exists: "No one has signed up yet."), no-results (what was asked for
      isn't there: "No people match “smith”.", with Clear all), error (the load failed: the message
      and Try again; the stack is `role="alert"` and the title takes the attention ink).
-   - `size` is the place it sits (R20-07, D-05): sm (default) is the line in a table's body, 14px
+   - `size` is the place it sits (R20-07, D-05): xs is a section's (George 2026-11-04: a record's
+     "Who it's shared with" with nobody in it), compact: one 14px muted line where the section's
+     content would start, left-aligned, no disc, no padding, its action (a link button) on the
+     same line; sm (default) is the line in a table's body, 14px
      at 500 in the muted ink, 40px of padding above and below, the reading measure wide; md is
      a pane's (a card, a side panel), the base's 18px title and 14px description at its 384px
      measure, more room around it; lg is a page's (ReUI's basic empty state), the title at 20px
@@ -37,8 +40,8 @@ type EmptyStateProps = {
   actions?: ReactNode
   /** nothing-yet (default) · no-results · error (an alert; the title in the attention ink). */
   kind?: "nothing-yet" | "no-results" | "error"
-  /** By place: sm (default) a table's body, one muted line · md a pane (a card, a side panel) · lg a page, with a larger disc and title. */
-  size?: "sm" | "md" | "lg"
+  /** By place: xs a section, one line where its content would be · sm (default) a table's body, one muted line · md a pane (a card, a side panel) · lg a page, with a larger disc and title. */
+  size?: "xs" | "sm" | "md" | "lg"
   className?: string
 }
 
@@ -71,6 +74,22 @@ const SIZE = {
 
 /** Nothing here: a title, an optional glyph and description, and what to do next (`kind` says why it's empty). */
 function EmptyState({ title, description, icon, actions, kind = "nothing-yet", size = "sm", className }: EmptyStateProps) {
+  // A section's: one line in the flow, where the content would start; no disc (an icon is ignored).
+  if (size === "xs") {
+    return (
+      <div
+        role={kind === "error" ? "alert" : undefined}
+        data-slot="empty-state"
+        data-kind={kind}
+        data-size={size}
+        className={cn("flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1 text-sm font-medium text-muted-foreground", kind === "error" && "text-attention-foreground", className)}
+      >
+        <p data-slot="empty-title">{title}</p>
+        {description && <p data-slot="empty-description">{description}</p>}
+        {actions}
+      </div>
+    )
+  }
   const s = SIZE[size]
   return (
     <UiEmpty role={kind === "error" ? "alert" : undefined} data-slot="empty-state" data-kind={kind} data-size={size} className={cn("min-w-0", s.root, className)}>

@@ -66,6 +66,8 @@ export function DocumentsView({
   documents,
   copy,
   initialOpenId,
+  onConfirm,
+  onFix,
   onUse,
   onKeep,
   onEdit,
@@ -77,6 +79,10 @@ export function DocumentsView({
   documents: VaultDocument[]
   copy: DocumentsViewCopy
   initialOpenId?: string
+  /** The owner checked these values of a document. Without it, no Looks right or Confirm all. */
+  onConfirm?: (id: string, keys: string[]) => Promise<void | { error: string }>
+  /** The owner fixed a value's reading. Without it, no Fix. */
+  onFix?: (id: string, key: string, value: string) => Promise<void | { error: string }>
   onUse: (id: string, key: string) => Promise<void | { error: string }>
   onKeep: (id: string, key: string) => Promise<void | { error: string }>
   onEdit?: (id: string) => void
@@ -257,6 +263,8 @@ export function DocumentsView({
               document={open}
               copy={copy.record}
               linkAs={linkAs}
+              onConfirm={onConfirm && ((keys) => onConfirm(open.id, keys))}
+              onFix={onFix && ((key, value) => onFix(open.id, key, value))}
               onUse={(key) => onUse(open.id, key)}
               onKeep={(key) => onKeep(open.id, key)}
             />

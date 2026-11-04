@@ -64,18 +64,20 @@ export type WaitingValue = {
 
 /* What a document says goes through a sequence (George 2026-11-04): the document is scanned and
    read; the owner approves the read (is that what it says?); what was read is proposed as Vault
-   facts; the owner uses each or keeps their own. The record draws the last two steps; approving
-   the read isn't drawn yet (Essential Setup skips it too, VIEWS-PLAN.md).
-   - proposed  waits for the owner: Use this / Keep mine ("Needs you").
+   facts; the owner uses each or keeps their own. The record draws all of it on each value's line
+   in "What it says" (SaidList); Essential Setup skips the read check (VIEWS-PLAN.md).
+   - read      read, not checked: Looks right / Fix. Checked, it becomes proposed, used (the
+               Vault already holds it) or unused (no Vault fact for it).
+   - proposed  waits for the owner: Use this / Keep mine.
    - used      in the Vault, in an Area (`area`, `open`).
    - kept      the owner kept what the Vault had (`current`).
    - unused    read, but there's no Vault fact for it (a licence number). */
-export type SaidState = "proposed" | "used" | "kept" | "unused"
+export type SaidState = "read" | "proposed" | "used" | "kept" | "unused"
 
 /** One value a document says, and what became of it. */
 export type SaidValue = WaitingValue & {
   state: SaidState
-  /** used: the Area it went to, and the way there ("Open in Personal"). */
+  /** The Area it goes to (proposed) or went to (used), and the way there ("Open in Personal"). None: there's no Vault fact for it. */
   area?: AreaRef
   open?: { href: string; label: string }
 }
