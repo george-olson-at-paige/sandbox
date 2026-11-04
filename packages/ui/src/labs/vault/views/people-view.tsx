@@ -44,6 +44,7 @@ export type PeopleViewCopy = {
   pickLead: string
   pickEmpty: string
   startWith: string
+  /** The phone's way back to the list, the arrow's name ("Back to Documents"). */
   back: string
   share: string
   more: (name: string) => string
@@ -138,7 +139,9 @@ export function PeopleView({
   const actions: ListAction[] = open
     ? [
         ...(onEdit ? [{ id: "edit", kind: "action" as const, label: copy.editDetails, icon: <UserRoundCogIcon />, run: () => onEdit(open.id) }] : []),
-        ...(onAssign && !open.pet ? [{ id: "assign", kind: "action" as const, label: copy.assign, icon: <UsersIcon />, run: () => onAssign(open.id) }] : []),
+        ...(onAssign && !open.pet
+          ? [{ id: "assign", kind: "action" as const, label: copy.assign, icon: <UsersIcon />, run: () => onAssign(open.id) }]
+          : []),
         ...(onRemove
           ? [
               {
@@ -169,7 +172,10 @@ export function PeopleView({
           <PageHeader
             density="compact"
             icon={
-              <span aria-hidden className="inline-flex size-control items-center justify-center rounded-lg bg-primary text-on-tone [&_svg]:size-icon-lg">
+              <span
+                aria-hidden
+                className="inline-flex size-control items-center justify-center rounded-lg bg-primary text-on-tone [&_svg]:size-icon-lg"
+              >
                 <UsersIcon />
               </span>
             }
@@ -189,7 +195,11 @@ export function PeopleView({
           <ViewList
             search={{ value: query, onChange: setQuery, label: copy.searchLabel, placeholder: copy.search }}
             areas={{ label: copy.areas, items: areaItems, value: areaFilter, onChange: setAreaFilter }}
-            filters={needSets.length ? { label: copy.filters, sets: [{ label: copy.needs, chips: needSets }], value: needFilter, onChange: setNeedFilter } : undefined}
+            filters={
+              needSets.length
+                ? { label: copy.filters, sets: [{ label: copy.needs, chips: needSets }], value: needFilter, onChange: setNeedFilter }
+                : undefined
+            }
             matches={shown.length > 0}
             none={{ title: copy.none, clear: copy.clear }}
           >
@@ -200,14 +210,19 @@ export function PeopleView({
             </ul>
           </ViewList>
         }
-        back={
-          <Button variant="quiet" size="inline" icon={<ArrowLeftIcon />} onClick={() => setOpenId(undefined)}>
-            {copy.back}
-          </Button>
-        }
         stageBar={
           open && (
             <StageBar
+              back={
+                <Button
+                  variant="quiet"
+                  size="icon"
+                  shape="rect"
+                  icon={<ArrowLeftIcon />}
+                  aria-label={copy.back}
+                  onClick={() => setOpenId(undefined)}
+                />
+              }
               title={open.name}
               chip={open.stated}
               sub={open.roles}
@@ -215,7 +230,7 @@ export function PeopleView({
                 <>
                   {onShare && !open.pet && (
                     <Button variant="secondary" size="sm" shape="rect" icon={<Share2Icon />} onClick={() => onShare(open.id)}>
-                      {copy.share}
+                      <span className="max-sm:sr-only">{copy.share}</span>
                     </Button>
                   )}
                   {actions.length > 0 && menu.trigger}
@@ -226,12 +241,7 @@ export function PeopleView({
         }
         stage={
           open ? (
-            <PersonRecord
-              person={open}
-              copy={copy.record}
-              linkAs={linkAs}
-              onSaveReach={onSaveReach && ((draft) => onSaveReach(open.id, draft))}
-            />
+            <PersonRecord person={open} copy={copy.record} linkAs={linkAs} onSaveReach={onSaveReach && ((draft) => onSaveReach(open.id, draft))} />
           ) : (
             <PickPanel
               icon={<UsersIcon />}

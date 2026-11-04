@@ -1,9 +1,8 @@
 "use client"
 
 import type { ComponentProps, ElementType, ReactNode } from "react"
-import { ArrowUpRightIcon, Share2Icon } from "lucide-react"
+import { ArrowUpRightIcon } from "lucide-react"
 
-import { Button } from "../../../components/actions/button"
 import { Avatar } from "../../../components/display/avatar"
 import { AreaLines, RecordCard, RecordSection } from "../record-section"
 import type { AreaGroup, VaultDocument } from "../views/data"
@@ -24,8 +23,8 @@ import { ValuesToCheck, type ValuesToCheckProps } from "./values-to-check"
      filled in, name and value (one section: "What it's for" and "What we read from it" said
      the same Area twice). A value joins it once it's accepted.
    - "Who it names", when it names anyone: each person's avatar and name, a link to their record.
-   - "Who it's shared with": each person's avatar, name and when it takes effect, then Share it
-     (a tool). A plain section, not the owner's set-back one (George 2026-11-04).
+   - "Who it's shared with": each person's avatar, name and when it takes effect. Sharing is the
+     stage bar's Share. A plain section, not the owner's set-back one (George 2026-11-04).
    View only in this pass; Edit (name, type, where the original is, the note) and Remove are the
    stage bar's (⋯). */
 
@@ -38,7 +37,6 @@ export type DocumentRecordCopy = {
   /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
   sharedWith: string
   sharedWithEmpty: string
-  shareIt: string
   /** A named person's link ("Open in People"). */
   openPerson: string
   values: ValuesToCheckProps["copy"]
@@ -49,7 +47,7 @@ function PersonLine({ name, detail, end }: { name: string; detail?: string; end?
   return (
     <li className="flex items-center justify-between gap-3 py-1">
       <span className="flex min-w-0 items-center gap-3">
-        <Avatar name={name} size="md" />
+        <Avatar name={name} size="sm" />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-semibold">{name}</span>
           {detail && <span className="truncate text-sm font-medium text-muted-foreground">{detail}</span>}
@@ -79,7 +77,6 @@ export function DocumentRecord({
   copy,
   onUse,
   onKeep,
-  onShare,
   linkAs: Link = "a",
 }: {
   document: VaultDocument
@@ -87,8 +84,6 @@ export function DocumentRecord({
   copy: DocumentRecordCopy
   onUse: ValuesToCheckProps["onUse"]
   onKeep: ValuesToCheckProps["onKeep"]
-  /** Share it. Without it, no button. */
-  onShare?: () => void
   /** Link component for in-app links (Next's `Link`). */
   linkAs?: ElementType
 }) {
@@ -139,11 +134,6 @@ export function DocumentRecord({
               <PersonLine key={s.id} name={s.who} detail={s.when} />
             ))}
           </ul>
-        )}
-        {onShare && (
-          <Button variant="secondary" size="sm" shape="rect" icon={<Share2Icon />} onClick={onShare} className="self-start">
-            {copy.shareIt}
-          </Button>
         )}
       </RecordSection>
     </RecordCard>

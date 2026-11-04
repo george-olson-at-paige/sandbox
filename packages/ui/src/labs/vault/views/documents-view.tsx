@@ -2,7 +2,7 @@
 
 import type { ElementType, MouseEvent, ReactNode } from "react"
 import { useMemo, useState } from "react"
-import { ArrowLeftIcon, FilePenLineIcon, FileTextIcon, Share2Icon, Trash2Icon } from "lucide-react"
+import { ArrowLeftIcon, DownloadIcon, FilePenLineIcon, FileTextIcon, Share2Icon, Trash2Icon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { useActionMenu, type ListAction } from "../../../components/actions/action-menu"
@@ -29,6 +29,8 @@ import { ViewList } from "./view-list"
 
 export type DocumentsViewCopy = {
   title: string
+  /** The stage bar's Download (the file, as it was added). */
+  download: string
   lead: string
   add: string
   count: (n: number) => string
@@ -49,6 +51,7 @@ export type DocumentsViewCopy = {
   pickLead: string
   pickEmpty: string
   startWith: string
+  /** The phone's way back to the list, the arrow's name ("Back to Documents"). */
   back: string
   share: string
   more: (title: string) => string
@@ -95,7 +98,9 @@ export function DocumentsView({
   }, [documents])
   const needChips = useMemo(() => {
     const counts = new Map<string, { value: string; label: string; count: number }>()
-    for (const d of documents) for (const n of d.needs) counts.set(`need:${n.kind}`, { value: `need:${n.kind}`, label: n.text, count: (counts.get(`need:${n.kind}`)?.count ?? 0) + 1 })
+    for (const d of documents)
+      for (const n of d.needs)
+        counts.set(`need:${n.kind}`, { value: `need:${n.kind}`, label: n.text, count: (counts.get(`need:${n.kind}`)?.count ?? 0) + 1 })
     return [...counts.values()]
   }, [documents])
   const showChips = [
@@ -171,7 +176,10 @@ export function DocumentsView({
           <PageHeader
             density="compact"
             icon={
-              <span aria-hidden className="inline-flex size-control items-center justify-center rounded-lg bg-primary text-on-tone [&_svg]:size-icon-lg">
+              <span
+                aria-hidden
+                className="inline-flex size-control items-center justify-center rounded-lg bg-primary text-on-tone [&_svg]:size-icon-lg"
+              >
                 <FileTextIcon />
               </span>
             }
@@ -185,7 +193,12 @@ export function DocumentsView({
           <ViewList
             search={{ value: query, onChange: setQuery, label: copy.searchLabel, placeholder: copy.search }}
             areas={{ label: copy.areas, items: areaItems, value: areaFilter, onChange: setAreaFilter }}
-            filters={{ label: copy.filters, sets: [...(needChips.length ? [{ label: copy.needs, chips: needChips }] : []), { label: copy.show, chips: showChips }], value: more, onChange: setMore }}
+            filters={{
+              label: copy.filters,
+              sets: [...(needChips.length ? [{ label: copy.needs, chips: needChips }] : []), { label: copy.show, chips: showChips }],
+              value: more,
+              onChange: setMore,
+            }}
             matches={shown.length > 0}
             none={{ title: copy.none, clear: copy.clear }}
           >
@@ -201,22 +214,34 @@ export function DocumentsView({
             )}
           </ViewList>
         }
-        back={
-          <Button variant="quiet" size="inline" icon={<ArrowLeftIcon />} onClick={() => setOpenId(undefined)}>
-            {copy.back}
-          </Button>
-        }
         stageBar={
           open && (
             <StageBar
+              back={
+                <Button
+                  variant="quiet"
+                  size="icon"
+                  shape="rect"
+                  icon={<ArrowLeftIcon />}
+                  aria-label={copy.back}
+                  onClick={() => setOpenId(undefined)}
+                />
+              }
               title={open.title}
               chip={open.type !== open.title ? open.type : undefined}
               sub={[open.fileName, open.added].filter(Boolean).join(" · ")}
               actions={
                 <>
+                  {open.file && (
+                    <Button asChild variant="secondary" size="sm" shape="rect" icon={<DownloadIcon />}>
+                      <a href={open.file.src} download={open.fileName}>
+                        <span className="max-sm:sr-only">{copy.download}</span>
+                      </a>
+                    </Button>
+                  )}
                   {onShare && (
                     <Button variant="secondary" size="sm" shape="rect" icon={<Share2Icon />} onClick={() => onShare(open.id)}>
-                      {copy.share}
+                      <span className="max-sm:sr-only">{copy.share}</span>
                     </Button>
                   )}
                   {actions.length > 0 && menu.trigger}
@@ -234,7 +259,6 @@ export function DocumentsView({
               linkAs={linkAs}
               onUse={(key) => onUse(open.id, key)}
               onKeep={(key) => onKeep(open.id, key)}
-              onShare={onShare && (() => onShare(open.id))}
             />
           ) : (
             <PickPanel

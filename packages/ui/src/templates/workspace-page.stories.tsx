@@ -45,7 +45,6 @@ export const Wireframe: Story = {
     stageLabel: "Jordan Lee",
     stageBar: <Placeholder size="sm" label="Stage bar" detail="Which record is open, and what can be done to all of it" measure />,
     stage: <Placeholder size="xl" label="Record card" detail="The record itself: what the owner shares (max 720, centred)" measure />,
-    back: <Placeholder size="xs" label="Back (below md)" />,
   },
   globals: { viewport: { value: "w1280", isRotated: false } },
 }

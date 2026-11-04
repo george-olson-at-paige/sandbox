@@ -99,7 +99,7 @@ export const PEOPLE_COPY = {
   pickLead: VIEW_COPY.people.pickLead,
   pickEmpty: VIEW_COPY.people.pickEmpty,
   startWith: VIEW_COPY.startWith,
-  back: VIEW_COPY.people.title,
+  back: "Back to People", // ⟨new⟩
   share: VIEW_COPY.share,
   more: (name: string) => `Actions for ${name}`, // ⟨new⟩
   editDetails: VIEW_COPY.editDetails,
@@ -125,6 +125,7 @@ export const PEOPLE_COPY = {
 /** Documents' words for DocumentsView: docs/views.md and the webapp's own; ⟨new⟩ as for People. */
 export const DOCUMENTS_COPY = {
   title: VIEW_COPY.documents.title,
+  download: VIEW_COPY.documents.download,
   lead: VIEW_COPY.documents.lead,
   add: VIEW_COPY.documents.add,
   count: (n: number) => (n === 0 ? "None yet" : n === 1 ? "1 document" : `${n} documents`),
@@ -145,7 +146,7 @@ export const DOCUMENTS_COPY = {
   pickLead: VIEW_COPY.documents.pickLead,
   pickEmpty: VIEW_COPY.documents.pickEmpty,
   startWith: VIEW_COPY.startWith,
-  back: VIEW_COPY.documents.title,
+  back: "Back to Documents", // ⟨new⟩
   share: VIEW_COPY.share,
   more: (title: string) => `Actions for ${title}`, // ⟨new⟩
   editDetails: VIEW_COPY.editDetails,
@@ -161,7 +162,6 @@ export const DOCUMENTS_COPY = {
     names: VIEW_COPY.documents.names,
     sharedWith: "Who it’s shared with", // ⟨new⟩ (replaces "Who can see it")
     sharedWithEmpty: "Nobody yet — it isn’t shared with anyone.",
-    shareIt: "Share it",
     openPerson: "Open in People",
     values: {
       useThis: VIEW_COPY.documents.useThis,

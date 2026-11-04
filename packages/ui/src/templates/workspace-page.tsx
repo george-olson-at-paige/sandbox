@@ -18,22 +18,24 @@ import { cn } from "../lib/utils"
               choose (the Pick panel). Never list controls or page actions. Scrolls on its own.
    - stageBar Which record is open and what can be done to all of it: title, chip, a quiet
               line, Share, ⋯ or Done. Stays at the top of the stage while it scrolls.
-              Actions on one part of the record sit on that part, not here.
-   - back     Below md only: the way from the record back to the list.
+              Actions on one part of the record sit on that part, not here. Below md it
+              also holds the way back to the list, an icon button left of the title (the
+              stage bar's own `back`), so a phone's record has one bar, not a back row over it.
 
-   Edges. From md the page behind the workspace is the page tint (`surface-page`), and the list
-   and the stage are one panel on it (the list white; the stage open to the page's tint, so the page and the stage are one
-   colour and the white list and record card stand on it, George 2026-11-04), edged at `border-medium` (between the region rule
-   and the hairline): top, left, right, and one rule between the list and the stage. The band
-   sits on the tint with no rule of its own, starting on the frame's edge under the logo, so the
-   panel's top edge is what divides it from the band. Inside the panel the list's and the stage
-   bar's contents start at the workspace gutter (`gutter-workspace`: 24 from sm), the caller's,
-   with the same utility. Below md there is no frame and no tint: the screen is the panel, the
-   band has its rule, and everything starts at the workspace gutter (16, 24 from sm).
+   Edges. From md the list and the stage are one panel in the frame, on the white page, edged
+   at `border-medium` (between the region rule and the hairline): top, left, right, and one rule
+   between the list and the stage. The list is white; the stage is the page tint
+   (`surface-page`), the only tint, so the white record card stands on it (George 2026-11-04:
+   a tinted page beside a tinted stage read as two near blues). The band has no rule of its
+   own and starts on the frame's edge under the logo; the panel's top edge divides it. Inside
+   the panel the list's and the stage bar's contents start at the workspace gutter
+   (`gutter-workspace`: 24 from sm), the caller's, with the same utility. Below md there is no
+   frame: the screen is the panel, the band has its rule, and everything starts at the
+   workspace gutter (16, 24 from sm).
 
    Breakpoints (theme.css, the standard ones):
    - below md (768): one column, two screens. `open` false shows the band and the list;
-     `open` true shows the stage, with `back` over it and no band.
+     `open` true shows the stage, its bar carrying the way back, and no band.
    - md: list (300) | stage, each the window's height under the app header.
    - lg (1024): the list is 360.
    The stage centres what it shows at the record's width (max-w-record, 720): every record on a
@@ -44,7 +46,6 @@ function WorkspacePage({
   list,
   stage,
   stageBar,
-  back,
   open = false,
   listLabel,
   stageLabel,
@@ -57,8 +58,6 @@ function WorkspacePage({
   stage: ReactNode
   /** Which record is open and the actions on all of it. Omit with nothing open. Sticks to the top of the stage. */
   stageBar?: ReactNode
-  /** Below md, over the stage: the way back to the list (a link). Hidden from md, where the list is beside the stage. */
-  back?: ReactNode
   /** A record is open. Below md it picks the screen: false, the band and list; true, the stage. From md both show. */
   open?: boolean
   /** The list region's accessible name, e.g. "People". */
@@ -67,7 +66,7 @@ function WorkspacePage({
   stageLabel: string
 }) {
   return (
-    <div data-slot="workspace-backdrop" className="flex flex-1 flex-col md:bg-surface-page">
+    <div data-slot="workspace-backdrop" className="flex flex-1 flex-col">
       <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0 md:page-frame">
         <div
           data-slot="workspace-band"
@@ -97,11 +96,6 @@ function WorkspacePage({
               open ? "" : "max-md:hidden",
             )}
           >
-            {back && (
-              <div data-slot="workspace-back" className="border-b border-border bg-background py-2 gutter-workspace md:hidden">
-                {back}
-              </div>
-            )}
             {stageBar && (
               <div data-slot="workspace-stage-bar" className="sticky top-0 z-sticky border-b border-border-medium bg-background">
                 {stageBar}
