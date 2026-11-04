@@ -23,9 +23,7 @@ import { ReachForm, type ReachDraft, type ReachFormProps } from "./reach-form"
 export type PersonRecordCopy = {
   roles: string
   rolesPet: string
-  rolesEmpty: string
   canSee: string
-  canSeeEmpty: string
   ownerOnly: string
   addReach: string
   reach: ReachFormProps["labels"]
@@ -70,12 +68,14 @@ export function PersonRecord({
           )
         }
       />
-      <RecordSection audience="shared" title={person.pet ? copy.rolesPet : copy.roles} empty={person.groups.length ? undefined : copy.rolesEmpty}>
-        {person.groups.length > 0 && <AreaLines groups={person.groups} linkAs={linkAs} />}
-      </RecordSection>
-      {!person.pet && (
-        <RecordSection audience="owner" ownerLabel={copy.ownerOnly} title={copy.canSee} empty={person.canSee.length ? undefined : copy.canSeeEmpty}>
-          {person.canSee.length > 0 && (
+      {person.groups.length > 0 && (
+        <RecordSection audience="shared" title={person.pet ? copy.rolesPet : copy.roles}>
+          <AreaLines groups={person.groups} linkAs={linkAs} />
+        </RecordSection>
+      )}
+      {!person.pet && person.canSee.length > 0 && (
+        <RecordSection audience="owner" ownerLabel={copy.ownerOnly} title={copy.canSee}>
+          {
             <ul className="flex flex-col gap-1.5">
               {person.canSee.map((line) => (
                 <li key={line.key} className="flex items-start gap-2.5 text-sm [&_svg]:mt-0.5 [&_svg]:size-icon [&_svg]:text-muted-foreground">
@@ -87,7 +87,7 @@ export function PersonRecord({
                 </li>
               ))}
             </ul>
-          )}
+          }
         </RecordSection>
       )}
     </RecordCard>

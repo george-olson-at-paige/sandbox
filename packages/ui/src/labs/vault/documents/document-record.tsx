@@ -28,11 +28,8 @@ import { SaidList, type SaidListCopy } from "./said-list"
      a value once settled moves here from Needs you, with what became of it: the Area it went to
      (a link), "You kept yours" or "Not in your Vault". No acts. When it was read at its right.
    - "Who it names": each person's avatar and name, a link to their record.
-   Every section but Needs you always shows, with a compact empty line (EmptyState xs) when it
-   has nothing, so a document's record has the same shape whatever is in it; Needs you is a
-   queue, and an empty queue isn't drawn.
-   - "Who it's shared with": each person's avatar, name and when it takes effect, or a compact
-     empty line. Sharing is the stage bar's Share.
+   A section with nothing in it isn't drawn (George 2026-11-04).
+   - "Who it's shared with": each person's avatar, name and when it takes effect. Sharing is the stage bar's Share.
    What the owner does here holds until the caller hands back the document with it. Edit (name,
    type, where the original is, the note) and Remove are the stage bar's (⋯). */
 
@@ -43,23 +40,15 @@ export type DocumentRecordCopy = {
   needs: string
   waiting: (n: number) => string
   confirmAll: string
-  /** What it is, Area by Area ("In your Vault"), and the line when it's in none. */
+  /** What it is, Area by Area ("In your Vault"). */
   inVault: string
-  inVaultEmpty: string
-  /** The values settled ("What we read"); its right says when it was read. Its empty line: read, nothing settled yet; not read yet; no file to read. */
+  /** The values settled ("What we read"); its right says when it was read. */
   read: string
-  readWaiting: string
-  readNotYet: string
-  readNoFile: string
-  /** A document Paige made: nothing of it to check. */
-  readMade: string
   said: SaidListCopy
-  /** Who it names, and the line when it names nobody. */
+  /** Who it names. */
   names: string
-  namesEmpty: string
-  /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
+  /** Who it's shared with ("Who it’s shared with"). */
   sharedWith: string
-  sharedWithEmpty: string
   /** A named person's link ("Open in People"). */
   openPerson: string
 }
@@ -183,19 +172,18 @@ export function DocumentRecord({
           ))}
         </RecordSection>
       ) : null}
-      <RecordSection audience="shared" title={copy.inVault} empty={document.forWhat.length ? undefined : copy.inVaultEmpty}>
-        {document.forWhat.length > 0 && <AreaLines groups={document.forWhat} linkAs={Link} />}
-      </RecordSection>
-      <RecordSection
-        audience="shared"
-        title={copy.read}
-        aside={document.said?.readOn}
-        empty={settled.length ? undefined : document.said ? copy.readWaiting : document.generated ? copy.readMade : document.file ? copy.readNotYet : copy.readNoFile}
-      >
-        {settled.length > 0 && <SaidList values={settled} {...lists} />}
-      </RecordSection>
-      <RecordSection audience="shared" title={copy.names} empty={document.names.length ? undefined : copy.namesEmpty}>
-        {document.names.length > 0 && (
+      {document.forWhat.length > 0 && (
+        <RecordSection audience="shared" title={copy.inVault}>
+          <AreaLines groups={document.forWhat} linkAs={Link} />
+        </RecordSection>
+      )}
+      {document.said && settled.length > 0 && (
+        <RecordSection audience="shared" title={copy.read} aside={document.said.readOn}>
+          <SaidList values={settled} {...lists} />
+        </RecordSection>
+      )}
+      {document.names.length > 0 && (
+        <RecordSection audience="shared" title={copy.names}>
           <ul className="flex flex-col">
             {document.names.map((n) => (
               <PersonLine
@@ -213,17 +201,17 @@ export function DocumentRecord({
               />
             ))}
           </ul>
-        )}
-      </RecordSection>
-      <RecordSection audience="shared" title={copy.sharedWith} empty={document.shares.length === 0 ? copy.sharedWithEmpty : undefined}>
-        {document.shares.length > 0 && (
+        </RecordSection>
+      )}
+      {document.shares.length > 0 && (
+        <RecordSection audience="shared" title={copy.sharedWith}>
           <ul className="flex flex-col">
             {document.shares.map((s) => (
               <PersonLine key={s.id} name={s.who} detail={s.when} />
             ))}
           </ul>
-        )}
-      </RecordSection>
+        </RecordSection>
+      )}
     </RecordCard>
   )
 }

@@ -2,7 +2,6 @@ import type { ComponentProps, ElementType, ReactNode } from "react"
 import { ArrowUpRightIcon, CircleAlertIcon, LockIcon } from "lucide-react"
 
 import { Dot } from "../../components/display/dot"
-import { EmptyState } from "../../components/feedback/empty-state"
 import { cn } from "../../lib/utils"
 import type { AreaGroup, RecordLine } from "./views/data"
 
@@ -23,13 +22,16 @@ import type { AreaGroup, RecordLine } from "./views/data"
    `attention` (the owner's to-dos, "Needs you"): its legend in the attention ink with the alert,
    shown only when something needs doing.
    In View a section reads; in Edit the same frame holds fields and actions (FieldSet's legend
-   and rule are where it comes from). `empty` is the line it shows with nothing in it.
+   and rule are where it comes from).
 
-   Type on a record (George 2026-11-04: one scale, not one per piece). Five roles, nothing else:
+   Type on a record (George 2026-11-04: one scale, not one per piece). Six roles, nothing else:
    - title   the record's name, once, in the letterhead: font-display text-2xl bold, the strong
              ink (as PageHeader's and the stage bar's names).
-   - label   section legends, Area names, the owner words, a legend's right: `eyebrow` (12, caps,
-             semibold); a legend in the ink (Needs you in the attention ink), the rest muted.
+   - heading a section's name: font-display text-lg bold, the strong ink (Needs you in the
+             attention ink, with the alert), over a hairline; so a section reads as one at a
+             glance, not as another caps label (George 2026-11-04).
+   - label   Area names, the owner words, a heading's right: `eyebrow` (12, caps, semibold),
+             muted.
    - value   what a line says, a value, a name: text-sm semibold, the ink.
    - detail  the quieter part: what a line adds, a field's or fact's name ("Date of birth",
              "Original"), a date: text-sm medium, muted.
@@ -39,11 +41,11 @@ import type { AreaGroup, RecordLine } from "./views/data"
    brand ink is something you can act on (an action, a contact or file link), the attention ink
    is something waiting on you. The stage bar's name (text-lg) is chrome, not the record.
 
-   Spacing on a record: sections 24 apart (the card's gap), a legend's rule 8 over its content
-   (8 under the legend text); a read-only line 6 above and below, no rules between lines (the
+   Spacing on a record: sections 32 apart (the card's gap), a heading's rule 12 over its content
+   (8 under the heading); a read-only line 6 above and below, no rules between lines (the
    section's rule is enough); the queue's lines (Needs you, which hold buttons) 10 above and
-   below with a hairline between. A section that can be empty always shows, with its empty
-   line (EmptyState size xs), so a record keeps the same shape whatever is in it.
+   below with a hairline between. A section with nothing in it isn't drawn (the caller
+   leaves it out).
 
    AreaLines: lines grouped by Area for a shared section, in two columns from sm: the Area (its
    dot and name) on the left, 120 wide; each line, its quieter detail and where it lives
@@ -55,7 +57,7 @@ export function RecordCard({ children, label }: { children: ReactNode; label: st
     <article
       data-slot="record-card"
       aria-label={label}
-      className="flex flex-col gap-6 rounded-lg border border-surface-edge bg-card p-5 shadow-card md:p-6"
+      className="flex flex-col gap-8 rounded-lg border border-surface-edge bg-card p-5 shadow-card md:p-6"
     >
       {children}
     </article>
@@ -69,7 +71,6 @@ export function RecordSection({
   ownerLabel,
   attention = false,
   aside,
-  empty,
   children,
 }: {
   /** shared: the people the owner shares with read it. owner: only the owner sees it. */
@@ -82,17 +83,10 @@ export function RecordSection({
   attention?: boolean
   /** shared: what sits at the legend's right, in the legend's type ("Read Oct 2, 2026"; "3 to check · Confirm all"). */
   aside?: ReactNode
-  /** The line it shows with nothing in it. The caller passes it only then; it sits above any children (an action that fills it). */
-  empty?: string
   /** The section's lines (View) or fields and actions (Edit). */
   children?: ReactNode
 }) {
-  const body = (
-    <>
-      {empty && <EmptyState size="xs" title={empty} />}
-      {children}
-    </>
-  )
+  const body = <>{children}</>
   if (audience === "owner") {
     return (
       <section
@@ -102,7 +96,7 @@ export function RecordSection({
         className="flex flex-col gap-2 rounded-lg border border-dashed border-surface-edge bg-muted px-4 py-3.5"
       >
         <div className="flex items-center justify-between gap-3 border-b border-divider pb-2">
-          <h3 className="eyebrow text-foreground">{title}</h3>
+          <h3 className="font-display text-lg font-bold text-foreground-strong">{title}</h3>
           <span className="flex items-center gap-1.5 eyebrow text-muted-foreground [&_svg]:size-icon-xs">
             <LockIcon aria-hidden />
             {ownerLabel}
@@ -113,9 +107,9 @@ export function RecordSection({
     )
   }
   return (
-    <section data-slot="record-section" data-audience="shared" aria-label={title} className="flex flex-col gap-2">
+    <section data-slot="record-section" data-audience="shared" aria-label={title} className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3 border-b border-divider pb-2">
-        <h3 className={cn("flex items-center gap-1.5 eyebrow [&_svg]:size-icon-xs", attention ? "text-attention" : "text-foreground")}>
+        <h3 className={cn("flex items-center gap-2 font-display text-lg font-bold [&_svg]:size-icon", attention ? "text-attention" : "text-foreground-strong")}>
           {attention && <CircleAlertIcon aria-hidden />}
           {title}
         </h3>
