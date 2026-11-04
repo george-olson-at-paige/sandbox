@@ -23,7 +23,7 @@ function ListGroup({
 }) {
   return (
     <section data-slot="list-group" aria-label={`${label}, ${count}`}>
-      <h3 data-slot="list-group-heading" className="flex items-center justify-between px-4 pt-4 pb-1.5 eyebrow text-muted-foreground">
+      <h3 data-slot="list-group-heading" className="flex items-center justify-between pt-3 pb-1 eyebrow text-muted-foreground gutter-workspace">
         <span>{label}</span>
         <span className="font-semibold tracking-normal tabular-nums">{count}</span>
       </h3>

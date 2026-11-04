@@ -56,8 +56,8 @@ export const ACCOUNT_ITEMS = [
 
 /* A page's top: the real AppHeader (logo + placeholder actions), for layout stories (R1-23),
    so the logo's left edge can be compared with the content's. */
-export function StoryAppHeader() {
-  return <AppHeader logo={<PaigeLogo />} actions={<Placeholder size="sm" label="Actions" className="w-40" />} />
+export function StoryAppHeader({ frame }: { frame?: "page" | "workspace" } = {}) {
+  return <AppHeader frame={frame} logo={<PaigeLogo />} actions={<Placeholder size="sm" label="Actions" className="w-40" />} />
 }
 
 /* Prints the side gutter the browser resolved at this width. */

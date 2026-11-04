@@ -7,7 +7,7 @@ import { extendTailwindMerge } from "tailwind-merge"
    `eyebrow` not known to set a font size (so Label's `text-sm` survived next to it; GAPS #28,
    #70). Every custom utility in theme.css is registered here, and each has a case in
    utils.test.ts (R2-21). A new utility gets an entry and a test. */
-const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "focus-ring" | "icon-stroke-small" | "scrollbar-thin" | "scrollbar-stable" | "header-rule" | "shimmer" | "scroll-fade">({
+const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "gutter-workspace" | "rich-text" | "focus-ring" | "icon-stroke-small" | "scrollbar-thin" | "scrollbar-stable" | "header-rule" | "shimmer" | "scroll-fade">({
   extend: {
     theme: {
       tracking: ["eyebrow", "display"],
@@ -38,7 +38,7 @@ const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "fo
     classGroups: {
       "border-w": ["border-dot"],
       shadow: [{ shadow: ["card", "lift", "pop", "avatar"] }],
-      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit", "workspace", "workspace-wide", "record-line", "document-head"] }],
+      "grid-cols": [{ "grid-cols": ["fit-xs", "fit-sm", "fit-md", "fit-lg", "area-page", "street-unit", "workspace", "workspace-wide", "record-line", "document-head", "view-row"] }],
       // Named stacking steps (T-12): the same group as z-10, so a later z-* replaces one.
       z: [{ z: ["raised", "sticky", "overlay"] }],
       // State opacities (T-07) and the decorative-art opacity (R18-02): the same group as opacity-50.
@@ -49,6 +49,7 @@ const twMerge = extendTailwindMerge<"eyebrow" | "page-frame" | "rich-text" | "fo
       // Multi-property utilities: their own groups, so nothing is dropped by guesswork.
       eyebrow: ["eyebrow"],
       "page-frame": ["page-frame"],
+      "gutter-workspace": ["gutter-workspace"],
       "rich-text": ["rich-text"],
       "focus-ring": ["focus-ring"],
       "icon-stroke-small": ["icon-stroke-small"],

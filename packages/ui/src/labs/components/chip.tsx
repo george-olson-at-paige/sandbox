@@ -48,7 +48,7 @@ function ChipGroup({
   return (
     // ToggleGroup's `card` variant: Radix's roving focus and pressed state on plain buttons,
     // nothing joined. Each Chip is Radix's Item on its own button.
-    <ToggleGroup variant="card" data-slot="chip-group" aria-label={label} className={cn("flex flex-wrap gap-1.5", className)} {...props}>
+    <ToggleGroup variant="card" data-slot="chip-group" aria-label={label} className={cn("flex flex-wrap gap-1", className)} {...props}>
       {children}
     </ToggleGroup>
   )
@@ -79,9 +79,9 @@ function Chip({
         type="button"
         data-slot="chip"
         className={cn(
-          "inline-flex h-7 min-w-0 cursor-pointer items-center gap-1.5 rounded-full border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground focus-ring",
+          "inline-flex h-6 min-w-0 cursor-pointer items-center gap-1 rounded-full border border-border bg-background px-2 text-xs font-semibold text-muted-foreground focus-ring",
           "hover:layer-hover active:layer-press",
-          "data-[state=on]:border-primary data-[state=on]:bg-primary-subtle data-[state=on]:text-primary",
+          "data-[state=on]:border-primary data-[state=on]:bg-accent data-[state=on]:text-primary",
           "disabled:cursor-not-allowed disabled:opacity-disabled",
         )}
       >

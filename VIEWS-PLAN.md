@@ -176,3 +176,11 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
    - the remove confirms' descriptions.
 
    It goes to the copy pass.
+
+**Frame pass (George 2026-11-04, the inspection's 1–6):**
+1. **One edge.** `gutter-workspace` (16; 24 from sm) is used by AppHeader `frame="workspace"`, the band, the list's controls, the group headings, the rows and the stage bar.
+2. **The compact band.** PageHeader's right side is centred on the title row, and the content may narrow to 12rem, so a phone keeps the count beside the title.
+3. **The selected row.** It uses `bg-accent` (the brand's lightest tint) with the 3px bar. Pressed chips use the same tint.
+4. **The ⋯.** It is now `secondary` and `rect`, bordered like Share; useActionMenu takes `secondary`.
+5. **Chips and the phone.** Chips are 24px high and tighter. Below sm the Area chips are the filter popover's first set, and the button's count includes them.
+6. **Compact rows.** ViewRow has its own layout (`grid-cols-view-row`): a 14px name over 12px lines, on the gutter. It no longer uses ItemFrame.

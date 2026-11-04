@@ -27,7 +27,7 @@ test("Paige shadows replace each other and the upstream aliases", () => {
 })
 
 test("grid-cols-fit-*, grid-cols-area-page, grid-cols-street-unit and grid-cols-workspace* are column templates", () => {
-  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit", "grid-cols-workspace", "grid-cols-workspace-wide", "grid-cols-record-line", "grid-cols-document-head"]) {
+  for (const c of ["grid-cols-fit-xs", "grid-cols-fit-sm", "grid-cols-fit-md", "grid-cols-fit-lg", "grid-cols-area-page", "grid-cols-street-unit", "grid-cols-workspace", "grid-cols-workspace-wide", "grid-cols-record-line", "grid-cols-document-head", "grid-cols-view-row"]) {
     assert.equal(cn("grid-cols-2", c), c)
   }
 })
@@ -60,6 +60,7 @@ test("bg-wash-corner is a background image, so the card colour survives", () => 
 
 test("page-frame, rich-text and focus-ring are kept beside the classes they overlap", () => {
   assert.equal(cn("page-frame", "flex"), "page-frame flex")
+  assert.equal(cn("gutter-workspace", "flex"), "gutter-workspace flex")
   assert.equal(cn("rich-text text-sm text-card-foreground"), "rich-text text-sm text-card-foreground")
   assert.equal(cn("outline-none", "focus-ring"), "outline-none focus-ring")
 })

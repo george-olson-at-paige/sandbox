@@ -13,7 +13,7 @@ const people = Object.values(areas)
 export default async function PeopleRoute({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
   const { id } = await searchParams
   return (
-    <VaultShell owner={home.owner}>
+    <VaultShell owner={home.owner} frame="workspace">
       <PeopleScreen people={people} openId={id} />
     </VaultShell>
   )

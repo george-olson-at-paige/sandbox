@@ -56,7 +56,8 @@ function PageHeader({
         {icon}
         <Split
           gap={4}
-          align="start"
+          align={compact ? "center" : "start"}
+          contentMin={compact ? "sm" : "md"}
           className="min-w-0 flex-1"
           aside={
             (meta || actions) && (

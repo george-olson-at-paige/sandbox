@@ -20,6 +20,11 @@ import { cn } from "../lib/utils"
               Actions on one part of the record sit on that part, not here.
    - back     Below md only: the way from the record back to the list.
 
+   One edge: the band, the back row and what the caller puts in the list and the stage bar start
+   at the workspace gutter (`gutter-workspace`: 16, 24 from sm), and so does an AppHeader with
+   `frame="workspace"` over it. The list's and the stage bar's insides are the caller's; they use
+   the same utility.
+
    Breakpoints (theme.css, the standard ones):
    - below md (768): one column, two screens. `open` false shows the band and the list;
      `open` true shows the stage, with `back` over it and no band.
@@ -57,7 +62,7 @@ function WorkspacePage({
 }) {
   return (
     <main data-slot="workspace-page" data-open={open} className="flex flex-1 flex-col md:h-workspace md:min-h-0">
-      <div data-slot="workspace-band" className={cn("border-b border-divider bg-background px-gutter py-3", open && "max-md:hidden")}>
+      <div data-slot="workspace-band" className={cn("border-b border-divider bg-background py-3 gutter-workspace", open && "max-md:hidden")}>
         {band}
       </div>
       <div data-slot="workspace-columns" className="flex flex-1 flex-col md:grid md:min-h-0 md:grid-cols-workspace lg:grid-cols-workspace-wide">
@@ -74,7 +79,7 @@ function WorkspacePage({
           className={cn("flex min-w-0 flex-1 flex-col bg-surface-page md:min-h-0 md:overflow-x-clip md:overflow-y-auto scrollbar-thin", open ? "" : "max-md:hidden")}
         >
           {back && (
-            <div data-slot="workspace-back" className="border-b border-divider bg-background px-gutter py-2 md:hidden">
+            <div data-slot="workspace-back" className="border-b border-divider bg-background py-2 gutter-workspace md:hidden">
               {back}
             </div>
           )}

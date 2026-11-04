@@ -29,7 +29,7 @@ function StageBar({
   actions?: ReactNode
 }) {
   return (
-    <div data-slot="stage-bar" className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
+    <div data-slot="stage-bar" className="flex items-center justify-between gap-4 py-3 gutter-workspace">
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-2">
           <h2 data-slot="stage-bar-title" className="truncate font-display text-lg font-bold">

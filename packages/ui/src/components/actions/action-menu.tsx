@@ -41,8 +41,8 @@ function useActionMenu({
   linkAs?: ElementType
   /** Hears each action that worked (after its confirm). */
   onDone?: (action: RunnableAction) => void
-  /** The ⋯'s look: `ghost` (a table row) or `quiet` (an Item). */
-  variant?: "ghost" | "quiet"
+  /** The ⋯'s look: `ghost` (a table row), `quiet` (an Item), or `secondary` (bordered, beside other bordered tools: a View's stage bar, D-V2). */
+  variant?: "ghost" | "quiet" | "secondary"
   /** The ⋯'s outline: `pill` (default) or `rect`, a tool in a bar of tools (a View's stage bar, D-V2). */
   shape?: Extract<Shape, "pill" | "rect">
 }): { trigger: ReactNode; withContextMenu: (target: ReactElement) => ReactNode; dialog: ReactNode } {

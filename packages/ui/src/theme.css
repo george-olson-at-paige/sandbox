@@ -269,6 +269,11 @@
   @variant sm { --gutter: 1.5rem; }
   @variant lg { --gutter: 2rem; }
   @variant xl { --gutter: 3rem; }
+  /* A workspace's one gutter (WorkspacePage, VIEWS-PLAN.md): the app header's row, the band, the
+     list's controls and rows and the stage bar share it, so they start on one edge. A workspace
+     is full bleed, so it stops at 24 (the page's grows to 48). 16 below sm · 24 from sm. */
+  --gutter-workspace: 1rem;
+  @variant sm { --gutter-workspace: 1.5rem; }
 }
 
 /* File kinds (R20-17, ReUI file-type; light only): one colour per kind of file, the page outline
@@ -944,6 +949,10 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-document-head {
   grid-template-columns: minmax(0, 1fr) 15rem;
 }
+/* A View's list row (VIEWS-PLAN.md): the mark in a 36 column, the text, the Area dots. */
+@utility grid-cols-view-row {
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+}
 /* A record's résumé lines (VIEWS-PLAN.md): the Area's name in a 120 column, the lines beside it. */
 @utility grid-cols-record-line {
   grid-template-columns: 7.5rem minmax(0, 1fr);
@@ -977,6 +986,11 @@ input::-webkit-strong-password-auto-fill-button {
   width: 100%;
   max-width: --theme(--container-page);
   padding-inline: var(--gutter);
+}
+/* The workspace edge: WorkspacePage's regions and an AppHeader with frame="workspace" (no max
+   width, the workspace gutter), so the logo, the band, the list and the stage bar share it. */
+@utility gutter-workspace {
+  padding-inline: var(--gutter-workspace);
 }
 /* Rich text (R1-27): the text styles of the rich Textarea's editor and of the read-only
    RichText renderer, so a value looks the same while edited and when shown. Paragraphs 8 apart,

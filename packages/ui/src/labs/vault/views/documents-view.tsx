@@ -156,7 +156,7 @@ export function DocumentsView({
           : []),
       ]
     : []
-  const menu = useActionMenu({ actions, label: open ? copy.more(open.title) : "", shape: "rect" })
+  const menu = useActionMenu({ actions, label: open ? copy.more(open.title) : "", variant: "secondary", shape: "rect" })
 
   const rows = (list: VaultDocument[]) =>
     list.map((d) => <DocumentRow key={d.id} document={d} href={hrefFor(d.id)} current={d.id === openId} ready={copy.ready} linkAs={RowLink} />)

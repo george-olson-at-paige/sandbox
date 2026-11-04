@@ -157,7 +157,7 @@ export function PeopleView({
           : []),
       ]
     : []
-  const menu = useActionMenu({ actions, label: open ? copy.more(open.name) : "", shape: "rect" })
+  const menu = useActionMenu({ actions, label: open ? copy.more(open.name) : "", variant: "secondary", shape: "rect" })
 
   return (
     <>
