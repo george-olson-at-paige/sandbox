@@ -9,7 +9,7 @@ import { IconButton } from "../../components/actions/icon-button"
 import { Spinner } from "../../components/feedback/spinner"
 import { cn } from "../../lib/utils"
 
-/* @archetype Display (ARCHETYPES.md).
+/* @archetype Composite (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). COLLECTIONS-PLAN.md §3 (George 2026-11-04): a secret, read —
    an account's password, a PIN, a recovery code — on its item page, never in a list.
    - Hidden by default, always as the same eight dots, so the mask says nothing about its length.
@@ -105,7 +105,7 @@ export function SecretValue({
       <span className="flex min-w-0 items-center gap-1">
         <span
           data-slot="secret-value-text"
-          className={cn("min-w-0 flex-1 font-mono text-sm font-semibold wrap-anywhere", shown ? "" : "tracking-widest text-muted-foreground")}
+          className={cn("min-w-0 font-mono text-sm font-semibold wrap-anywhere", shown ? "" : "tracking-widest text-muted-foreground")}
         >
           {busy ? (
             <span className="inline-flex items-center gap-2 font-sans font-medium tracking-normal">

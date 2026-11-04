@@ -101,3 +101,21 @@ So it's mostly composition. **New: 1 template** (ItemPage) **+ 1 page pattern** 
 3. **Memories** (Card with media, SectionsField), then **Messages** (DeliveryRuleField, the letter card).
 4. **Promote** what held up, then the app routes.
 5. **Will Builder:** its own plan (a guided flow; check the linked will-builder session first).
+
+## 6. Progress
+
+**2026-11-04: the shared pieces, then Passwords, in labs**
+- **`labs/components`:**
+  - **SecretValue:** hidden as eight dots. Show, which asks for the secret when it's first needed and hides again after 30 seconds or when the tab is left. Copy, without showing it.
+  - **RepeatField:** rows with × and Add. Focus moves to the new row, or to the row that takes a removed one's place. It has `max` and `min`.
+  - **FileField:** Attachments with × or ↺ (try again), a drop zone, limits and accepted kinds, and Replace when the limit is one.
+  - Each has stories, and the key behaviour is tested in the stories.
+- **`labs/vault/collections/passwords-view.tsx` (PasswordsView):** one reading column (Page `focused`) for every screen.
+  - **The list:** the header with Add, the next-kind prompt (a neutral Callout with Add and Skip), search plus type Chips, the accounts grouped by type, and the empty and no-match states.
+  - **An account:** a header with the type tile, chip, Edit and ⋯ Delete (confirmed). A RecordCard holds Signing in (website, username with Copy, each credential as a SecretValue that asks for its secret), Notes and Files, plus the "only you can see this for now" line.
+  - **Add and edit:** a Form with FormSections. Credentials are a RepeatField of a label and a secret. Saved secrets are never put back into the form; leave the field blank to keep one. Files use FileField.
+- **No CollectionPage or ItemPage template yet:** Page `focused` plus PageHeader carried it. Decide once Memories shows whether a template earns its place.
+- `ListGroup` gained `gutter` (off in a reading column).
+- **Data:** `labs/vault/collections/data.ts`. A credential carries `hasSecret`, not the secret: the shape the API should take (§4.3).
+- **Copy marked ⟨new⟩** in `collections/fixtures.ts` needs Product.
+

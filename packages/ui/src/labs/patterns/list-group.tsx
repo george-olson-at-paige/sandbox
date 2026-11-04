@@ -1,5 +1,7 @@
 import type { ComponentProps, ReactNode } from "react"
 
+import { cn } from "../../lib/utils"
+
 /* @archetype Frame (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md §4 (D-V5: lands in labs, for patterns/).
    ListGroup: a heading with a count over the rows that belong under it — Documents' "Needs you 4"
@@ -12,18 +14,21 @@ import type { ComponentProps, ReactNode } from "react"
 function ListGroup({
   label,
   count,
+  gutter = true,
   children,
 }: {
   /** The group's name ("Needs you"). It labels the list of rows under it. */
   label: string
   /** How many rows are in it; shown at the heading's right. */
   count: number
+  /** Inset to the workspace gutter (a WorkspacePage list). Off in a page's reading column, where the column is the edge. */
+  gutter?: boolean
   /** The rows. */
   children: ReactNode
 }) {
   return (
     <section data-slot="list-group" aria-label={`${label}, ${count}`}>
-      <h3 data-slot="list-group-heading" className="flex items-center justify-between pt-3 pb-1 eyebrow text-muted-foreground gutter-workspace">
+      <h3 data-slot="list-group-heading" className={cn("flex items-center justify-between pt-3 pb-1 eyebrow text-muted-foreground", gutter ? "gutter-workspace" : "")}>
         <span>{label}</span>
         <span className="font-semibold tracking-normal tabular-nums">{count}</span>
       </h3>
