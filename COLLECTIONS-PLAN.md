@@ -132,3 +132,14 @@ So it's mostly composition. **New: 1 template** (ItemPage) **+ 1 page pattern** 
   - The library's Timeline is the other kind (a rail at the start, for activity), so this is separate.
 - **Later (George):** more views and a better filter experience. The timeline could stagger its sides so they overlap vertically and use the space better.
 
+**2026-11-04: Messages, in labs** (`labs/vault/collections/messages-view.tsx`). The third keep-and-compose page, so the shared parts came out first: **FindRow** (`labs/patterns`: search, the caller's tools beside it, one filter set as Chips) and **useRoutes** (`collections/use-routes.tsx`: hrefs as routes in labs). Passwords and Memories use them now.
+- **The list:** letters grouped by when they go (Right away · On a date · Every year · When a delegate says · After I'm gone). Each row has the envelope (a pen for a draft), the subject, the type and when it goes, and its status (Draft · Ready · Sent).
+- **A message:** the header (status chip, type, when written, Edit, ⋯ Delete), then a RecordCard. When it goes is the lead, with "Paige doesn't send messages yet…" under it (D2); then the letter (RichText) and its files.
+- **Write and edit:** type and subject, the letter (rich Textarea), When it goes (**DeliveryRuleField**: five radios, each with its line, and only the chosen one's inputs under it: a date, or a month and day; what was typed for one is kept while trying another), and up to 2 files. Saving without a complete rule is refused in place.
+- **Open:**
+  - **The body's shape.** The editor's value is a rich-text JSON document, but the wire has sanitized HTML today. One shape is needed before this leaves labs.
+  - **Recipients** are left out (§4.6).
+  - **"Ready"** is my word for the wire's Scheduled, since nothing is scheduled while nothing sends. It's ⟨new⟩ copy for Product.
+  - **The message types** are stand-ins.
+- With all three built, **no CollectionPage or ItemPage template** was needed: Page `focused` + PageHeader + FindRow + ListGroup + RecordCard compose every screen. §3's "1 template + 1 page pattern" became FindRow and useRoutes.
+
