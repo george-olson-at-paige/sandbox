@@ -6,6 +6,8 @@
     "apps/*"
   ],
   "scripts": {
+    "dev": "npm run storybook -w @paige/ui -- -p ${PORT:-3000} --host 0.0.0.0 --ci",
+    "dev:web": "npm run dev -w apps/web",
     "build": "npm run typecheck -w @paige/ui && npm run build -w apps/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
