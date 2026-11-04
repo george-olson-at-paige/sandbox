@@ -59,6 +59,7 @@
 
   --neutral-700: #595959;
   --neutral-300: #d9d9d9;
+  --neutral-200: #e8e8e8; /* halfway between 300 and 100: --border-medium */
   --neutral-100: #f7f7f7;
   --neutral-50: #fefcfb;
   --surface-muted: #f3f6fc;
@@ -157,7 +158,7 @@
   --border-strong: var(--ink-300);
   /* Halfway between --border and the row hairline (George 2026-11-04): a panel's edge on a tinted
      page, which needs less weight than a region rule on white. WorkspacePage's box. */
-  --border-medium: color-mix(in oklab, var(--border) 50%, var(--divider));
+  --border-medium: var(--neutral-200);
   --divider-tint: var(--hairline-tint);
   /* A Surface's edge (R21-01, TOKENS.md §4's context model, its first variable): the border a
      Card, a DataTable's box or a DagFrame draws, by the surface it sits on. --border by default;
