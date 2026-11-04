@@ -26,13 +26,24 @@ import type { AreaGroup, RecordLine } from "./views/data"
    and rule are where it comes from). `empty` is the line it shows with nothing in it.
 
    Type on a record (George 2026-11-04: one scale, not one per piece). Five roles, nothing else:
-   - title   the record's name, once, in the letterhead: font-display text-2xl bold.
-   - label   section legends, Area names, field and fact names, the owner words: `eyebrow`
-             (12, caps, semibold); a legend in the ink, the rest muted.
+   - title   the record's name, once, in the letterhead: font-display text-2xl bold, the strong
+             ink (as PageHeader's and the stage bar's names).
+   - label   section legends, Area names, the owner words, a legend's right: `eyebrow` (12, caps,
+             semibold); a legend in the ink (Needs you in the attention ink), the rest muted.
    - value   what a line says, a value, a name: text-sm semibold, the ink.
-   - detail  the quieter part under or after it: text-sm medium, muted.
-   - meta    links out ("Open in Family"), a status ("You have …"): text-xs semibold.
-   The stage bar's name (text-lg) is chrome, not the record.
+   - detail  the quieter part: what a line adds, a field's or fact's name ("Date of birth",
+             "Original"), a date: text-sm medium, muted.
+   - meta    text-xs semibold: a link out ("Open in Family ↗"), muted until hovered; a status
+             ("You have …"), in its tone.
+   Colour says what a thing does, not how important it is: the ink reads, muted is quieter, the
+   brand ink is something you can act on (an action, a contact or file link), the attention ink
+   is something waiting on you. The stage bar's name (text-lg) is chrome, not the record.
+
+   Spacing on a record: sections 24 apart (the card's gap), a legend's rule 8 over its content
+   (8 under the legend text); a read-only line 6 above and below, no rules between lines (the
+   section's rule is enough); the queue's lines (Needs you, which hold buttons) 10 above and
+   below with a hairline between. A section that can be empty always shows, with its empty
+   line (EmptyState size xs), so a record keeps the same shape whatever is in it.
 
    AreaLines: lines grouped by Area for a shared section, in two columns from sm: the Area (its
    dot and name) on the left, 120 wide; each line, its quieter detail and where it lives
@@ -118,7 +129,7 @@ export function RecordSection({
 /** One line: what it says, its quieter detail, and where it lives. */
 function Line({ line, linkAs: Link }: { line: RecordLine; linkAs: ElementType }) {
   return (
-    <li className="flex items-baseline justify-between gap-3 py-1">
+    <li className="flex items-baseline justify-between gap-3 py-1.5">
       <span className="min-w-0">
         <span className="text-sm font-semibold">{line.label}</span>
         {line.detail && <span className="block text-sm font-medium text-muted-foreground">{line.detail}</span>}
@@ -139,10 +150,10 @@ function Line({ line, linkAs: Link }: { line: RecordLine; linkAs: ElementType })
 /** A shared section's lines, grouped by Area: the Area on the left, its lines on the right (stacked below sm). */
 export function AreaLines({ groups, linkAs = "a" }: { groups: AreaGroup[]; linkAs?: ElementType }) {
   return (
-    <div data-slot="area-lines" className="flex flex-col gap-2">
+    <div data-slot="area-lines" className="flex flex-col gap-1">
       {groups.map((g) => (
         <div key={g.area.id} data-area={g.area.id} className="grid gap-x-4 gap-y-1 sm:grid-cols-record-line">
-          <span className="flex min-h-7 items-center gap-2 self-start eyebrow text-muted-foreground">
+          <span className="flex min-h-8 items-center gap-2 self-start eyebrow text-muted-foreground">
             <Dot tone="area" />
             {g.area.label}
           </span>

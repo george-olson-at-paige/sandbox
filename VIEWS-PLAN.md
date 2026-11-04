@@ -219,3 +219,9 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - **EmptyState `size="xs"`** (in a section): one muted line where a section's content would be, its action on the same line; RecordSection's `empty` uses it.
 - Not drawn: "Couldn't read" (a label found, no value: Add it); "Not this document"; changing a used value asking "Change it in Personal too?". ValuesToCheck is gone (SaidList replaces it).
 
+**Spacing, colour and empties pass (George 2026-11-04):** the rules are in record-section.tsx's header.
+- Measured in the browser: the type held to the five roles. Fixed: the letterhead names and the stage bar's name take the strong ink (as PageHeader's); "Confirm all" is in the brand ink (an action) instead of the muted eyebrow; a fact's name ("Original") is a detail like a field's name, not caps.
+- Colour says what a thing does: ink reads, muted is quieter, brand is something you can act on (actions, contact and file links), attention waits on you. "Open in …" links stay muted until hovered.
+- Spacing: sections 24 apart; a legend's rule 8 over its content; read-only lines 6 above and below with no rules between; the queue's lines (Needs you) 10 with a hairline.
+- Every section but Needs you always shows, with a compact empty line (EmptyState xs) when it has nothing: "Not in any Area yet.", "We haven’t read it yet.", "Nothing to read until it has a file.", "Nothing settled yet — it’s all in Needs you.", "Nothing to check — Paige made it.", "It doesn’t name anyone." (all ⟨new⟩ copy).
+

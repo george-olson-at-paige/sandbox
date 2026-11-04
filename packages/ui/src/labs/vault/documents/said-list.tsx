@@ -6,6 +6,7 @@ import { ArrowUpRightIcon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
 import { Input } from "../../../components/inputs/input"
+import { cn } from "../../../lib/utils"
 import type { SaidValue } from "../views/data"
 
 /* @archetype Item (ARCHETYPES.md).
@@ -52,9 +53,12 @@ export function SaidList({
   onFix,
   onUse,
   onKeep,
+  queue = false,
   linkAs: Link = "a",
 }: {
   values: SaidValue[]
+  /** Needs you's list (lines with buttons): roomier, a hairline between lines. Otherwise read-only lines, no rules. */
+  queue?: boolean
   copy: SaidListCopy
   /** The key of the line acting now ("*" while every line is confirmed at once); every line's buttons are off. */
   busy: string | null
@@ -80,7 +84,7 @@ export function SaidList({
   }
   const off = busy !== null
   return (
-    <ul data-slot="said-list" className="flex flex-col divide-y divide-divider">
+    <ul data-slot="said-list" className={cn("flex flex-col", queue && "divide-y divide-divider")}>
       {values.map((v) => {
         const editing = fixing?.key === v.key
         const saving = busy === v.key || (busy === "*" && v.state === "read")
@@ -94,7 +98,7 @@ export function SaidList({
             key={v.key}
             data-slot="said-line"
             data-state={v.state}
-            className="flex flex-col gap-x-3 gap-y-1 py-2 text-sm sm:grid sm:grid-cols-record-said sm:items-center"
+            className={cn("flex flex-col gap-x-3 gap-y-1 text-sm sm:grid sm:grid-cols-record-said sm:items-center", queue ? "py-2.5" : "py-1.5")}
           >
             <span className="font-medium text-muted-foreground">{v.label}</span>
             {editing ? (

@@ -167,7 +167,12 @@ export const DOCUMENTS_COPY = {
   record: {
     needs: VIEW_COPY.documents.groupNeeds,
     inVault: "In your Vault", // ⟨new⟩ (replaces "What it’s for")
+    inVaultEmpty: "Not in any Area yet.", // ⟨new⟩
     read: "What we read", // ⟨new⟩ (replaces "What we read from it"; George 2026-11-04)
+    readWaiting: "Nothing settled yet — it’s all in Needs you.", // ⟨new⟩
+    readNotYet: "We haven’t read it yet.", // ⟨new⟩
+    readNoFile: "Nothing to read until it has a file.", // ⟨new⟩
+    readMade: "Nothing to check — Paige made it.", // ⟨new⟩
     waiting: (n: number) => `${n} to check`, // ⟨new⟩
     confirmAll: "Confirm all", // ⟨new⟩
     said: {
@@ -185,6 +190,7 @@ export const DOCUMENTS_COPY = {
       fixLabel: (label: string) => `Fix ${label}`, // ⟨new⟩
     },
     names: VIEW_COPY.documents.names,
+    namesEmpty: "It doesn’t name anyone.", // ⟨new⟩
     sharedWith: "Who it’s shared with", // ⟨new⟩ (replaces "Who can see it")
     sharedWithEmpty: "Nobody yet — it isn’t shared with anyone.",
     openPerson: "Open in People",

@@ -40,7 +40,7 @@ export function PersonLetterhead({
       <div className="flex items-start gap-4">
         {person.pet ? <Avatar variant="pet" name={person.name} size="xl" /> : <Avatar name={person.name} src={person.photo} size="xl" />}
         <div className="flex min-w-0 flex-col gap-0.5 pt-1">
-          <h3 className="font-display text-2xl leading-tight font-bold wrap-anywhere">{person.name}</h3>
+          <h3 className="font-display text-2xl leading-tight font-bold wrap-anywhere text-foreground-strong">{person.name}</h3>
           <p className="text-sm font-medium text-muted-foreground">{[person.stated, person.aside].filter(Boolean).join(" · ")}</p>
           {lines.length > 0 && (
             <p data-slot="person-reach" className="mt-1 flex flex-wrap gap-x-2 text-sm font-semibold">

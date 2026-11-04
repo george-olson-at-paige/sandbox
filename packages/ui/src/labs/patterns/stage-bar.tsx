@@ -42,7 +42,7 @@ function StageBar({
         {back && <div className="-ml-2 shrink-0 md:hidden">{back}</div>}
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-2">
-            <h2 data-slot="stage-bar-title" className="truncate font-display text-lg font-bold">
+            <h2 data-slot="stage-bar-title" className="truncate font-display text-lg font-bold text-foreground-strong">
               {title}
             </h2>
             {chip && (

@@ -27,7 +27,10 @@ import { SaidList, type SaidListCopy } from "./said-list"
    - "What we read" (George 2026-11-04: Paige speaking, "we", the relationship, not the paper):
      a value once settled moves here from Needs you, with what became of it: the Area it went to
      (a link), "You kept yours" or "Not in your Vault". No acts. When it was read at its right.
-   - "Who it names", when it names anyone: each person's avatar and name, a link to their record.
+   - "Who it names": each person's avatar and name, a link to their record.
+   Every section but Needs you always shows, with a compact empty line (EmptyState xs) when it
+   has nothing, so a document's record has the same shape whatever is in it; Needs you is a
+   queue, and an empty queue isn't drawn.
    - "Who it's shared with": each person's avatar, name and when it takes effect, or a compact
      empty line. Sharing is the stage bar's Share.
    What the owner does here holds until the caller hands back the document with it. Edit (name,
@@ -40,12 +43,20 @@ export type DocumentRecordCopy = {
   needs: string
   waiting: (n: number) => string
   confirmAll: string
-  /** What it is, Area by Area ("In your Vault"). */
+  /** What it is, Area by Area ("In your Vault"), and the line when it's in none. */
   inVault: string
-  /** The values settled ("What we read"); its right says when it was read. */
+  inVaultEmpty: string
+  /** The values settled ("What we read"); its right says when it was read. Its empty line: read, nothing settled yet; not read yet; no file to read. */
   read: string
+  readWaiting: string
+  readNotYet: string
+  readNoFile: string
+  /** A document Paige made: nothing of it to check. */
+  readMade: string
   said: SaidListCopy
+  /** Who it names, and the line when it names nobody. */
   names: string
+  namesEmpty: string
   /** Who it's shared with ("Who it’s shared with"), and the line with nobody. */
   sharedWith: string
   sharedWithEmpty: string
@@ -56,7 +67,7 @@ export type DocumentRecordCopy = {
 /** A person on a document's record: their avatar, their name, a quieter line, and what sits at the end. */
 function PersonLine({ name, detail, end }: { name: string; detail?: string; end?: ReactNode }) {
   return (
-    <li className="flex items-center justify-between gap-3 py-1">
+    <li className="flex items-center justify-between gap-3 py-1.5">
       <span className="flex min-w-0 items-center gap-3">
         <Avatar name={name} size="sm" />
         <span className="flex min-w-0 flex-col">
@@ -153,7 +164,7 @@ export function DocumentRecord({
               <>
                 <span className="text-attention">{copy.waiting(waiting.length)}</span>
                 {onConfirm && unchecked.length > 1 && (
-                  <Button variant="link" size="inline" className="eyebrow" disabled={busy !== null} onClick={confirmAll}>
+                  <Button variant="link" size="inline" className="eyebrow text-primary" disabled={busy !== null} onClick={confirmAll}>
                     {busy === "*" ? copy.said.saving : copy.confirmAll}
                   </Button>
                 )}
@@ -166,25 +177,26 @@ export function DocumentRecord({
               {confirmError}
             </p>
           )}
-          {waiting.length > 0 && <SaidList values={waiting} {...lists} />}
+          {waiting.length > 0 && <SaidList queue values={waiting} {...lists} />}
           {needs.map((n) => (
             <StatusLine key={n.kind} need={n.text} />
           ))}
         </RecordSection>
       ) : null}
-      {document.forWhat.length > 0 && (
-        <RecordSection audience="shared" title={copy.inVault}>
-          <AreaLines groups={document.forWhat} linkAs={Link} />
-        </RecordSection>
-      )}
-      {document.said && settled.length > 0 && (
-        <RecordSection audience="shared" title={copy.read} aside={document.said.readOn}>
-          <SaidList values={settled} {...lists} />
-        </RecordSection>
-      )}
-      {document.names.length > 0 && (
-        <RecordSection audience="shared" title={copy.names}>
-          <ul className="flex flex-col gap-1">
+      <RecordSection audience="shared" title={copy.inVault} empty={document.forWhat.length ? undefined : copy.inVaultEmpty}>
+        {document.forWhat.length > 0 && <AreaLines groups={document.forWhat} linkAs={Link} />}
+      </RecordSection>
+      <RecordSection
+        audience="shared"
+        title={copy.read}
+        aside={document.said?.readOn}
+        empty={settled.length ? undefined : document.said ? copy.readWaiting : document.generated ? copy.readMade : document.file ? copy.readNotYet : copy.readNoFile}
+      >
+        {settled.length > 0 && <SaidList values={settled} {...lists} />}
+      </RecordSection>
+      <RecordSection audience="shared" title={copy.names} empty={document.names.length ? undefined : copy.namesEmpty}>
+        {document.names.length > 0 && (
+          <ul className="flex flex-col">
             {document.names.map((n) => (
               <PersonLine
                 key={n.id}
@@ -201,11 +213,11 @@ export function DocumentRecord({
               />
             ))}
           </ul>
-        </RecordSection>
-      )}
+        )}
+      </RecordSection>
       <RecordSection audience="shared" title={copy.sharedWith} empty={document.shares.length === 0 ? copy.sharedWithEmpty : undefined}>
         {document.shares.length > 0 && (
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col">
             {document.shares.map((s) => (
               <PersonLine key={s.id} name={s.who} detail={s.when} />
             ))}
