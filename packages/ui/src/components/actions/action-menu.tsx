@@ -30,6 +30,7 @@ function useActionMenu({
   linkAs,
   onDone,
   variant = "ghost",
+  shape = "pill",
 }: {
   /** The actions, in order (destructive ones move last). */
   actions: readonly ListAction[]
@@ -41,6 +42,8 @@ function useActionMenu({
   onDone?: (action: RunnableAction) => void
   /** The ⋯'s look: `ghost` (a table row) or `quiet` (an Item). */
   variant?: "ghost" | "quiet"
+  /** The ⋯'s outline: `pill` (default) or `rect`, a tool in a bar of tools (a View's stage bar, D-V2). */
+  shape?: "pill" | "rect"
 }): { trigger: ReactNode; withContextMenu: (target: ReactElement) => ReactNode; dialog: ReactNode } {
   const trigger = useRef<HTMLButtonElement>(null)
   const { start, dialog } = useListActionRunner({ onDone, returnFocusTo: () => trigger.current })
@@ -51,7 +54,7 @@ function useActionMenu({
         aria-label={label}
         modal={false}
         linkAs={linkAs}
-        trigger={<Button ref={trigger} data-slot="row-actions" variant={variant} size="icon" aria-label={label} icon={<MoreHorizontal aria-hidden />} />}
+        trigger={<Button ref={trigger} data-slot="row-actions" variant={variant} shape={shape} size="icon" aria-label={label} icon={<MoreHorizontal aria-hidden />} />}
         items={items}
       />
     ),

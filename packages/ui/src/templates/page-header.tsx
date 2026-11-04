@@ -3,6 +3,8 @@ import type { ElementType, ReactNode } from "react"
 import { ArrowLeftIcon } from "lucide-react"
 
 import { Button } from "../components/actions/button"
+import type { Density } from "../lib/vocabulary"
+import { cn } from "../lib/utils"
 import { Split } from "../primitives/split"
 
 /* @archetype Frame (ARCHETYPES.md).
@@ -18,6 +20,7 @@ function PageHeader({
   meta,
   actions,
   lead,
+  density = "default",
   linkAs: Link = "a",
 }: {
   /** Quiet back link above the header. */
@@ -34,9 +37,12 @@ function PageHeader({
   actions?: ReactNode
   /** A larger line under the header rule that sets up the page. */
   lead?: ReactNode
+  /** default: a page's header, its own rule under it. compact: a band's (WorkspacePage, VIEWS-PLAN.md §1a): no rule of its own (the band draws it), a smaller title, the row centred. */
+  density?: Extract<Density, "default" | "compact">
   /** Link component for in-app links (Next's `Link`). Default a plain `a`. */
   linkAs?: ElementType
 }) {
+  const compact = density === "compact"
   return (
     <div data-slot="page-header">
       {back && (
@@ -46,7 +52,7 @@ function PageHeader({
           </Button>
         </div>
       )}
-      <div className="flex items-start gap-4 border-b pb-5">
+      <div className={cn("flex gap-4", compact ? "items-center gap-3" : "items-start border-b pb-5")}>
         {icon}
         <Split
           gap={4}
@@ -61,8 +67,8 @@ function PageHeader({
             )
           }
         >
-          <h1 className="font-display text-3xl leading-display font-bold tracking-display text-foreground-strong">{title}</h1>
-          {description && <p className="mt-1 max-w-measure text-base font-medium text-body-muted">{description}</p>}
+          <h1 className={cn("font-display leading-display font-bold tracking-display text-foreground-strong", compact ? "text-2xl" : "text-3xl")}>{title}</h1>
+          {description && <p className={cn("mt-1 max-w-measure font-medium text-body-muted", compact ? "text-sm" : "text-base")}>{description}</p>}
         </Split>
       </div>
       {lead && <p className="mt-6 max-w-measure font-display text-xl leading-display font-bold tracking-display text-pretty text-foreground-strong">{lead}</p>}

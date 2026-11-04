@@ -25,7 +25,8 @@ import { cn } from "../lib/utils"
      `open` true shows the stage, with `back` over it and no band.
    - md: list (300) | stage, each the window's height under the app header.
    - lg (1024): the list is 360.
-   The record card sets its own width on the stage (max-w-record, 720, centred). */
+   The stage centres what it shows at the record's width (max-w-record, 720): every record on a
+   stage is that wide, and the Pick panel sits in the same column. */
 /** A View's workspace: a band, a list to find and choose, and a stage that shows the chosen record. */
 function WorkspacePage({
   band,
@@ -41,7 +42,7 @@ function WorkspacePage({
   band: ReactNode
   /** Find and choose: search, filters, groups, rows. Never edits. Scrolls on its own from md. */
   list: ReactNode
-  /** The chosen record (its card), or what to choose when nothing is open (the Pick panel). Scrolls on its own from md. */
+  /** The chosen record (its card), or what to choose when nothing is open (the Pick panel). Centred at the record's width (720); scrolls on its own from md. */
   stage: ReactNode
   /** Which record is open and the actions on all of it. Omit with nothing open. Sticks to the top of the stage. */
   stageBar?: ReactNode
@@ -83,7 +84,9 @@ function WorkspacePage({
             </div>
           )}
           <div data-slot="workspace-stage-body" className="flex flex-1 flex-col p-4 md:p-6">
-            {stage}
+            <div data-slot="workspace-stage-column" className="mx-auto flex w-full max-w-record flex-col gap-4">
+              {stage}
+            </div>
           </div>
         </section>
       </div>

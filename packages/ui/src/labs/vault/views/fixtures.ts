@@ -80,6 +80,48 @@ export const VIEW_COPY = {
   filters: "Filters",
 } as const
 
+/** People's words for PeopleView: docs/views.md, then the webapp's own (Remove, Assign, the reach
+    form) where views.md has none. New here, marked ⟨new⟩ for the copy pass: the search's and the
+    chips' accessible names, "Clear search and filters", the ⋯'s name. */
+export const PEOPLE_COPY = {
+  title: VIEW_COPY.people.title,
+  lead: VIEW_COPY.people.lead,
+  add: VIEW_COPY.people.add,
+  count: (n: number) => (n === 0 ? "Nobody yet" : n === 1 ? "1 person" : `${n} people`),
+  search: VIEW_COPY.people.search,
+  searchLabel: "Search people", // ⟨new⟩
+  areas: "Filter by Area", // ⟨new⟩
+  filters: VIEW_COPY.filters,
+  needs: "Needs",
+  none: VIEW_COPY.people.none,
+  clear: "Clear search and filters", // ⟨new⟩
+  pickTitle: VIEW_COPY.people.pickTitle,
+  pickLead: VIEW_COPY.people.pickLead,
+  pickEmpty: VIEW_COPY.people.pickEmpty,
+  startWith: VIEW_COPY.startWith,
+  back: VIEW_COPY.people.title,
+  share: VIEW_COPY.share,
+  more: (name: string) => `Actions for ${name}`, // ⟨new⟩
+  editDetails: VIEW_COPY.editDetails,
+  assign: "Assign to roles",
+  remove: "Remove from People",
+  removeConfirm: (name: string) => ({
+    title: `Remove ${name} from People?`,
+    description: "This also takes them off everything they’re named on.",
+    confirmLabel: `Remove ${name.split(" ")[0]}`,
+  }),
+  record: {
+    roles: VIEW_COPY.people.roles,
+    rolesPet: VIEW_COPY.people.rolesPet,
+    rolesEmpty: VIEW_COPY.people.rolesEmpty,
+    canSee: VIEW_COPY.people.canSee,
+    canSeeEmpty: VIEW_COPY.people.canSeeEmpty,
+    ownerOnly: VIEW_COPY.ownerOnly,
+    addReach: VIEW_COPY.people.addReach,
+    reach: { form: "How to reach", phone: "Mobile", email: "Email", save: "Save", saving: "Saving…", cancel: "Never mind", needOne: "Add a phone or an email." },
+  },
+}
+
 export const PEOPLE: Person[] = [
   {
     id: "david",

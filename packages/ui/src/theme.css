@@ -940,6 +940,10 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-workspace {
   grid-template-columns: --theme(--spacing-workspace-list-md) minmax(0, 1fr);
 }
+/* A record's résumé lines (VIEWS-PLAN.md): the Area's name in a 120 column, the lines beside it. */
+@utility grid-cols-record-line {
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+}
 @utility grid-cols-workspace-wide {
   grid-template-columns: --theme(--spacing-workspace-list) minmax(0, 1fr);
 }

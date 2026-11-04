@@ -44,7 +44,7 @@ export const Wireframe: Story = {
     open: true,
     stageLabel: "Jordan Lee",
     stageBar: <Placeholder size="sm" label="Stage bar" detail="Which record is open, and what can be done to all of it" measure />,
-    stage: <Placeholder size="xl" label="Record card" detail="The record itself: what the owner shares (max 720, centred)" measure className="mx-auto w-full max-w-record" />,
+    stage: <Placeholder size="xl" label="Record card" detail="The record itself: what the owner shares (max 720, centred)" measure />,
     back: <Placeholder size="xs" label="Back (below md)" />,
   },
   globals: { viewport: { value: "w1280", isRotated: false } },
@@ -92,7 +92,7 @@ export const LongContent: Story = {
       </div>
     ),
     stage: (
-      <div className="mx-auto flex w-full max-w-record flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {Array.from({ length: 6 }, (_, i) => (
           <Placeholder key={i} size="lg" label={`Record section ${i + 1}`} />
         ))}

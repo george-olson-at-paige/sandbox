@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { FileTextIcon } from "lucide-react"
+import { FileTextIcon, PlusIcon } from "lucide-react"
 
 import { StubLink } from "../stories/fixtures"
 import { Button } from "../components/actions/button"
@@ -50,4 +50,16 @@ export const Narrow: Story = {
   name: "Phone · 375",
   globals: { viewport: { value: "w375", isRotated: false } },
   args: Example.args,
+}
+
+/** Compact (VIEWS-PLAN.md §1a): a WorkspacePage band's header. No rule of its own (the band draws it), a smaller title, the row centred. */
+export const Compact: Story = {
+  args: {
+    density: "compact",
+    icon: <span data-area="family"><AreaIcon area="family" size="lg" /></span>,
+    title: "People",
+    description: "Everyone in your Vault, and what each of them does for you.",
+    meta: "7 people",
+    actions: <Button size="sm" icon={<PlusIcon />}>Add someone</Button>,
+  },
 }
