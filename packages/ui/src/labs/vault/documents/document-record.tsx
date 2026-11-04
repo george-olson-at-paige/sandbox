@@ -1,22 +1,20 @@
 "use client"
 
 import type { ComponentProps, ElementType } from "react"
-import { useState } from "react"
 import { ArrowUpRightIcon, Share2Icon, UserRoundIcon } from "lucide-react"
 
 import { Button } from "../../../components/actions/button"
-import { cn } from "../../../lib/utils"
 import { AreaLines, RecordCard, RecordSection } from "../record-section"
 import type { VaultDocument } from "../views/data"
-import { DocumentPreview, type DocumentPreviewProps } from "./document-preview"
+import { DocumentLetterhead } from "./document-letterhead"
 import { ValuesToCheck, type ValuesToCheckProps } from "./values-to-check"
 
 /* @archetype Composite (ARCHETYPES.md).
    @level 0 — sketch (LEVELS.md). VIEWS-PLAN.md §1a "Record card" (D-V5: lands in labs, for
    vault/documents/). A document's record on the stage, top to bottom:
-   - its head: what it is on the left (facts such as where the original is, who made it; the
-     note), the document on the right as a 150 strip (DocumentPreview). Expanded, the document
-     takes the full width under the text. Below sm the two stack, the document first.
+   - its head, DocumentLetterhead: PersonLetterhead's shape with a file-type tile for the
+     avatar, the file as its link, the facts and note (George 2026-11-04). No preview of the
+     document for now; DocumentPreview stays in labs until we have real previews.
    - "What it's for", shared: where it is filed, Area by Area.
    - "What we read from it", shared: the values waiting for a yes (in View: the to-do where the
      value shows), then what it filled in.
@@ -35,7 +33,6 @@ export type DocumentRecordCopy = {
   shareIt: string
   /** A named person's link ("Open in People"). */
   openPerson: string
-  preview: DocumentPreviewProps["copy"]
   values: ValuesToCheckProps["copy"]
 }
 
@@ -58,29 +55,9 @@ export function DocumentRecord({
   /** Link component for in-app links (Next's `Link`). */
   linkAs?: ElementType
 }) {
-  const [expanded, setExpanded] = useState(false)
-  const hasText = document.facts.length > 0 || Boolean(document.note)
-  const preview = <DocumentPreview document={document} expanded={expanded} onExpandedChange={setExpanded} copy={copy.preview} />
   return (
     <RecordCard label={document.title}>
-      <div data-slot="document-head" className={cn("grid gap-5", hasText && (expanded ? "" : "sm:grid-cols-document-head"))}>
-        {hasText && (
-          <div className={cn("flex min-w-0 flex-col gap-3", expanded ? "" : "order-last sm:order-first")}>
-            {document.facts.length > 0 && (
-              <dl className="flex flex-col gap-1 text-sm">
-                {document.facts.map((f) => (
-                  <div key={f.label} className="flex items-baseline gap-3">
-                    <dt className="eyebrow text-muted-foreground">{f.label}</dt>
-                    <dd className="font-medium">{f.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-            {document.note && <p className="text-sm text-muted-foreground italic">{document.note}</p>}
-          </div>
-        )}
-        {preview}
-      </div>
+      <DocumentLetterhead document={document} />
       {document.forWhat.length > 0 && (
         <RecordSection audience="shared" title={copy.forWhat}>
           <AreaLines groups={document.forWhat} linkAs={Link} />
@@ -101,7 +78,10 @@ export function DocumentRecord({
                   <UserRoundIcon aria-hidden />
                   {n.name}
                 </span>
-                <Link href={n.href} className="inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-muted-foreground focus-ring hover:text-primary [&_svg]:size-icon-xs">
+                <Link
+                  href={n.href}
+                  className="inline-flex items-center gap-1 rounded-sm text-xs font-semibold text-muted-foreground focus-ring hover:text-primary [&_svg]:size-icon-xs"
+                >
                   {copy.openPerson}
                   <ArrowUpRightIcon aria-hidden />
                 </Link>
@@ -110,7 +90,12 @@ export function DocumentRecord({
           </ul>
         </RecordSection>
       )}
-      <RecordSection audience="owner" ownerLabel={copy.ownerOnly} title={copy.canSee} empty={document.shares.length === 0 ? copy.canSeeEmpty : undefined}>
+      <RecordSection
+        audience="owner"
+        ownerLabel={copy.ownerOnly}
+        title={copy.canSee}
+        empty={document.shares.length === 0 ? copy.canSeeEmpty : undefined}
+      >
         {document.shares.length > 0 && (
           <ul className="flex flex-col gap-1.5">
             {document.shares.map((s) => (

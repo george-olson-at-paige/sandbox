@@ -8,7 +8,8 @@ import { Badge } from "../../components/display/badge"
    Left: the record's name; a chip (who they are to you, a document's type) when it adds
    something; one quiet line under them. Right: the actions on the whole record, tools not calls
    to action (Share; ⋯ with Edit details, Assign, Remove; Done while editing), the caller's.
-   The quiet line is always there, empty or not, so a record gaining its first role doesn't push
+   The chip is at least 56 wide (a lozenge reads as one, "ID" as much as "Spouse"), its word
+   centred. The quiet line is always there, empty or not, so a record gaining its first role doesn't push
    the stage down (the webapp's 2026-11-02 fix). A long name truncates; the actions never wrap
    under it. It is `workspace-bar` high (72), the same as the list's search row, so the two
    rules under them meet in one line across the workspace. Nothing in it knows what kind of
@@ -31,14 +32,14 @@ function StageBar({
   actions?: ReactNode
 }) {
   return (
-    <div data-slot="stage-bar" className="flex min-h-workspace-bar items-center justify-between gap-4 py-3 gutter-workspace">
+    <div data-slot="stage-bar" className="flex h-workspace-bar items-center justify-between gap-4 gutter-workspace">
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-2">
           <h2 data-slot="stage-bar-title" className="truncate font-display text-lg font-bold">
             {title}
           </h2>
           {chip && (
-            <Badge tone="info" size="sm" className="shrink-0">
+            <Badge tone="info" size="sm" className="min-w-14 shrink-0 justify-center">
               {chip}
             </Badge>
           )}

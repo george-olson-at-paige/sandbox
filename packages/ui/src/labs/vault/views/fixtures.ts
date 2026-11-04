@@ -164,13 +164,6 @@ export const DOCUMENTS_COPY = {
     ownerOnly: VIEW_COPY.ownerOnly,
     shareIt: "Share it",
     openPerson: "Open in People",
-    preview: {
-      expand: VIEW_COPY.documents.expand,
-      collapse: VIEW_COPY.documents.collapse,
-      openFull: VIEW_COPY.documents.openFull,
-      download: VIEW_COPY.documents.download,
-      noFile: VIEW_COPY.documents.noFile,
-    },
     values: {
       useThis: VIEW_COPY.documents.useThis,
       keepMine: VIEW_COPY.documents.keepMine,

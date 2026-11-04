@@ -22,7 +22,8 @@ import { cn } from "../lib/utils"
    - back     Below md only: the way from the record back to the list.
 
    Edges. From md the page behind the workspace is the page tint (`surface-page`), and the list
-   and the stage are one white panel on it, edged at `border-medium` (between the region rule
+   and the stage are one panel on it (the list white, the stage one step darker, `muted`, so the
+   record card stands off it), edged at `border-medium` (between the region rule
    and the hairline): top, left, right, and one rule between the list and the stage. The band
    sits on the tint with no rule of its own, starting on the frame's edge under the logo, so the
    panel's top edge is what divides it from the band. Inside the panel the list's and the stage
@@ -92,7 +93,7 @@ function WorkspacePage({
             data-slot="workspace-stage"
             aria-label={stageLabel}
             className={cn(
-              "flex min-w-0 flex-1 flex-col bg-surface-page md:min-h-0 md:bg-background md:overflow-x-clip md:overflow-y-auto scrollbar-thin",
+              "flex min-w-0 flex-1 flex-col bg-muted md:min-h-0 md:overflow-x-clip md:overflow-y-auto scrollbar-thin",
               open ? "" : "max-md:hidden",
             )}
           >
