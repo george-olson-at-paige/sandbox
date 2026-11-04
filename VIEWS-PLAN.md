@@ -81,6 +81,7 @@ These are container widths, not the window's, so the template behaves the same i
   - **ChipGroup:** single or multi choice, arrow keys, `aria-pressed`.
 
   The stories show it in several jobs (a status filter, needs, Areas) to see how it holds up across them. Area chips are the first specialization once it does. This reopens GAPS #62 on the archetype, not as a fourth ToggleGroup look.
+- **D-V6 · Open: what `shape` means in the vocabulary.** Button's `shape` (`pill` · `rect`, D-V2) is built as the component's own prop for now. The word is already a prop on Legend (`block` · `line` · `dot`, a swatch) and Skeleton (`text` · `number` · `block` · `circle`), each with its own set. Registering it in `lib/vocabulary.ts` for Button alone would give one word three meanings: 10 new `check:vocab` warnings. Proposal: one meaning, "the outline a part draws", with the union of the values, allowed on Action, Mark and Chart. The alternative is a different word for Button. George's call; until then the vocabulary is unchanged.
 - **D-V5 · Everything starts in `labs/` (George 2026-11-04).** Every new piece lands at level 0 in `src/labs/` (`INTAKE.md`'s route) with an `@from` / purpose header, and moves to its layer when George approves it. §4's "Layer" column is where each piece is expected to end up, not where it starts. Changes to existing components (Button `shape`) are the exception: they land in place, as a change to that component.
 
 ## 4. Pieces to add, by layer

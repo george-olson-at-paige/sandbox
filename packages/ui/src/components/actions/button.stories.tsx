@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { ArrowLeftIcon, ArrowRightIcon, PlusIcon, SearchIcon } from "lucide-react"
+import { ArrowLeftIcon, ArrowRightIcon, FilterIcon, MoreHorizontalIcon, PlusIcon, SearchIcon, Share2Icon } from "lucide-react"
 
 import { StubLink } from "../../stories/fixtures"
 import { Button } from "./button"
@@ -209,6 +209,19 @@ export const RelativeHover: Story = {
           ))}
         </div>
       ))}
+    </div>
+  ),
+}
+
+/** Shape (D-V2, George 2026-11-04): a pill is the page's call to action; a rect is a tool beside it — Share, ⋯, a filter button, Expand. Any emphasis can be either. */
+export const Shapes: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button icon={<PlusIcon />}>Add someone</Button>
+      <Button variant="secondary" size="sm" shape="rect" icon={<Share2Icon />}>Share</Button>
+      <Button variant="secondary" size="icon" shape="rect" icon={<MoreHorizontalIcon />} aria-label="More actions" />
+      <Button variant="secondary" size="icon" shape="rect" icon={<FilterIcon />} aria-label="Filters" />
+      <Button variant="ghost" size="sm" shape="rect">Expand</Button>
     </div>
   ),
 }

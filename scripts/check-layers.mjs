@@ -253,6 +253,9 @@ for (const f of walk(app)) {
     // segment card had to undo class by class; Radix's Item with asChild puts the behaviour on a
     // plain button. The Root, and the `icon` item, still come from the base.
     "packages/ui/src/components/inputs/toggle-group.tsx": ["ToggleGroup", ["Item"]],
+    // Chip (labs, D-V4): the same move as ToggleGroup's `card` item: Radix's Item with asChild on a
+    // plain button wearing the chip, with nothing to undo. The Root is ToggleGroup's.
+    "packages/ui/src/labs/components/chip.tsx": ["ToggleGroup", ["Item"]],
   }
   for (const f of pkgFiles) {
     if (inside(f, baseDir) || isStory(f)) continue

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="404" viewBox="0 0 640 404">
+  <rect width="640" height="404" rx="24" fill="#eef3f8"/>
+  <rect x="0" y="0" width="640" height="72" rx="24" fill="#2b5c8a"/>
+  <rect x="0" y="48" width="640" height="24" fill="#2b5c8a"/>
+  <text x="32" y="46" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#ffffff">DRIVER LICENSE · SPECIMEN</text>
+  <rect x="32" y="104" width="168" height="208" rx="10" fill="#c9d6e3"/>
+  <circle cx="116" cy="180" r="42" fill="#9fb3c8"/>
+  <rect x="68" y="232" width="96" height="60" rx="30" fill="#9fb3c8"/>
+  <g font-family="Arial, sans-serif" fill="#25344f">
+    <text x="232" y="128" font-size="15" fill="#5a657e">NAME</text>
+    <text x="232" y="154" font-size="24" font-weight="700">MAYA REYES</text>
+    <text x="232" y="196" font-size="15" fill="#5a657e">DOB</text>
+    <text x="232" y="220" font-size="20">03/14/1988</text>
+    <text x="420" y="196" font-size="15" fill="#5a657e">EXPIRES</text>
+    <text x="420" y="220" font-size="20">03/14/2029</text>
+    <text x="232" y="262" font-size="15" fill="#5a657e">LICENSE NO.</text>
+    <text x="232" y="286" font-size="20">D4821 9933</text>
+  </g>
+  <rect x="32" y="336" width="576" height="36" rx="8" fill="#dbe4ee"/>
+</svg>

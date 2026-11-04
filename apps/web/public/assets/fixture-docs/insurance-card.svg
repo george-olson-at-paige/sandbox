@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="404" viewBox="0 0 640 404">
+  <rect width="640" height="404" rx="24" fill="#f3f7f2"/>
+  <rect x="0" y="0" width="640" height="80" rx="24" fill="#3f7d5a"/>
+  <rect x="0" y="56" width="640" height="24" fill="#3f7d5a"/>
+  <text x="32" y="52" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">HEALTH PLAN · MEMBER CARD</text>
+  <g font-family="Arial, sans-serif" fill="#25344f">
+    <text x="32" y="132" font-size="15" fill="#5a657e">MEMBER</text>
+    <text x="32" y="158" font-size="24" font-weight="700">MAYA REYES</text>
+    <text x="32" y="206" font-size="15" fill="#5a657e">MEMBER ID</text>
+    <text x="32" y="230" font-size="20">XHP 4417 2208</text>
+    <text x="340" y="206" font-size="15" fill="#5a657e">GROUP</text>
+    <text x="340" y="230" font-size="20">88120</text>
+    <text x="32" y="278" font-size="15" fill="#5a657e">DEPENDENTS</text>
+    <text x="32" y="302" font-size="20">DAVID · ELENA · TOMÁS</text>
+  </g>
+</svg>

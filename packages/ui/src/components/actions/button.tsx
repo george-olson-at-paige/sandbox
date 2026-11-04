@@ -12,7 +12,8 @@ import { Button as UiButton, buttonVariants as uiButtonVariants } from "../../ba
    (upstream narrows it when an svg is present: has-[>svg]:px-*).
    Decided (George, 2026-10-18):
    - Every button is a pill (rounded-full), as every prototype button is; "pill" is dropped as
-     a variant name only (R2-06).
+     a variant name only (R2-06). Since D-V2 (George 2026-11-04) `shape="rect"` is the one
+     exception: a tool that is not the page's call to action.
    - Weight 600 at 14 · 14 · 16px on 36 · 44 · 48, the standard, not the prototype's 700 at
      smaller sizes: one weight rule, 600 for UI and 700 for slab display (R2-09).
    - One control height, 44 (md), for buttons and inputs, setup included; 44 is the touch
@@ -68,9 +69,12 @@ const buttonVariants = cva(
         inline: "h-auto gap-1.5 rounded-sm p-0 text-size-inherit has-[>svg]:p-0 active:scale-100",
       },
       underline: { true: "", false: "" },
+      /* D-V2 (George 2026-11-04): a pill is the page's call to action; a rect is a tool (Share,
+         ⋯, a filter button, Expand), the radius of a control's corners (rounded-md, 10). */
+      shape: { pill: "", rect: "rounded-md" },
     },
     compoundVariants: [{ variant: "quiet", underline: true, className: "underline underline-offset-4" }],
-    defaultVariants: { variant: "primary", size: "md", underline: false },
+    defaultVariants: { variant: "primary", size: "md", underline: false, shape: "pill" },
   }
 )
 
@@ -103,6 +107,8 @@ type ButtonProps = Omit<ComponentProps<"button">, "style"> & {
   iconPosition?: "start" | "end"
   /** Underline the label: the decline action ("Not applicable"). Applies to variant="quiet" only. */
   underline?: boolean
+  /** pill (default): the page's call to action. rect: a tool — Share, ⋯, a filter button, Expand (D-V2). */
+  shape?: "pill" | "rect"
   /** Put the button styling on the child element (a router link). */
   asChild?: boolean
 }
@@ -114,6 +120,7 @@ function Button({
   icon,
   iconPosition = "start",
   underline = false,
+  shape = "pill",
   asChild = false,
   className,
   children,
@@ -126,7 +133,7 @@ function Button({
       variant={UPSTREAM_VARIANT[variant]}
       size={UPSTREAM_SIZE[size]}
       asChild={asChild}
-      className={cn(buttonVariants({ variant, size, underline }), className)}
+      className={cn(buttonVariants({ variant, size, underline, shape }), className)}
       {...props}
     >
       {iconPosition === "start" && icon}
