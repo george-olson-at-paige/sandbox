@@ -20,6 +20,8 @@ export type RecordLine = {
   detail?: string
   /** Where it lives, and the link's words ("Open in Family"). */
   open?: { href: string; label: string }
+  /** Values under it, name and value ("Date of birth · Mar 14, 1988"): what a document filled in. */
+  facts?: Array<{ key: string; label: string; value: string }>
 }
 
 /** Lines grouped under an Area: "Who they are to you", "What it's for". */

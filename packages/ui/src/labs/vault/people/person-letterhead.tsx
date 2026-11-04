@@ -41,9 +41,9 @@ export function PersonLetterhead({
         {person.pet ? <Avatar variant="pet" name={person.name} size="xl" /> : <Avatar name={person.name} src={person.photo} size="xl" />}
         <div className="flex min-w-0 flex-col gap-0.5 pt-1">
           <h3 className="font-display text-2xl leading-tight font-bold wrap-anywhere">{person.name}</h3>
-          <p className="text-sm font-semibold text-muted-foreground">{[person.stated, person.aside].filter(Boolean).join(" · ")}</p>
+          <p className="text-sm font-medium text-muted-foreground">{[person.stated, person.aside].filter(Boolean).join(" · ")}</p>
           {lines.length > 0 && (
-            <p data-slot="person-reach" className="mt-1 flex flex-wrap gap-x-2 text-sm font-medium">
+            <p data-slot="person-reach" className="mt-1 flex flex-wrap gap-x-2 text-sm font-semibold">
               {lines.map((l, i) => (
                 <span key={l.href} className="flex gap-2">
                   {i > 0 && <span aria-hidden className="text-muted-foreground">·</span>}

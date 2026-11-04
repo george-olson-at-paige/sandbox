@@ -156,8 +156,8 @@ export const DOCUMENTS_COPY = {
     confirmLabel: "Remove it",
   }),
   record: {
-    forWhat: VIEW_COPY.documents.forWhat,
-    read: VIEW_COPY.documents.read,
+    needs: VIEW_COPY.documents.groupNeeds,
+    inVault: "In your Vault", // ⟨new⟩ (replaces "What it’s for" and "What we read from it")
     names: VIEW_COPY.documents.names,
     canSee: VIEW_COPY.documents.canSee,
     canSeeEmpty: VIEW_COPY.documents.canSeeEmpty,

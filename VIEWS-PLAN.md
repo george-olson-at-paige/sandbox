@@ -190,3 +190,10 @@ Steps 3–6 can run two at a time (list | stage) once 2 is in.
 - The list and the stage sit in a box ruled at the region weight (`border`, neutral-300), not the hairline: the band's rule on top, the frame's rules left and right, one between list and stage. The stage bar's and the back row's rules are `border` too; rows keep the hairline (row level).
 - Inside the box the list and the stage bar keep the 24 inset; below md nothing changes (no frame, the screen is the box).
 - At 768 the frame's 48px makes item 7 (the résumé lines squeezed beside the Area label) worse: the record's lines need to stack under their label below lg.
+
+**Document record and type pass (George 2026-11-04):**
+- Documents' record opens with DocumentLetterhead, PersonLetterhead's shape: a rounded file-type tile (FileIcon with its format band) for the avatar, the type where "Spouse" is, the file as its link, then the facts. No preview until we have real ones; DocumentPreview stays in labs.
+- Order: letterhead → **Needs you** (owner's to-dos, attention legend, only when there are any: values to check, then "No file yet", "Say what it is") → **In your Vault** (one section per Area: what it is there, and under it the values it filled in, name and value; replaces "What it's for" + "What we read from it") → Who it names → Who can see it. "In your Vault" is ⟨new⟩ copy for Product.
+- One type scale on a record (record-section.tsx header): title (display 2xl, the letterhead only) · label (`eyebrow`: legends, Area names, field names, the owner words) · value (text-sm semibold) · detail (text-sm medium, muted) · meta (text-xs semibold: links out, statuses). The owner section's title is now a legend like the shared ones, with "Only visible to you" and the lock at its right, so a card has one heading style.
+- The stage is `muted`, a step darker than the page tint. StageBar and the list's search row are exactly 72 (`--spacing-workspace-bar`) with their rules outside it, so the rules meet. The stage bar's chip is at least 56 wide.
+

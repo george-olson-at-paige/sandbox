@@ -36,8 +36,8 @@ export function DocumentLetterhead({ document }: { document: VaultDocument }) {
       </span>
       <div className="flex min-w-0 flex-col gap-0.5 pt-1">
         <h3 className="font-display text-2xl leading-tight font-bold wrap-anywhere">{document.title}</h3>
-        {document.type && document.type !== document.title && <p className="text-sm font-semibold text-muted-foreground">{document.type}</p>}
-        <p data-slot="document-file" className="mt-1 flex flex-wrap gap-x-2 text-sm font-medium">
+        {document.type && document.type !== document.title && <p className="text-sm font-medium text-muted-foreground">{document.type}</p>}
+        <p data-slot="document-file" className="mt-1 flex flex-wrap gap-x-2 text-sm font-semibold">
           {fileName && document.file ? (
             <a href={document.file.src} target="_blank" rel="noreferrer" className="rounded-sm text-primary focus-ring hover:underline">
               {fileName}
@@ -50,19 +50,19 @@ export function DocumentLetterhead({ document }: { document: VaultDocument }) {
               ·
             </span>
           )}
-          <span className="text-muted-foreground">{document.added}</span>
+          <span className="font-medium text-muted-foreground">{document.added}</span>
         </p>
         {document.facts.length > 0 && (
           <dl className="mt-1 flex flex-wrap gap-x-4 text-sm">
             {document.facts.map((f) => (
               <div key={f.label} className="flex items-baseline gap-2">
                 <dt className="eyebrow text-muted-foreground">{f.label}</dt>
-                <dd className="font-medium">{f.value}</dd>
+                <dd className="font-semibold">{f.value}</dd>
               </div>
             ))}
           </dl>
         )}
-        {document.note && <p className="mt-1 text-sm text-muted-foreground italic">{document.note}</p>}
+        {document.note && <p className="mt-1 text-sm font-medium text-muted-foreground">{document.note}</p>}
       </div>
     </header>
   )

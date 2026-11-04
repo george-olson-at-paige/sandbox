@@ -46,7 +46,7 @@ export function ValuesToCheck({
         <li key={v.key} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
           <span className="flex min-w-0 flex-col">
             <span className="eyebrow text-muted-foreground">{v.label}</span>
-            <span className="font-semibold">{v.value}</span>
+            <span className="text-sm font-semibold">{v.value}</span>
             <span className="text-xs font-semibold text-attention">{v.current ? copy.youHave(v.current) : copy.notYet}</span>
             {errors[v.key] && (
               <span role="alert" className="text-xs font-semibold text-destructive">
