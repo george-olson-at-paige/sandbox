@@ -90,3 +90,19 @@ New: **ShareField** and **PersonSlots**. The rest is composition.
 2. **WillBuilder in labs:** the steps on SetupBeat with branching, Review, and Finalize-and-sign, on fixtures.
 3. The hub.
 4. Promote, then wire to the API (`estate/workbooks/will-builder/*`).
+
+## 6. Progress
+
+**2026-11-04: the builder, in labs** (`labs/vault/will/`).
+- **ShareField** (`labs/components`): a percent per person, a running total in the success or attention ink ("Total 80% · 20% left"), Split evenly, and the caller's add. `totalOf` and `splitEvenly` are exported.
+- **PersonSlots** (`labs/vault/will`): people a will names. Pick from your people (PersonPicker) or someone new (name, relationship, and email when asked). In order, the first marked "First choice", with ↑ ↓ ×.
+- **WillBuilder:** the steps on SetupBeat, each a Form whose FlowFooter saves and moves on, with the step rail and "Save and finish later" in the bar.
+  - The steps: You (the county only when the state has counties) · Your spouse (married only) · Children with guardians per child · Who carries it out (plus the digital-executors checkbox) · Who inherits (a choice that fits the family, then shares or backups that must total 100) · Specific gifts (skippable) · Anyone left out · Review · Finalize and sign.
+  - **Review:** each answer as a RecordSection with Edit, the draft PDF, then Finalize (paid) or Pay and finalize (`checkoutHref`).
+  - **Finalize and sign:** finalize first; then the **clean** PDF to download; then the state's signing steps as a checklist.
+- **Checked in a headless browser:**
+  - an empty You is refused in place;
+  - an 80% split is refused, and Split evenly gives 50/50, which saves and moves on;
+  - nothing to download before Finalize, and the clean copy after it.
+- **Not built yet:** the hub (Your will: start, continue, finished, versions), the checkout return, and the spouse's own will (§4.1). All the copy is ⟨new⟩ for Product.
+
