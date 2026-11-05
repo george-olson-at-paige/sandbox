@@ -106,3 +106,13 @@ New: **ShareField** and **PersonSlots**. The rest is composition.
   - nothing to download before Finalize, and the clean copy after it.
 - **Not built yet:** the hub (Your will: start, continue, finished, versions), the checkout return, and the spouse's own will (§4.1). All the copy is ⟨new⟩ for Product.
 
+**2026-11-04: the hub, and finalize leads to the will** (George: "simple, but not looking incomplete with minimal data; maybe just the will with some options if there's only one").
+- **WillHub** (`labs/vault/will/will-hub.tsx`): the will itself as one card in the reading column, the same card in every state.
+  - **Not started:** "What it asks", the eight steps in order with "About 15 minutes", and Start my will. The outline is the content.
+  - **A draft:** "Step 5 of 8 · saved Oct 1", a progress bar, Continue my will, and the answered sections so far.
+  - **Finalized:** Open it (the will in Documents), Download, Update my will (a new draft), what it says, and "How to sign it in California" folded.
+  - **Earlier versions:** a quiet list, only when there's more than one.
+- **Finalize and sign ends at the will in Documents:** the last button is "Open my will" (`documentHref`), not "Back to your Vault".
+- **The answers' summary is shared:** `summaryOf` is used by Review (every section, with Edit) and the hub (the filled sections).
+- "Who inherits" uses the spouse's first name in both of its options.
+

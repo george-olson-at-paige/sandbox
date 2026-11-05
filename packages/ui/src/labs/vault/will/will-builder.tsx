@@ -115,6 +115,70 @@ function Choice({
   )
 }
 
+/** The answers as the record reads them: one section per step, its lines in words. `filled` leaves out the steps with nothing in them (the hub). */
+export function summaryOf(
+  a: WillAnswers,
+  copy: Copy,
+  people: PersonPickerPerson[],
+  states: Array<{ value: string; label: string }>,
+  filled = false,
+): Array<{ id: StepId; title: string; lines: string[] }> {
+  const r = copy.review
+  const st = states.find((x) => x.value === a.you.state)
+  const spouseName = a.spouse.name || people.find((p) => p.detail === "Spouse")?.name || ""
+  const first = (n: string) => n.split(" ")[0] ?? n
+  const names = (slots: Slot[]) => (slots.length ? slots.map((x) => x.name).join(", ") : r.none)
+  const shares = (rows: ShareRow[]) => rows.map((x) => `${x.name} ${x.share || 0}%`).join(", ")
+  const plan = a.inherit.plan
+  const all: Array<{ id: StepId; title: string; lines: string[]; empty: boolean }> = [
+    {
+      id: "you",
+      title: r.sections.you,
+      lines: [
+        a.you.legalName,
+        `${copy.you.maritalOptions.find((o) => o.value === a.you.marital)?.label ?? ""} · ${[a.you.county, st?.label].filter(Boolean).join(", ")}`,
+      ],
+      empty: !a.you.legalName,
+    },
+    ...(a.you.marital === "married" ? [{ id: "spouse" as const, title: r.sections.spouse, lines: [a.spouse.name], empty: !a.spouse.name }] : []),
+    {
+      id: "children",
+      title: r.sections.children,
+      lines: a.children.has ? a.children.list.map((k) => `${k.name}${k.guardians.length ? ` — ${names(k.guardians)}` : ""}`) : [r.none],
+      empty: !a.children.has,
+    },
+    {
+      id: "executors",
+      title: r.sections.executors,
+      lines: [names(a.executors), ...(a.digitalToo && a.executors.length ? [r.digital] : [])],
+      empty: !a.executors.length,
+    },
+    {
+      id: "inherit",
+      title: r.sections.inherit,
+      lines: [
+        plan === "spouse"
+          ? copy.inherit.everythingTo(first(spouseName))
+          : plan === "spouseThenChildren"
+            ? copy.inherit.thenChildren(first(spouseName))
+            : plan === "children"
+              ? copy.inherit.toChildren
+              : shares(a.inherit.shares) || r.none,
+        ...(a.inherit.backups.length ? [`${copy.inherit.backups}: ${shares(a.inherit.backups)}`] : []),
+      ],
+      empty: !plan,
+    },
+    {
+      id: "gifts",
+      title: r.sections.gifts,
+      lines: a.gifts.length ? a.gifts.map((x) => `${x.what} → ${people.find((p) => p.id === x.to)?.name ?? ""}`) : [r.none],
+      empty: !a.gifts.length,
+    },
+    { id: "leftOut", title: r.sections.leftOut, lines: [a.leftOut.any ? names(a.leftOut.people) : r.none], empty: !a.leftOut.any },
+  ]
+  return all.filter((x) => !filled || !x.empty).map(({ empty: _e, ...x }) => x)
+}
+
 /** The Will Builder: the steps on SetupBeat, Review, then Finalize and sign. */
 export function WillBuilder({
   start,
@@ -127,6 +191,7 @@ export function WillBuilder({
   onSave,
   checkoutHref,
   onFinalize,
+  documentHref,
   logo,
   linkAs = "a",
 }: {
@@ -146,6 +211,8 @@ export function WillBuilder({
   checkoutHref: string
   /** Makes the clean PDF and files it in the Vault. */
   onFinalize: () => Promise<Result>
+  /** The finalized will in Documents: where Finalize and sign ends. */
+  documentHref: string
   logo: ReactNode
   linkAs?: ElementType
 }) {
@@ -299,7 +366,10 @@ export function WillBuilder({
             label={ch.title}
             value={a.children.has === undefined ? "" : a.children.has ? "yes" : "no"}
             onChange={(v) =>
-              set("children", { has: v === "yes", list: v === "yes" && kids.length === 0 ? [{ id: newId(), name: "", dob: "", guardians: [] }] : kids })
+              set("children", {
+                has: v === "yes",
+                list: v === "yes" && kids.length === 0 ? [{ id: newId(), name: "", dob: "", guardians: [] }] : kids,
+              })
             }
             options={[
               { value: "yes", label: copy.yes },
@@ -397,7 +467,7 @@ export function WillBuilder({
     const married = a.you.marital === "married"
     const hasKids = Boolean(a.children.has && a.children.list.length)
     const plans = [
-      ...(married ? [{ value: "spouse", label: ih.everythingTo(spouseName) }] : []),
+      ...(married ? [{ value: "spouse", label: ih.everythingTo(spouseName.split(" ")[0]!) }] : []),
       ...(married && hasKids ? [{ value: "spouseThenChildren", label: ih.thenChildren(spouseName.split(" ")[0]!) }] : []),
       ...(!married && hasKids ? [{ value: "children", label: ih.toChildren }] : []),
       { value: "own", label: ih.own },
@@ -568,24 +638,6 @@ export function WillBuilder({
 
   if (step === "review") {
     const r = copy.review
-    const st = states.find((x) => x.value === a.you.state)
-    const names = (slots: Slot[]) => (slots.length ? slots.map((s) => s.name).join(", ") : r.none)
-    const shares = (rows: ShareRow[]) => rows.map((x) => `${x.name} ${x.share || 0}%`).join(", ")
-    const section = (id: StepId, title: string, lines: string[]) => (
-      <RecordSection key={id} audience="shared" title={title}>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-1 text-sm font-medium">
-            {lines.map((l) => (
-              <p key={l}>{l}</p>
-            ))}
-          </div>
-          <Button asChild variant="link" size="inline" icon={<PencilIcon />} className="text-xs">
-            <NavLink href={href(id)}>{r.edit}</NavLink>
-          </Button>
-        </div>
-      </RecordSection>
-    )
-    const plan = a.inherit.plan
     return (
       <SetupBeat
         logo={logo}
@@ -609,33 +661,20 @@ export function WillBuilder({
         <div className="flex flex-col gap-6">
           <Attachment name={r.draftName} description={r.draftLine} onOpen={() => {}} openLabel={r.seeDraft} />
           <RecordCard label={r.title}>
-            {section("you", r.sections.you, [
-              a.you.legalName,
-              `${copy.you.maritalOptions.find((o) => o.value === a.you.marital)?.label ?? ""} · ${[a.you.county, st?.label].filter(Boolean).join(", ")}`,
-            ])}
-            {a.you.marital === "married" && section("spouse", r.sections.spouse, [a.spouse.name])}
-            {section(
-              "children",
-              r.sections.children,
-              a.children.has ? a.children.list.map((k) => `${k.name}${k.guardians.length ? ` — ${names(k.guardians)}` : ""}`) : [r.none],
-            )}
-            {section("executors", r.sections.executors, [names(a.executors), ...(a.digitalToo ? [r.digital] : [])])}
-            {section("inherit", r.sections.inherit, [
-              plan === "spouse"
-                ? copy.inherit.everythingTo(spouseName)
-                : plan === "spouseThenChildren"
-                  ? copy.inherit.thenChildren(spouseName.split(" ")[0]!)
-                  : plan === "children"
-                    ? copy.inherit.toChildren
-                    : shares(a.inherit.shares),
-              ...(a.inherit.backups.length ? [`${copy.inherit.backups}: ${shares(a.inherit.backups)}`] : []),
-            ])}
-            {section(
-              "gifts",
-              r.sections.gifts,
-              a.gifts.length ? a.gifts.map((x) => `${x.what} → ${people.find((p) => p.id === x.to)?.name ?? ""}`) : [r.none],
-            )}
-            {section("leftOut", r.sections.leftOut, [a.leftOut.any ? names(a.leftOut.people) : r.none])}
+            {summaryOf(a, copy, people, states).map((sec) => (
+              <RecordSection key={sec.id} audience="shared" title={sec.title}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col gap-1 text-sm font-medium">
+                    {sec.lines.map((l) => (
+                      <p key={l}>{l}</p>
+                    ))}
+                  </div>
+                  <Button asChild variant="link" size="inline" icon={<PencilIcon />} className="text-xs">
+                    <NavLink href={href(sec.id)}>{r.edit}</NavLink>
+                  </Button>
+                </div>
+              </RecordSection>
+            ))}
           </RecordCard>
         </div>
       </SetupBeat>
@@ -650,6 +689,7 @@ export function WillBuilder({
       state={states.find((x) => x.value === a.you.state)?.label ?? ""}
       signing={signing}
       onFinalize={onFinalize}
+      documentHref={documentHref}
       linkAs={NavLink}
       back={href("review")}
     />
@@ -663,6 +703,7 @@ function SignStep({
   state,
   signing,
   onFinalize,
+  documentHref,
   linkAs,
   back,
 }: {
@@ -671,6 +712,7 @@ function SignStep({
   state: string
   signing: string[]
   onFinalize: () => Promise<Result>
+  documentHref: string
   linkAs: ElementType
   back: string
 }) {
@@ -686,7 +728,7 @@ function SignStep({
       eyebrowTone="primary"
       title={s.title}
       lede={s.lede}
-      footer={<FlowFooter linkAs={linkAs} backHref={back} ctaLabel={s.done} ctaHref="#vault" ctaDisabled={!done} />}
+      footer={<FlowFooter linkAs={linkAs} backHref={back} ctaLabel={s.done} ctaHref={documentHref} ctaDisabled={!done} />}
     >
       <ol className="flex flex-col gap-8">
         <li className="flex flex-col gap-3">

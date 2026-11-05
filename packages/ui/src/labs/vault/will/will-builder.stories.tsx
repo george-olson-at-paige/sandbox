@@ -20,7 +20,7 @@ const EMPTY: WillAnswers = {
   leftOut: { people: [] },
 }
 
-const MAYA: WillAnswers = {
+export const MAYA_ANSWERS: WillAnswers = {
   you: { legalName: "Maya Elena Reyes", dob: "1958-03-14", marital: "married", state: "CA", county: "Alameda" },
   spouse: { name: "David Reyes", dob: "1956-11-02" },
   children: {
@@ -64,6 +64,7 @@ const meta = {
       await wait(400)
     },
     checkoutHref: "#checkout",
+    documentHref: "#documents?id=will",
     onFinalize: async () => {
       await wait(900)
     },
@@ -78,23 +79,23 @@ type Story = StoryObj<typeof meta>
 export const You: Story = {}
 
 /** Your spouse (married only), filled from the Vault. */
-export const Spouse: Story = { args: { start: MAYA, initialStep: "spouse" } }
+export const Spouse: Story = { args: { start: MAYA_ANSWERS, initialStep: "spouse" } }
 
 /** Children and who would raise them. */
-export const Children: Story = { args: { start: MAYA, initialStep: "children" } }
+export const Children: Story = { args: { start: MAYA_ANSWERS, initialStep: "children" } }
 
 /** Who carries it out: executors in order, from your people. */
-export const Executors: Story = { args: { start: MAYA, initialStep: "executors" } }
+export const Executors: Story = { args: { start: MAYA_ANSWERS, initialStep: "executors" } }
 
 /** Who inherits: the choice that fits the family, then optional backups as shares. */
-export const Inherit: Story = { name: "Who inherits", args: { start: MAYA, initialStep: "inherit" } }
+export const Inherit: Story = { name: "Who inherits", args: { start: MAYA_ANSWERS, initialStep: "inherit" } }
 
 /** Who inherits, your own split: shares that must total 100. */
 export const InheritOwn: Story = {
   name: "Who inherits · own split",
   args: {
     start: {
-      ...MAYA,
+      ...MAYA_ANSWERS,
       inherit: {
         plan: "own",
         backups: [],
@@ -109,24 +110,24 @@ export const InheritOwn: Story = {
 }
 
 /** Specific gifts (optional). */
-export const Gifts: Story = { name: "Specific gifts", args: { start: MAYA, initialStep: "gifts" } }
+export const Gifts: Story = { name: "Specific gifts", args: { start: MAYA_ANSWERS, initialStep: "gifts" } }
 
 /** Anyone left out (optional). */
-export const LeftOut: Story = { name: "Anyone left out", args: { start: MAYA, initialStep: "leftOut" } }
+export const LeftOut: Story = { name: "Anyone left out", args: { start: MAYA_ANSWERS, initialStep: "leftOut" } }
 
 /** Review: every answer with Edit, the draft, Finalize. */
-export const Review: Story = { args: { start: MAYA, initialStep: "review" } }
+export const Review: Story = { args: { start: MAYA_ANSWERS, initialStep: "review" } }
 
 /** Review when the will isn't paid for: Pay and finalize. */
-export const ReviewUnpaid: Story = { name: "Review · not paid", args: { start: MAYA, initialStep: "review", paid: false } }
+export const ReviewUnpaid: Story = { name: "Review · not paid", args: { start: MAYA_ANSWERS, initialStep: "review", paid: false } }
 
 /** Finalize, then download the clean copy, then sign. */
-export const Sign: Story = { name: "Finalize and sign", args: { start: MAYA, initialStep: "sign" } }
+export const Sign: Story = { name: "Finalize and sign", args: { start: MAYA_ANSWERS, initialStep: "sign" } }
 
 /** A step at phone width. */
 export const PhoneInherit: Story = {
   tags: ["!autodocs"],
   name: "Phone · who inherits",
-  args: { start: MAYA, initialStep: "inherit" },
+  args: { start: MAYA_ANSWERS, initialStep: "inherit" },
   globals: { viewport: { value: "w375", isRotated: false } },
 }
