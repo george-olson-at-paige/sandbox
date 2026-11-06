@@ -7,8 +7,8 @@ import { GutterReadout } from "../stories/fixtures"
    HomePage) and AppHeader's row are the only places that use the frame and page-level
    tokens; `npm run check:tokens` flags page wrappers anywhere else. */
 const TOKENS: Array<[string, string, string]> = [
-  ["page-frame", "--container-page + --gutter", "The frame: max width 1400, side gutter inside, centred (Page, PageBand, AppHeader row)"],
-  ["max-w-page", "--container-page", "Page max width (1400)"],
+  ["page-frame", "--container-page + --gutter", "The frame: content at most 1120 (the app's), the side gutter outside it, centred (Page, PageBand, AppHeader row)"],
+  ["max-w-page", "--container-page", "Page content width (1120, the app's)"],
   ["px-gutter", "--gutter", "Side gutter: 16 · 24 from sm · 32 from lg · 48 from xl"],
   ["gap-column", "--spacing-column", "Two columns (main and rail)"],
   ["gap-grid", "--spacing-grid", "Tiles and card grids"],

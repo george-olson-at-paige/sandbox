@@ -272,10 +272,9 @@
   --gutter: 1rem;
   @variant sm { --gutter: 1.5rem; }
   @variant lg { --gutter: 2rem; }
-  @variant xl { --gutter: 3rem; }
   /* A workspace's one gutter (WorkspacePage, VIEWS-PLAN.md): the app header's row, the band, the
      list's controls and rows and the stage bar share it, so they start on one edge. A workspace
-     is full bleed, so it stops at 24 (the page's grows to 48). 16 below sm · 24 from sm. */
+     stops at 24 (the page's grows to 32). 16 below sm · 24 from sm. */
   --gutter-workspace: 1rem;
   @variant sm { --gutter-workspace: 1.5rem; }
 }
@@ -516,7 +515,9 @@
 
   /* widths: max-w-page (gutters inside) · max-w-focused · max-w-wide (centered columns) ·
      max-w-measure (prose). */
-  --container-page: 87.5rem;     /* 1400 */
+  /* The app's one page width (George 2026-11-05; Paige.Webapp's --vt-frame, PR 598): content at
+     most 1120, the gutter outside it, so the reference renders at the width the app does. */
+  --container-page: 70rem;       /* 1120 */
   --container-focused: 48rem;    /* 768 */
   --container-wide: 60rem;       /* 960 */
   /* max-w-record: a record card on a WorkspacePage's stage, centred (VIEWS-PLAN.md §1a). */
@@ -989,12 +990,13 @@ input::-webkit-strong-password-auto-fill-button {
 @utility grid-cols-fit-lg {
   grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
 }
-/* The page frame (R1-23): max width 1400 with the side gutter inside it. Page, PageBand and
-   AppHeader's row use it, so the logo, a band's content and the page content share one edge. */
+/* The page frame (R1-23), the app's (Paige.Webapp base.css, PR 598): content at most 1120, the
+   side gutter (16 · 24 from sm · 32 from lg) on each side of it. Page, PageBand and AppHeader's
+   row use it, so the logo, a band's content and the page content share one edge. */
 @utility page-frame {
   margin-inline: auto;
   width: 100%;
-  max-width: --theme(--container-page);
+  max-width: calc(--theme(--container-page) + 2 * var(--gutter));
   padding-inline: var(--gutter);
 }
 /* The workspace edge: inside WorkspacePage's ruled box (and its regions on a phone), where the
